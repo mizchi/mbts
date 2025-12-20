@@ -169,6 +169,8 @@ function processNode(
     processFunction(node, checker, binding);
   } else if (ts.isVariableStatement(node)) {
     processVariableStatement(node, checker, binding);
+  } else if (ts.isClassDeclaration(node)) {
+    processClass(node, checker, binding);
   } else if (ts.isModuleDeclaration(node)) {
     // Process namespace/module declarations
     if (node.body && ts.isModuleBlock(node.body)) {
@@ -218,6 +220,142 @@ function processInterface(
     fields,
     typeParams: typeParams.length > 0 ? typeParams : undefined,
   });
+}
+
+function processClass(
+  node: ts.ClassDeclaration,
+  checker: ts.TypeChecker,
+  binding: MbtBinding
+): void {
+  if (!node.name) return;
+
+  const className = node.name.text;
+  const fields: MbtField[] = [];
+  const typeParams: string[] = [];
+
+  // Process type parameters
+  if (node.typeParameters) {
+    node.typeParameters.forEach((tp) => {
+      typeParams.push(tp.name.text);
+    });
+  }
+
+  // Process members
+  node.members.forEach((member) => {
+    // Properties
+    if (ts.isPropertyDeclaration(member) && member.name) {
+      const propName = member.name.getText();
+      const propType = member.type
+        ? mapTypeString(member.type.getText())
+        : "Json";
+      const isOptional = !!member.questionToken;
+      const isReadonly = member.modifiers?.some(
+        (m) => m.kind === ts.SyntaxKind.ReadonlyKeyword
+      );
+
+      fields.push({
+        name: toSnakeCase(propName),
+        type: isOptional ? `${propType}?` : propType,
+        mutable: !isReadonly,
+      });
+    }
+
+    // Methods -> extern functions
+    if (ts.isMethodDeclaration(member) && member.name) {
+      const methodName = member.name.getText();
+      const params: MbtParam[] = [];
+      const methodTypeParams: string[] = [];
+      let isAsync = false;
+
+      // Check for async
+      if (member.modifiers) {
+        isAsync = member.modifiers.some(
+          (m) => m.kind === ts.SyntaxKind.AsyncKeyword
+        );
+      }
+
+      // Process method type parameters
+      if (member.typeParameters) {
+        member.typeParameters.forEach((tp) => {
+          methodTypeParams.push(tp.name.text);
+        });
+      }
+
+      // Add 'self' as first parameter (the class instance)
+      params.push({
+        name: "self",
+        type: className + (typeParams.length > 0 ? `[${typeParams.join(", ")}]` : ""),
+        optional: false,
+      });
+
+      // Process method parameters
+      member.parameters.forEach((param, i) => {
+        const paramName = param.name.getText();
+        const paramType = param.type
+          ? mapTypeString(param.type.getText())
+          : "Json";
+        const isOptional = !!param.questionToken || !!param.initializer;
+
+        params.push({
+          name: toSnakeCase(paramName),
+          type: paramType,
+          optional: isOptional,
+        });
+      });
+
+      // Process return type
+      let returnType = "Unit";
+      if (member.type) {
+        returnType = mapTypeString(member.type.getText());
+      }
+
+      binding.functions.push({
+        name: `${toSnakeCase(className)}_${toSnakeCase(methodName)}`,
+        params,
+        returnType,
+        isAsync,
+        jsName: `${className}.prototype.${methodName}`,
+        typeParams: [...typeParams, ...methodTypeParams].length > 0
+          ? [...typeParams, ...methodTypeParams]
+          : undefined,
+      });
+    }
+
+    // Constructor -> ClassName_new
+    if (ts.isConstructorDeclaration(member)) {
+      const params: MbtParam[] = [];
+
+      member.parameters.forEach((param, i) => {
+        const paramName = param.name.getText();
+        const paramType = param.type
+          ? mapTypeString(param.type.getText())
+          : "Json";
+        const isOptional = !!param.questionToken || !!param.initializer;
+
+        params.push({
+          name: toSnakeCase(paramName),
+          type: paramType,
+          optional: isOptional,
+        });
+      });
+
+      binding.functions.push({
+        name: `${toSnakeCase(className)}_new`,
+        params,
+        returnType: className + (typeParams.length > 0 ? `[${typeParams.join(", ")}]` : ""),
+        isAsync: false,
+        jsName: className,
+        typeParams: typeParams.length > 0 ? typeParams : undefined,
+      });
+    }
+  });
+
+  // Add the class as an extern type
+  binding.externTypes.push(
+    typeParams.length > 0
+      ? `type ${className}[${typeParams.join(", ")}]`
+      : `type ${className}`
+  );
 }
 
 function processTypeAlias(

@@ -171,7 +171,7 @@ export function Show$toString<Self>(arg0: Self): string;
 
 | 機能 | 状態 | 詳細 |
 |------|------|------|
-| class 変換 | 未実装 | `type + メソッド群` への変換 |
+| class 変換 | ✅完了 | `extern type` + メソッド関数 (`ClassName_method`) |
 | namespace/module | 部分的 | ネストした namespace の扱い |
 | overload | 未実装 | 同名関数の複数シグネチャ |
 | generics 制約 | 未実装 | `T extends X` の変換 |

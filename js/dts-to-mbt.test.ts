@@ -177,6 +177,71 @@ export function process(
   });
 });
 
+describe("class conversion", () => {
+  it("should convert class to extern type and methods", () => {
+    const dts = `
+export class Counter {
+  value: number;
+  constructor(initial: number);
+  increment(): void;
+  decrement(): void;
+  getValue(): number;
+}
+`;
+    const binding = parseDts(dts, "test.d.ts");
+
+    // Should have extern type
+    expect(binding.externTypes).toContain("type Counter");
+
+    // Should have constructor
+    const ctorFn = binding.functions.find((f) => f.name === "counter_new");
+    expect(ctorFn).toBeDefined();
+    expect(ctorFn?.returnType).toBe("Counter");
+
+    // Should have methods with self parameter
+    const incrFn = binding.functions.find((f) => f.name === "counter_increment");
+    expect(incrFn).toBeDefined();
+    expect(incrFn?.params[0].name).toBe("self");
+    expect(incrFn?.params[0].type).toBe("Counter");
+  });
+
+  it("should generate correct MoonBit code for class", () => {
+    const dts = `
+export class HttpClient {
+  baseUrl: string;
+  constructor(baseUrl: string);
+  get(path: string): Promise<string>;
+  post(path: string, body: string): Promise<string>;
+}
+`;
+    const mbt = dtsToMbt(dts, "test.d.ts");
+
+    expect(mbt).toContain("extern type HttpClient");
+    expect(mbt).toContain('extern "js" fn http_client_new');
+    expect(mbt).toContain('= "HttpClient"');
+    expect(mbt).toContain('extern "js" fn http_client_get');
+    expect(mbt).toContain('extern "js" fn http_client_post');
+  });
+
+  it("should handle generic class", () => {
+    const dts = `
+export class Container<T> {
+  value: T;
+  constructor(value: T);
+  get(): T;
+  set(value: T): void;
+}
+`;
+    const binding = parseDts(dts, "test.d.ts");
+
+    expect(binding.externTypes).toContain("type Container[T]");
+
+    const ctorFn = binding.functions.find((f) => f.name === "container_new");
+    expect(ctorFn?.typeParams).toContain("T");
+    expect(ctorFn?.returnType).toBe("Container[T]");
+  });
+});
+
 describe("real world: DOM API subset", () => {
   it("should convert DOM-like API", () => {
     const dts = `
