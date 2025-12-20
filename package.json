@@ -1,6 +1,6 @@
 {
   "name": "mbts",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "MoonBit と TypeScript 間の型定義を相互変換するツールです。",
   "main": "js/index.ts",
   "scripts": {
