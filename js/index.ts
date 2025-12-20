@@ -268,6 +268,31 @@ export interface GenerateOptions {
   namespace?: boolean;
   /** Include runtime type definitions (Ref<T>, etc.) */
   preamble?: boolean;
+  /**
+   * Naming convention for exported functions
+   * - "preserve": Keep original snake_case from MoonBit (default)
+   * - "camelCase": Convert to camelCase
+   */
+  naming?: "preserve" | "camelCase";
+}
+
+/**
+ * Convert camelCase to snake_case
+ */
+function camelToSnake(str: string): string {
+  return str.replace(/([a-z])([A-Z])/g, "$1_$2").toLowerCase();
+}
+
+/**
+ * Convert function names in DTS from camelCase to snake_case
+ */
+function convertNamingToSnakeCase(dts: string): string {
+  // Match function declarations and convert names
+  const funcRegex = /^(export function )([\w$]+)(\s*[<(])/gm;
+  return dts.replace(funcRegex, (match, prefix, funcName, rest) => {
+    const snakeName = camelToSnake(funcName);
+    return `${prefix}${snakeName}${rest}`;
+  });
 }
 
 /**
@@ -278,7 +303,8 @@ export interface GenerateOptions {
  */
 function addGenericsToFunctions(
   dts: string,
-  symbols: ExportSymbol[]
+  symbols: ExportSymbol[],
+  naming: "preserve" | "camelCase" = "preserve"
 ): string {
   // Create a map of function name to type params
   const genericMap = new Map<string, string[]>();
@@ -352,8 +378,17 @@ export function generateDts(
     dts = generate_dts_from_string(preprocessed, filename);
   }
 
+  const naming = options.naming ?? "preserve";
+
   // Add generics to function declarations
-  return addGenericsToFunctions(dts, symbols);
+  let result = addGenericsToFunctions(dts, symbols, naming);
+
+  // Convert to snake_case if preserving original naming
+  if (naming === "preserve") {
+    result = convertNamingToSnakeCase(result);
+  }
+
+  return result;
 }
 
 /**
@@ -361,16 +396,15 @@ export function generateDts(
  *
  * @param content - The MBTI file content
  * @param filename - The filename
+ * @param options - Generation options
  * @returns Generated TypeScript definition with namespace wrapper
  */
 export function generateDtsNamespace(
   content: string,
-  filename: string
+  filename: string,
+  options: Pick<GenerateOptions, "naming"> = {}
 ): string {
-  const symbols = extractExportSymbols(content);
-  const preprocessed = preprocessMbti(content);
-  const dts = generate_dts_namespace_from_string(preprocessed, filename);
-  return addGenericsToFunctions(dts, symbols);
+  return generateDts(content, filename, { ...options, namespace: true });
 }
 
 /**
@@ -378,16 +412,15 @@ export function generateDtsNamespace(
  *
  * @param content - The MBTI file content
  * @param filename - The filename
+ * @param options - Generation options
  * @returns Generated TypeScript definition with preamble
  */
 export function generateDtsWithPreamble(
   content: string,
-  filename: string
+  filename: string,
+  options: Pick<GenerateOptions, "naming"> = {}
 ): string {
-  const symbols = extractExportSymbols(content);
-  const preprocessed = preprocessMbti(content);
-  const dts = generate_dts_with_preamble_from_string(preprocessed, filename);
-  return addGenericsToFunctions(dts, symbols);
+  return generateDts(content, filename, { ...options, preamble: true });
 }
 
 // ============================================================

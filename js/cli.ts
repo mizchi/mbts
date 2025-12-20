@@ -140,6 +140,7 @@ interface DtsOptions {
   out?: string;
   namespace?: boolean;
   preamble?: boolean;
+  naming?: "preserve" | "camelCase";
 }
 
 /**
@@ -149,7 +150,7 @@ async function dtsCommand(
   srcPath: string,
   options: DtsOptions = {}
 ): Promise<void> {
-  const { out, namespace = false, preamble = false } = options;
+  const { out, namespace = false, preamble = false, naming = "preserve" } = options;
 
   // Resolve source path
   const resolvedSrc = path.resolve(srcPath);
@@ -187,6 +188,7 @@ async function dtsCommand(
   const dts = generateDts(mbtiContent, path.basename(mbtiPath), {
     namespace,
     preamble,
+    naming,
   });
 
   // Write output
@@ -227,6 +229,7 @@ Options:
   --targets <list>  Comma-separated targets: js,wasm,wasm-gc (default: js)
   --namespace       Wrap output in namespace (dts command)
   --preamble        Include runtime type preamble (dts command)
+  --naming <type>   Function naming: preserve (default) or camelCase
   --dry-run         Show what would be done without writing files
   --help, -h        Show this help message
 
@@ -315,10 +318,12 @@ async function main(): Promise<void> {
         console.error("Usage: mbts dts <src> [--out <dir>]");
         process.exit(1);
       }
+      const naming = options.naming === "camelCase" ? "camelCase" : "preserve";
       await dtsCommand(src, {
         out: options.out as string | undefined,
         namespace: !!options.namespace,
         preamble: !!options.preamble,
+        naming,
       });
       break;
     }

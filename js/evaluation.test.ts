@@ -316,7 +316,7 @@ fn get_status() -> Status
     expect(dts).toContain("readonly name: string");
     expect(dts).toContain("readonly age: number");
     expect(dts).toContain("type Status = ");
-    expect(dts).toContain("function createUser");
+    expect(dts).toContain("function create_user");
 
     // Reverse conversion
     const mbt = dtsToMbt(dts, "test.d.ts");
@@ -420,7 +420,7 @@ pub enum Option {
       export type Option = Option_None | Option_Some;
 
       export const Option$None: Option_None;
-      export function Option$Some($0: number): Option_Some;"
+      export function option$some($0: number): Option_Some;"
     `);
   });
 
@@ -466,11 +466,11 @@ fn Vec2::add(Self, Self) -> Self
         readonly y: number;
       }
 
-      export function Vec2$new(arg0: number, arg1: number): Vec2;
+      export function vec2$new(arg0: number, arg1: number): Vec2;
 
-      export function Vec2$length(arg0: Vec2): number;
+      export function vec2$length(arg0: Vec2): number;
 
-      export function Vec2$add(arg0: Vec2, arg1: Vec2): Vec2;"
+      export function vec2$add(arg0: Vec2, arg1: Vec2): Vec2;"
     `);
   });
 
@@ -490,9 +490,9 @@ fn Handle::close(Self) -> Unit
         readonly __brand: "Handle";
       }
 
-      export function Handle$new(): Handle;
+      export function handle$new(): Handle;
 
-      export function Handle$close(arg0: Handle): void;"
+      export function handle$close(arg0: Handle): void;"
     `);
   });
 
@@ -516,7 +516,7 @@ fn get_pair() -> (Int, String)
     expect(dts).toMatchInlineSnapshot(`
       "// Generated from .mbti file - DO NOT EDIT
 
-      export function getPair(): [number, string];"
+      export function get_pair(): [number, string];"
     `);
   });
 
@@ -548,7 +548,7 @@ fn to_json(String) -> @json.Json
     expect(dts).toMatchInlineSnapshot(`
       "// Generated from .mbti file - DO NOT EDIT
 
-      export function toJson(arg0: string): json.Json;"
+      export function to_json(arg0: string): json.Json;"
     `);
   });
 });

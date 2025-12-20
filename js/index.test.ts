@@ -31,7 +31,7 @@ describe("generateDts with real packages", () => {
 
         export function parse(arg0: string): any;
 
-        export function ParseError$toString(arg0: ParseError): string;
+        export function parse_error$to_string(arg0: ParseError): string;
 
         export interface ParseErrorData_NoValidToken { readonly $tag: "NoValidToken"; readonly $0: Position; }
         export interface ParseErrorData_InvalidChar { readonly $tag: "InvalidChar"; readonly $0: Position; readonly $1: Char; }
@@ -40,11 +40,11 @@ describe("generateDts with real packages", () => {
         export interface ParseErrorData_InvalidIdentEscape { readonly $tag: "InvalidIdentEscape"; readonly $0: Position; }
         export type ParseErrorData = ParseErrorData_NoValidToken | ParseErrorData_InvalidChar | ParseErrorData_InvalidEof | ParseErrorData_InvalidNumber | ParseErrorData_InvalidIdentEscape;
 
-        export function ParseErrorData$NoValidToken($0: Position): ParseErrorData_NoValidToken;
-        export function ParseErrorData$InvalidChar($0: Position, $1: Char): ParseErrorData_InvalidChar;
+        export function parse_error_data$no_valid_token($0: Position): ParseErrorData_NoValidToken;
+        export function parse_error_data$invalid_char($0: Position, $1: Char): ParseErrorData_InvalidChar;
         export const ParseErrorData$InvalidEof: ParseErrorData_InvalidEof;
-        export function ParseErrorData$InvalidNumber($0: Position, $1: string): ParseErrorData_InvalidNumber;
-        export function ParseErrorData$InvalidIdentEscape($0: Position): ParseErrorData_InvalidIdentEscape;
+        export function parse_error_data$invalid_number($0: Position, $1: string): ParseErrorData_InvalidNumber;
+        export function parse_error_data$invalid_ident_escape($0: Position): ParseErrorData_InvalidIdentEscape;
 
 
         export interface Position {
@@ -63,9 +63,9 @@ describe("generateDts with real packages", () => {
       expect(result).toMatchInlineSnapshot(`
         "// Generated from .mbti file - DO NOT EDIT
 
-        export function dateTime(arg0: number, arg1: number, arg2: number, hour?: number, minute?: number, second?: number, nanosecond?: number, zone?: Zone): ZonedDateTime;
+        export function date_time(arg0: number, arg1: number, arg2: number, hour?: number, minute?: number, second?: number, nanosecond?: number, zone?: Zone): ZonedDateTime;
 
-        export function fixedZone(arg0: string, arg1: number, abbrev?: string, dst?: boolean): Zone;
+        export function fixed_zone(arg0: string, arg1: number, abbrev?: string, dst?: boolean): Zone;
 
         export function unix(arg0: number, nanosecond?: number, zone?: Zone): ZonedDateTime;
 
@@ -73,281 +73,281 @@ describe("generateDts with real packages", () => {
           readonly __brand: "Duration";
         }
 
-        export function Duration$addDuration(arg0: Duration, arg1: Duration): Duration;
+        export function duration$add_duration(arg0: Duration, arg1: Duration): Duration;
 
-        export function Duration$addHours(arg0: Duration, arg1: number): Duration;
+        export function duration$add_hours(arg0: Duration, arg1: number): Duration;
 
-        export function Duration$addMinutes(arg0: Duration, arg1: number): Duration;
+        export function duration$add_minutes(arg0: Duration, arg1: number): Duration;
 
-        export function Duration$addNanoseconds(arg0: Duration, arg1: number): Duration;
+        export function duration$add_nanoseconds(arg0: Duration, arg1: number): Duration;
 
-        export function Duration$addSeconds(arg0: Duration, arg1: number): Duration;
+        export function duration$add_seconds(arg0: Duration, arg1: number): Duration;
 
-        export function Duration$fromString(arg0: string): Duration;
+        export function duration$from_string(arg0: string): Duration;
 
-        export function Duration$isNeg(arg0: Duration): boolean;
+        export function duration$is_neg(arg0: Duration): boolean;
 
-        export function Duration$isZero(arg0: Duration): boolean;
+        export function duration$is_zero(arg0: Duration): boolean;
 
-        export function Duration$nanoseconds(arg0: Duration): number;
+        export function duration$nanoseconds(arg0: Duration): number;
 
-        export function Duration$of(hours?: number, minutes?: number, seconds?: number, nanoseconds?: number): Duration;
+        export function duration$of(hours?: number, minutes?: number, seconds?: number, nanoseconds?: number): Duration;
 
-        export function Duration$opAdd(arg0: Duration, arg1: Duration): Duration;
+        export function duration$op_add(arg0: Duration, arg1: Duration): Duration;
 
-        export function Duration$seconds(arg0: Duration): number;
+        export function duration$seconds(arg0: Duration): number;
 
-        export function Duration$toNanoseconds(arg0: Duration): number;
+        export function duration$to_nanoseconds(arg0: Duration): number;
 
-        export function Duration$toString(arg0: Duration): string;
+        export function duration$to_string(arg0: Duration): string;
 
-        export function Duration$withNanoseconds(arg0: Duration, arg1: number): Duration;
+        export function duration$with_nanoseconds(arg0: Duration, arg1: number): Duration;
 
-        export function Duration$withSeconds(arg0: Duration, arg1: number): Duration;
+        export function duration$with_seconds(arg0: Duration, arg1: number): Duration;
 
-        export function Duration$zero(): Duration;
+        export function duration$zero(): Duration;
 
         export interface Period {
           readonly __brand: "Period";
         }
 
-        export function Period$addDays(arg0: Period, arg1: number): Period;
+        export function period$add_days(arg0: Period, arg1: number): Period;
 
-        export function Period$addMonths(arg0: Period, arg1: number): Period;
+        export function period$add_months(arg0: Period, arg1: number): Period;
 
-        export function Period$addPeriod(arg0: Period, arg1: Period): Period;
+        export function period$add_period(arg0: Period, arg1: Period): Period;
 
-        export function Period$addWeeks(arg0: Period, arg1: number): Period;
+        export function period$add_weeks(arg0: Period, arg1: number): Period;
 
-        export function Period$addYears(arg0: Period, arg1: number): Period;
+        export function period$add_years(arg0: Period, arg1: number): Period;
 
-        export function Period$days(arg0: Period): number;
+        export function period$days(arg0: Period): number;
 
-        export function Period$fromString(arg0: string): Period;
+        export function period$from_string(arg0: string): Period;
 
-        export function Period$isNeg(arg0: Period): boolean;
+        export function period$is_neg(arg0: Period): boolean;
 
-        export function Period$isZero(arg0: Period): boolean;
+        export function period$is_zero(arg0: Period): boolean;
 
-        export function Period$months(arg0: Period): number;
+        export function period$months(arg0: Period): number;
 
-        export function Period$multiply(arg0: Period, arg1: number): Period;
+        export function period$multiply(arg0: Period, arg1: number): Period;
 
-        export function Period$negated(arg0: Period): Period;
+        export function period$negated(arg0: Period): Period;
 
-        export function Period$of(years?: number, months?: number, days?: number): Period;
+        export function period$of(years?: number, months?: number, days?: number): Period;
 
-        export function Period$opAdd(arg0: Period, arg1: Period): Period;
+        export function period$op_add(arg0: Period, arg1: Period): Period;
 
-        export function Period$opSub(arg0: Period, arg1: Period): Period;
+        export function period$op_sub(arg0: Period, arg1: Period): Period;
 
-        export function Period$toString(arg0: Period): string;
+        export function period$to_string(arg0: Period): string;
 
-        export function Period$toTotalMonths(arg0: Period): number;
+        export function period$to_total_months(arg0: Period): number;
 
-        export function Period$withDays(arg0: Period, arg1: number): Period;
+        export function period$with_days(arg0: Period, arg1: number): Period;
 
-        export function Period$withMonths(arg0: Period, arg1: number): Period;
+        export function period$with_months(arg0: Period, arg1: number): Period;
 
-        export function Period$withYears(arg0: Period, arg1: number): Period;
+        export function period$with_years(arg0: Period, arg1: number): Period;
 
-        export function Period$years(arg0: Period): number;
+        export function period$years(arg0: Period): number;
 
-        export function Period$zero(): Period;
+        export function period$zero(): Period;
 
         export interface PlainDate {
           readonly __brand: "PlainDate";
         }
 
-        export function PlainDate$addDays(arg0: PlainDate, arg1: number): PlainDate;
+        export function plain_date$add_days(arg0: PlainDate, arg1: number): PlainDate;
 
-        export function PlainDate$addMonths(arg0: PlainDate, arg1: number): PlainDate;
+        export function plain_date$add_months(arg0: PlainDate, arg1: number): PlainDate;
 
-        export function PlainDate$addPeriod(arg0: PlainDate, arg1: Period): PlainDate;
+        export function plain_date$add_period(arg0: PlainDate, arg1: Period): PlainDate;
 
-        export function PlainDate$addWeeks(arg0: PlainDate, arg1: number): PlainDate;
+        export function plain_date$add_weeks(arg0: PlainDate, arg1: number): PlainDate;
 
-        export function PlainDate$addYears(arg0: PlainDate, arg1: number): PlainDate;
+        export function plain_date$add_years(arg0: PlainDate, arg1: number): PlainDate;
 
-        export function PlainDate$day(arg0: PlainDate): number;
+        export function plain_date$day(arg0: PlainDate): number;
 
-        export function PlainDate$daysInMonth(arg0: PlainDate): number;
+        export function plain_date$days_in_month(arg0: PlainDate): number;
 
-        export function PlainDate$daysInWeek(arg0: PlainDate): number;
+        export function plain_date$days_in_week(arg0: PlainDate): number;
 
-        export function PlainDate$daysInYear(arg0: PlainDate): number;
+        export function plain_date$days_in_year(arg0: PlainDate): number;
 
-        export function PlainDate$era(arg0: PlainDate): string;
+        export function plain_date$era(arg0: PlainDate): string;
 
-        export function PlainDate$eraYear(arg0: PlainDate): number;
+        export function plain_date$era_year(arg0: PlainDate): number;
 
-        export function PlainDate$fromString(arg0: string): PlainDate;
+        export function plain_date$from_string(arg0: string): PlainDate;
 
-        export function PlainDate$fromUnixDay(arg0: number): PlainDate;
+        export function plain_date$from_unix_day(arg0: number): PlainDate;
 
-        export function PlainDate$fromYearOrd(arg0: number, arg1: number): PlainDate;
+        export function plain_date$from_year_ord(arg0: number, arg1: number): PlainDate;
 
-        export function PlainDate$inLeapYear(arg0: PlainDate): boolean;
+        export function plain_date$in_leap_year(arg0: PlainDate): boolean;
 
-        export function PlainDate$month(arg0: PlainDate): number;
+        export function plain_date$month(arg0: PlainDate): number;
 
-        export function PlainDate$monthsInYear(arg0: PlainDate): number;
+        export function plain_date$months_in_year(arg0: PlainDate): number;
 
-        export function PlainDate$of(arg0: number, arg1: number, arg2: number): PlainDate;
+        export function plain_date$of(arg0: number, arg1: number, arg2: number): PlainDate;
 
-        export function PlainDate$ordinal(arg0: PlainDate): number;
+        export function plain_date$ordinal(arg0: PlainDate): number;
 
-        export function PlainDate$toString(arg0: PlainDate): string;
+        export function plain_date$to_string(arg0: PlainDate): string;
 
-        export function PlainDate$toUnixDay(arg0: PlainDate): number;
+        export function plain_date$to_unix_day(arg0: PlainDate): number;
 
-        export function PlainDate$until(arg0: PlainDate, arg1: PlainDate): Period;
+        export function plain_date$until(arg0: PlainDate, arg1: PlainDate): Period;
 
-        export function PlainDate$weekday(arg0: PlainDate): Weekday;
+        export function plain_date$weekday(arg0: PlainDate): Weekday;
 
-        export function PlainDate$withDay(arg0: PlainDate, arg1: number): PlainDate;
+        export function plain_date$with_day(arg0: PlainDate, arg1: number): PlainDate;
 
-        export function PlainDate$withMonth(arg0: PlainDate, arg1: number): PlainDate;
+        export function plain_date$with_month(arg0: PlainDate, arg1: number): PlainDate;
 
-        export function PlainDate$withOrdinal(arg0: PlainDate, arg1: number): PlainDate;
+        export function plain_date$with_ordinal(arg0: PlainDate, arg1: number): PlainDate;
 
-        export function PlainDate$withYear(arg0: PlainDate, arg1: number): PlainDate;
+        export function plain_date$with_year(arg0: PlainDate, arg1: number): PlainDate;
 
-        export function PlainDate$year(arg0: PlainDate): number;
+        export function plain_date$year(arg0: PlainDate): number;
 
         export interface PlainDateTime {
           readonly __brand: "PlainDateTime";
         }
 
-        export function PlainDateTime$addDays(arg0: PlainDateTime, arg1: number): PlainDateTime;
+        export function plain_date_time$add_days(arg0: PlainDateTime, arg1: number): PlainDateTime;
 
-        export function PlainDateTime$addDuration(arg0: PlainDateTime, arg1: Duration): PlainDateTime;
+        export function plain_date_time$add_duration(arg0: PlainDateTime, arg1: Duration): PlainDateTime;
 
-        export function PlainDateTime$addHours(arg0: PlainDateTime, arg1: number): PlainDateTime;
+        export function plain_date_time$add_hours(arg0: PlainDateTime, arg1: number): PlainDateTime;
 
-        export function PlainDateTime$addMinutes(arg0: PlainDateTime, arg1: number): PlainDateTime;
+        export function plain_date_time$add_minutes(arg0: PlainDateTime, arg1: number): PlainDateTime;
 
-        export function PlainDateTime$addMonths(arg0: PlainDateTime, arg1: number): PlainDateTime;
+        export function plain_date_time$add_months(arg0: PlainDateTime, arg1: number): PlainDateTime;
 
-        export function PlainDateTime$addNanoseconds(arg0: PlainDateTime, arg1: number): PlainDateTime;
+        export function plain_date_time$add_nanoseconds(arg0: PlainDateTime, arg1: number): PlainDateTime;
 
-        export function PlainDateTime$addPeriod(arg0: PlainDateTime, arg1: Period): PlainDateTime;
+        export function plain_date_time$add_period(arg0: PlainDateTime, arg1: Period): PlainDateTime;
 
-        export function PlainDateTime$addSeconds(arg0: PlainDateTime, arg1: number): PlainDateTime;
+        export function plain_date_time$add_seconds(arg0: PlainDateTime, arg1: number): PlainDateTime;
 
-        export function PlainDateTime$addWeeks(arg0: PlainDateTime, arg1: number): PlainDateTime;
+        export function plain_date_time$add_weeks(arg0: PlainDateTime, arg1: number): PlainDateTime;
 
-        export function PlainDateTime$addYears(arg0: PlainDateTime, arg1: number): PlainDateTime;
+        export function plain_date_time$add_years(arg0: PlainDateTime, arg1: number): PlainDateTime;
 
-        export function PlainDateTime$day(arg0: PlainDateTime): number;
+        export function plain_date_time$day(arg0: PlainDateTime): number;
 
-        export function PlainDateTime$daysInMonth(arg0: PlainDateTime): number;
+        export function plain_date_time$days_in_month(arg0: PlainDateTime): number;
 
-        export function PlainDateTime$daysInWeek(arg0: PlainDateTime): number;
+        export function plain_date_time$days_in_week(arg0: PlainDateTime): number;
 
-        export function PlainDateTime$daysInYear(arg0: PlainDateTime): number;
+        export function plain_date_time$days_in_year(arg0: PlainDateTime): number;
 
-        export function PlainDateTime$era(arg0: PlainDateTime): string;
+        export function plain_date_time$era(arg0: PlainDateTime): string;
 
-        export function PlainDateTime$eraYear(arg0: PlainDateTime): number;
+        export function plain_date_time$era_year(arg0: PlainDateTime): number;
 
-        export function PlainDateTime$fromString(arg0: string): PlainDateTime;
+        export function plain_date_time$from_string(arg0: string): PlainDateTime;
 
-        export function PlainDateTime$fromUnixSecond(arg0: number, arg1: number, arg2: ZoneOffset): PlainDateTime;
+        export function plain_date_time$from_unix_second(arg0: number, arg1: number, arg2: ZoneOffset): PlainDateTime;
 
-        export function PlainDateTime$hour(arg0: PlainDateTime): number;
+        export function plain_date_time$hour(arg0: PlainDateTime): number;
 
-        export function PlainDateTime$inLeapYear(arg0: PlainDateTime): boolean;
+        export function plain_date_time$in_leap_year(arg0: PlainDateTime): boolean;
 
-        export function PlainDateTime$minute(arg0: PlainDateTime): number;
+        export function plain_date_time$minute(arg0: PlainDateTime): number;
 
-        export function PlainDateTime$month(arg0: PlainDateTime): number;
+        export function plain_date_time$month(arg0: PlainDateTime): number;
 
-        export function PlainDateTime$monthsInYear(arg0: PlainDateTime): number;
+        export function plain_date_time$months_in_year(arg0: PlainDateTime): number;
 
-        export function PlainDateTime$nanosecond(arg0: PlainDateTime): number;
+        export function plain_date_time$nanosecond(arg0: PlainDateTime): number;
 
-        export function PlainDateTime$of(arg0: number, arg1: number, arg2: number, hour?: number, minute?: number, second?: number, nanosecond?: number): PlainDateTime;
+        export function plain_date_time$of(arg0: number, arg1: number, arg2: number, hour?: number, minute?: number, second?: number, nanosecond?: number): PlainDateTime;
 
-        export function PlainDateTime$ordinal(arg0: PlainDateTime): number;
+        export function plain_date_time$ordinal(arg0: PlainDateTime): number;
 
-        export function PlainDateTime$second(arg0: PlainDateTime): number;
+        export function plain_date_time$second(arg0: PlainDateTime): number;
 
-        export function PlainDateTime$toPlainDate(arg0: PlainDateTime): PlainDate;
+        export function plain_date_time$to_plain_date(arg0: PlainDateTime): PlainDate;
 
-        export function PlainDateTime$toPlainTime(arg0: PlainDateTime): PlainTime;
+        export function plain_date_time$to_plain_time(arg0: PlainDateTime): PlainTime;
 
-        export function PlainDateTime$toString(arg0: PlainDateTime): string;
+        export function plain_date_time$to_string(arg0: PlainDateTime): string;
 
-        export function PlainDateTime$toUnixSecond(arg0: PlainDateTime): number;
+        export function plain_date_time$to_unix_second(arg0: PlainDateTime): number;
 
-        export function PlainDateTime$weekday(arg0: PlainDateTime): Weekday;
+        export function plain_date_time$weekday(arg0: PlainDateTime): Weekday;
 
-        export function PlainDateTime$withDay(arg0: PlainDateTime, arg1: number): PlainDateTime;
+        export function plain_date_time$with_day(arg0: PlainDateTime, arg1: number): PlainDateTime;
 
-        export function PlainDateTime$withHour(arg0: PlainDateTime, arg1: number): PlainDateTime;
+        export function plain_date_time$with_hour(arg0: PlainDateTime, arg1: number): PlainDateTime;
 
-        export function PlainDateTime$withMinute(arg0: PlainDateTime, arg1: number): PlainDateTime;
+        export function plain_date_time$with_minute(arg0: PlainDateTime, arg1: number): PlainDateTime;
 
-        export function PlainDateTime$withMonth(arg0: PlainDateTime, arg1: number): PlainDateTime;
+        export function plain_date_time$with_month(arg0: PlainDateTime, arg1: number): PlainDateTime;
 
-        export function PlainDateTime$withNanosecond(arg0: PlainDateTime, arg1: number): PlainDateTime;
+        export function plain_date_time$with_nanosecond(arg0: PlainDateTime, arg1: number): PlainDateTime;
 
-        export function PlainDateTime$withOrdinal(arg0: PlainDateTime, arg1: number): PlainDateTime;
+        export function plain_date_time$with_ordinal(arg0: PlainDateTime, arg1: number): PlainDateTime;
 
-        export function PlainDateTime$withSecond(arg0: PlainDateTime, arg1: number): PlainDateTime;
+        export function plain_date_time$with_second(arg0: PlainDateTime, arg1: number): PlainDateTime;
 
-        export function PlainDateTime$withYear(arg0: PlainDateTime, arg1: number): PlainDateTime;
+        export function plain_date_time$with_year(arg0: PlainDateTime, arg1: number): PlainDateTime;
 
-        export function PlainDateTime$year(arg0: PlainDateTime): number;
+        export function plain_date_time$year(arg0: PlainDateTime): number;
 
         export interface PlainTime {
           readonly __brand: "PlainTime";
         }
 
-        export function PlainTime$addDuration(arg0: PlainTime, arg1: Duration): PlainTime;
+        export function plain_time$add_duration(arg0: PlainTime, arg1: Duration): PlainTime;
 
-        export function PlainTime$addHours(arg0: PlainTime, arg1: number): PlainTime;
+        export function plain_time$add_hours(arg0: PlainTime, arg1: number): PlainTime;
 
-        export function PlainTime$addMinutes(arg0: PlainTime, arg1: number): PlainTime;
+        export function plain_time$add_minutes(arg0: PlainTime, arg1: number): PlainTime;
 
-        export function PlainTime$addNanoseconds(arg0: PlainTime, arg1: number): PlainTime;
+        export function plain_time$add_nanoseconds(arg0: PlainTime, arg1: number): PlainTime;
 
-        export function PlainTime$addSeconds(arg0: PlainTime, arg1: number): PlainTime;
+        export function plain_time$add_seconds(arg0: PlainTime, arg1: number): PlainTime;
 
-        export function PlainTime$atDate(arg0: PlainTime, arg1: PlainDate): PlainDateTime;
+        export function plain_time$at_date(arg0: PlainTime, arg1: PlainDate): PlainDateTime;
 
-        export function PlainTime$fromNanosecondOfDay(arg0: number): PlainTime;
+        export function plain_time$from_nanosecond_of_day(arg0: number): PlainTime;
 
-        export function PlainTime$fromSecondOfDay(arg0: number): PlainTime;
+        export function plain_time$from_second_of_day(arg0: number): PlainTime;
 
-        export function PlainTime$fromString(arg0: string): PlainTime;
+        export function plain_time$from_string(arg0: string): PlainTime;
 
-        export function PlainTime$hour(arg0: PlainTime): number;
+        export function plain_time$hour(arg0: PlainTime): number;
 
-        export function PlainTime$minute(arg0: PlainTime): number;
+        export function plain_time$minute(arg0: PlainTime): number;
 
-        export function PlainTime$nanosecond(arg0: PlainTime): number;
+        export function plain_time$nanosecond(arg0: PlainTime): number;
 
-        export function PlainTime$nanosecondOfDay(arg0: PlainTime): number;
+        export function plain_time$nanosecond_of_day(arg0: PlainTime): number;
 
-        export function PlainTime$of(arg0: number, arg1: number, arg2: number, arg3: number): PlainTime;
+        export function plain_time$of(arg0: number, arg1: number, arg2: number, arg3: number): PlainTime;
 
-        export function PlainTime$second(arg0: PlainTime): number;
+        export function plain_time$second(arg0: PlainTime): number;
 
-        export function PlainTime$secondOfDay(arg0: PlainTime): number;
+        export function plain_time$second_of_day(arg0: PlainTime): number;
 
-        export function PlainTime$toString(arg0: PlainTime): string;
+        export function plain_time$to_string(arg0: PlainTime): string;
 
-        export function PlainTime$until(arg0: PlainTime, arg1: PlainTime): Duration;
+        export function plain_time$until(arg0: PlainTime, arg1: PlainTime): Duration;
 
-        export function PlainTime$withHour(arg0: PlainTime, arg1: number): PlainTime;
+        export function plain_time$with_hour(arg0: PlainTime, arg1: number): PlainTime;
 
-        export function PlainTime$withMinute(arg0: PlainTime, arg1: number): PlainTime;
+        export function plain_time$with_minute(arg0: PlainTime, arg1: number): PlainTime;
 
-        export function PlainTime$withNanosecond(arg0: PlainTime, arg1: number): PlainTime;
+        export function plain_time$with_nanosecond(arg0: PlainTime, arg1: number): PlainTime;
 
-        export function PlainTime$withSecond(arg0: PlainTime, arg1: number): PlainTime;
+        export function plain_time$with_second(arg0: PlainTime, arg1: number): PlainTime;
 
         export interface Weekday_Monday { readonly $tag: "Monday"; }
         export interface Weekday_Tuesday { readonly $tag: "Tuesday"; }
@@ -371,117 +371,117 @@ describe("generateDts with real packages", () => {
           readonly __brand: "Zone";
         }
 
-        export function Zone$fromTzif2(arg0: string, arg1: Array<number>): Zone;
+        export function zone$from_tzif2(arg0: string, arg1: Array<number>): Zone;
 
-        export function Zone$isFixed(arg0: Zone): boolean;
+        export function zone$is_fixed(arg0: Zone): boolean;
 
-        export function Zone$toString(arg0: Zone): string;
+        export function zone$to_string(arg0: Zone): string;
 
         export interface ZoneOffset {
           readonly __brand: "ZoneOffset";
         }
 
-        export function ZoneOffset$abbreviation(arg0: ZoneOffset): string;
+        export function zone_offset$abbreviation(arg0: ZoneOffset): string;
 
-        export function ZoneOffset$fromSeconds(arg0: number, abbrev?: string, dst?: boolean): ZoneOffset;
+        export function zone_offset$from_seconds(arg0: number, abbrev?: string, dst?: boolean): ZoneOffset;
 
-        export function ZoneOffset$id(arg0: ZoneOffset): string;
+        export function zone_offset$id(arg0: ZoneOffset): string;
 
-        export function ZoneOffset$isDst(arg0: ZoneOffset): boolean;
+        export function zone_offset$is_dst(arg0: ZoneOffset): boolean;
 
-        export function ZoneOffset$of(hours?: number, minutes?: number, seconds?: number, abbrev?: string, dst?: boolean): ZoneOffset;
+        export function zone_offset$of(hours?: number, minutes?: number, seconds?: number, abbrev?: string, dst?: boolean): ZoneOffset;
 
-        export function ZoneOffset$seconds(arg0: ZoneOffset): number;
+        export function zone_offset$seconds(arg0: ZoneOffset): number;
 
-        export function ZoneOffset$toString(arg0: ZoneOffset): string;
+        export function zone_offset$to_string(arg0: ZoneOffset): string;
 
         export interface ZonedDateTime {
           readonly __brand: "ZonedDateTime";
         }
 
-        export function ZonedDateTime$addDays(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
+        export function zoned_date_time$add_days(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
 
-        export function ZonedDateTime$addHours(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
+        export function zoned_date_time$add_hours(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
 
-        export function ZonedDateTime$addMinutes(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
+        export function zoned_date_time$add_minutes(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
 
-        export function ZonedDateTime$addMonths(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
+        export function zoned_date_time$add_months(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
 
-        export function ZonedDateTime$addNanoseconds(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
+        export function zoned_date_time$add_nanoseconds(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
 
-        export function ZonedDateTime$addSeconds(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
+        export function zoned_date_time$add_seconds(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
 
-        export function ZonedDateTime$addWeeks(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
+        export function zoned_date_time$add_weeks(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
 
-        export function ZonedDateTime$addYears(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
+        export function zoned_date_time$add_years(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
 
-        export function ZonedDateTime$day(arg0: ZonedDateTime): number;
+        export function zoned_date_time$day(arg0: ZonedDateTime): number;
 
-        export function ZonedDateTime$daysInMonth(arg0: ZonedDateTime): number;
+        export function zoned_date_time$days_in_month(arg0: ZonedDateTime): number;
 
-        export function ZonedDateTime$daysInWeek(arg0: ZonedDateTime): number;
+        export function zoned_date_time$days_in_week(arg0: ZonedDateTime): number;
 
-        export function ZonedDateTime$daysInYear(arg0: ZonedDateTime): number;
+        export function zoned_date_time$days_in_year(arg0: ZonedDateTime): number;
 
-        export function ZonedDateTime$era(arg0: ZonedDateTime): string;
+        export function zoned_date_time$era(arg0: ZonedDateTime): string;
 
-        export function ZonedDateTime$eraYear(arg0: ZonedDateTime): number;
+        export function zoned_date_time$era_year(arg0: ZonedDateTime): number;
 
-        export function ZonedDateTime$fromPlainDatetime(arg0: PlainDateTime, zone?: Zone): ZonedDateTime;
+        export function zoned_date_time$from_plain_datetime(arg0: PlainDateTime, zone?: Zone): ZonedDateTime;
 
-        export function ZonedDateTime$fromUnixSecond(arg0: number, nanosecond?: number, zone?: Zone): ZonedDateTime;
+        export function zoned_date_time$from_unix_second(arg0: number, nanosecond?: number, zone?: Zone): ZonedDateTime;
 
-        export function ZonedDateTime$hour(arg0: ZonedDateTime): number;
+        export function zoned_date_time$hour(arg0: ZonedDateTime): number;
 
-        export function ZonedDateTime$inLeapYear(arg0: ZonedDateTime): boolean;
+        export function zoned_date_time$in_leap_year(arg0: ZonedDateTime): boolean;
 
-        export function ZonedDateTime$minute(arg0: ZonedDateTime): number;
+        export function zoned_date_time$minute(arg0: ZonedDateTime): number;
 
-        export function ZonedDateTime$month(arg0: ZonedDateTime): number;
+        export function zoned_date_time$month(arg0: ZonedDateTime): number;
 
-        export function ZonedDateTime$monthsInYear(arg0: ZonedDateTime): number;
+        export function zoned_date_time$months_in_year(arg0: ZonedDateTime): number;
 
-        export function ZonedDateTime$nanosecond(arg0: ZonedDateTime): number;
+        export function zoned_date_time$nanosecond(arg0: ZonedDateTime): number;
 
-        export function ZonedDateTime$of(arg0: number, arg1: number, arg2: number, hour?: number, minute?: number, second?: number, nanosecond?: number, zone?: Zone): ZonedDateTime;
+        export function zoned_date_time$of(arg0: number, arg1: number, arg2: number, hour?: number, minute?: number, second?: number, nanosecond?: number, zone?: Zone): ZonedDateTime;
 
-        export function ZonedDateTime$offset(arg0: ZonedDateTime): ZoneOffset;
+        export function zoned_date_time$offset(arg0: ZonedDateTime): ZoneOffset;
 
-        export function ZonedDateTime$ordinal(arg0: ZonedDateTime): number;
+        export function zoned_date_time$ordinal(arg0: ZonedDateTime): number;
 
-        export function ZonedDateTime$second(arg0: ZonedDateTime): number;
+        export function zoned_date_time$second(arg0: ZonedDateTime): number;
 
-        export function ZonedDateTime$toPlainDate(arg0: ZonedDateTime): PlainDate;
+        export function zoned_date_time$to_plain_date(arg0: ZonedDateTime): PlainDate;
 
-        export function ZonedDateTime$toPlainDateTime(arg0: ZonedDateTime): PlainDateTime;
+        export function zoned_date_time$to_plain_date_time(arg0: ZonedDateTime): PlainDateTime;
 
-        export function ZonedDateTime$toPlainTime(arg0: ZonedDateTime): PlainTime;
+        export function zoned_date_time$to_plain_time(arg0: ZonedDateTime): PlainTime;
 
-        export function ZonedDateTime$toString(arg0: ZonedDateTime): string;
+        export function zoned_date_time$to_string(arg0: ZonedDateTime): string;
 
-        export function ZonedDateTime$toUnixSecond(arg0: ZonedDateTime): number;
+        export function zoned_date_time$to_unix_second(arg0: ZonedDateTime): number;
 
-        export function ZonedDateTime$weekday(arg0: ZonedDateTime): Weekday;
+        export function zoned_date_time$weekday(arg0: ZonedDateTime): Weekday;
 
-        export function ZonedDateTime$withDay(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
+        export function zoned_date_time$with_day(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
 
-        export function ZonedDateTime$withHour(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
+        export function zoned_date_time$with_hour(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
 
-        export function ZonedDateTime$withMinute(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
+        export function zoned_date_time$with_minute(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
 
-        export function ZonedDateTime$withMonth(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
+        export function zoned_date_time$with_month(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
 
-        export function ZonedDateTime$withNanosecond(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
+        export function zoned_date_time$with_nanosecond(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
 
-        export function ZonedDateTime$withOrdinal(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
+        export function zoned_date_time$with_ordinal(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
 
-        export function ZonedDateTime$withSecond(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
+        export function zoned_date_time$with_second(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
 
-        export function ZonedDateTime$withYear(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
+        export function zoned_date_time$with_year(arg0: ZonedDateTime, arg1: number): ZonedDateTime;
 
-        export function ZonedDateTime$year(arg0: ZonedDateTime): number;
+        export function zoned_date_time$year(arg0: ZonedDateTime): number;
 
-        export function ZonedDateTime$zone(arg0: ZonedDateTime): Zone;"
+        export function zoned_date_time$zone(arg0: ZonedDateTime): Zone;"
       `);
     });
   });
@@ -494,7 +494,7 @@ describe("generateDts with real packages", () => {
       expect(result).toMatchInlineSnapshot(`
         "// Generated from .mbti file - DO NOT EDIT
 
-        export function negOne(): Decimal;
+        export function neg_one(): Decimal;
 
         export function one(): Decimal;
 
@@ -505,43 +505,43 @@ describe("generateDts with real packages", () => {
           readonly scale: number;
         }
 
-        export function Decimal$abs(arg0: Decimal): Decimal;
+        export function decimal$abs(arg0: Decimal): Decimal;
 
-        export function Decimal$coefficient(arg0: Decimal): bigint.BigInt;
+        export function decimal$coefficient(arg0: Decimal): bigint.BigInt;
 
-        export function Decimal$fromBigint(arg0: bigint.BigInt): Decimal;
+        export function decimal$from_bigint(arg0: bigint.BigInt): Decimal;
 
-        export function Decimal$fromDouble(arg0: number, arg1: number): Decimal | undefined;
+        export function decimal$from_double(arg0: number, arg1: number): Decimal | undefined;
 
-        export function Decimal$fromInt(arg0: number): Decimal;
+        export function decimal$from_int(arg0: number): Decimal;
 
-        export function Decimal$fromString(arg0: string): Decimal | undefined;
+        export function decimal$from_string(arg0: string): Decimal | undefined;
 
-        export function Decimal$isNegative(arg0: Decimal): boolean;
+        export function decimal$is_negative(arg0: Decimal): boolean;
 
-        export function Decimal$isPositive(arg0: Decimal): boolean;
+        export function decimal$is_positive(arg0: Decimal): boolean;
 
-        export function Decimal$isZero(arg0: Decimal): boolean;
+        export function decimal$is_zero(arg0: Decimal): boolean;
 
-        export function Decimal$new(arg0: bigint.BigInt, arg1: number): Decimal | undefined;
+        export function decimal$new(arg0: bigint.BigInt, arg1: number): Decimal | undefined;
 
-        export function Decimal$round(arg0: Decimal, arg1: number): Decimal | undefined;
+        export function decimal$round(arg0: Decimal, arg1: number): Decimal | undefined;
 
-        export function Decimal$scale(arg0: Decimal): number;
+        export function decimal$scale(arg0: Decimal): number;
 
-        export function Decimal$scaleTo(arg0: Decimal, arg1: number): Decimal | undefined;
+        export function decimal$scale_to(arg0: Decimal, arg1: number): Decimal | undefined;
 
-        export function Decimal$signum(arg0: Decimal): number;
+        export function decimal$signum(arg0: Decimal): number;
 
-        export function Decimal$toBigint(arg0: Decimal): bigint.BigInt;
+        export function decimal$to_bigint(arg0: Decimal): bigint.BigInt;
 
-        export function Decimal$toDouble(arg0: Decimal): number;
+        export function decimal$to_double(arg0: Decimal): number;
 
-        export function Decimal$toInt(arg0: Decimal): number | undefined;
+        export function decimal$to_int(arg0: Decimal): number | undefined;
 
-        export function Decimal$toString(arg0: Decimal): string;
+        export function decimal$to_string(arg0: Decimal): string;
 
-        export function Decimal$truncate(arg0: Decimal, arg1: number): Decimal | undefined;"
+        export function decimal$truncate(arg0: Decimal, arg1: number): Decimal | undefined;"
       `);
     });
   });
@@ -554,25 +554,25 @@ describe("generateDts with real packages", () => {
       expect(result).toMatchInlineSnapshot(`
         "// Generated from .mbti file - DO NOT EDIT
 
-        export function fromBytes(arg0: Uint8Array): UUID;
+        export function from_bytes(arg0: Uint8Array): UUID;
 
-        export function fromHex(arg0: string): UUID;
+        export function from_hex(arg0: string): UUID;
 
         export interface UUID {
           readonly __brand: "UUID";
         }
 
-        export function UUID$asVersion(arg0: UUID, arg1: Version): UUID;
+        export function uuid$as_version(arg0: UUID, arg1: Version): UUID;
 
-        export function UUID$hash(arg0: UUID): number;
+        export function uuid$hash(arg0: UUID): number;
 
-        export function UUID$toBytes(arg0: UUID): Uint8Array;
+        export function uuid$to_bytes(arg0: UUID): Uint8Array;
 
-        export function UUID$toString(arg0: UUID): string;
+        export function uuid$to_string(arg0: UUID): string;
 
-        export function UUID$variant(arg0: UUID): Variant;
+        export function uuid$variant(arg0: UUID): Variant;
 
-        export function UUID$version(arg0: UUID): Version | undefined;
+        export function uuid$version(arg0: UUID): Version | undefined;
 
         export interface Variant_ReservedNCS { readonly $tag: "ReservedNCS"; }
         export interface Variant_RFC4122 { readonly $tag: "RFC4122"; readonly $0: Version; }
@@ -581,7 +581,7 @@ describe("generateDts with real packages", () => {
         export type Variant = Variant_ReservedNCS | Variant_RFC4122 | Variant_ReservedMicrosoft | Variant_ReservedFuture;
 
         export const Variant$ReservedNCS: Variant_ReservedNCS;
-        export function Variant$RFC4122($0: Version): Variant_RFC4122;
+        export function variant$rfc4122($0: Version): Variant_RFC4122;
         export const Variant$ReservedMicrosoft: Variant_ReservedMicrosoft;
         export const Variant$ReservedFuture: Variant_ReservedFuture;
 
@@ -599,7 +599,7 @@ describe("generateDts with real packages", () => {
         export const Version$V3: Version_V3;
         export const Version$V4: Version_V4;
         export const Version$V5: Version_V5;
-        export function Version$Unknown($0: number): Version_Unknown;"
+        export function version$unknown($0: number): Version_Unknown;"
       `);
     });
   });
@@ -612,7 +612,7 @@ describe("generateDts with real packages", () => {
       expect(result).toMatchInlineSnapshot(`
         "// Generated from .mbti file - DO NOT EDIT
 
-        export function layoutOfString(meta?: cmark_base.Meta, arg0: string): Node<string>;
+        export function layout_of_string(meta?: cmark_base.Meta, arg0: string): Node<string>;
 
         export interface Block_BlankLine { readonly $tag: "BlankLine"; readonly $0: Node<string>; }
         export interface Block_BlockQuote { readonly $tag: "BlockQuote"; readonly $0: Node<BlockQuote>; }
@@ -629,28 +629,28 @@ describe("generateDts with real packages", () => {
         export interface Block_ExtFootnoteDefinition { readonly $tag: "ExtFootnoteDefinition"; readonly $0: Node<Footnote>; }
         export type Block = Block_BlankLine | Block_BlockQuote | Block_Blocks | Block_CodeBlock | Block_Heading | Block_HtmlBlock | Block_LinkRefDefinition | Block_List | Block_Paragraph | Block_ThematicBreak | Block_ExtMathBlock | Block_ExtTable | Block_ExtFootnoteDefinition;
 
-        export function Block$BlankLine($0: Node<string>): Block_BlankLine;
-        export function Block$BlockQuote($0: Node<BlockQuote>): Block_BlockQuote;
-        export function Block$Blocks($0: Node<Seq<Block>>): Block_Blocks;
-        export function Block$CodeBlock($0: Node<CodeBlock>): Block_CodeBlock;
-        export function Block$Heading($0: Node<BlockHeading>): Block_Heading;
-        export function Block$HtmlBlock($0: Node<HtmlBlock>): Block_HtmlBlock;
-        export function Block$LinkRefDefinition($0: Node<LinkDefinition>): Block_LinkRefDefinition;
-        export function Block$List($0: Node<BlockList>): Block_List;
-        export function Block$Paragraph($0: Node<BlockParagraph>): Block_Paragraph;
-        export function Block$ThematicBreak($0: Node<BlockThematicBreak>): Block_ThematicBreak;
-        export function Block$ExtMathBlock($0: Node<CodeBlock>): Block_ExtMathBlock;
-        export function Block$ExtTable($0: Node<Table>): Block_ExtTable;
-        export function Block$ExtFootnoteDefinition($0: Node<Footnote>): Block_ExtFootnoteDefinition;
+        export function block$blank_line($0: Node<string>): Block_BlankLine;
+        export function block$block_quote($0: Node<BlockQuote>): Block_BlockQuote;
+        export function block$blocks($0: Node<Seq<Block>>): Block_Blocks;
+        export function block$code_block($0: Node<CodeBlock>): Block_CodeBlock;
+        export function block$heading($0: Node<BlockHeading>): Block_Heading;
+        export function block$html_block($0: Node<HtmlBlock>): Block_HtmlBlock;
+        export function block$link_ref_definition($0: Node<LinkDefinition>): Block_LinkRefDefinition;
+        export function block$list($0: Node<BlockList>): Block_List;
+        export function block$paragraph($0: Node<BlockParagraph>): Block_Paragraph;
+        export function block$thematic_break($0: Node<BlockThematicBreak>): Block_ThematicBreak;
+        export function block$ext_math_block($0: Node<CodeBlock>): Block_ExtMathBlock;
+        export function block$ext_table($0: Node<Table>): Block_ExtTable;
+        export function block$ext_footnote_definition($0: Node<Footnote>): Block_ExtFootnoteDefinition;
 
 
-        export function Block$defs(arg0: Block, init?: Map<string, LabelDef>): Map<string, LabelDef>;
+        export function block$defs(arg0: Block, init?: Map<string, LabelDef>): Map<string, LabelDef>;
 
-        export function Block$empty(): Block;
+        export function block$empty(): Block;
 
-        export function Block$meta(arg0: Block): cmark_base.Meta;
+        export function block$meta(arg0: Block): cmark_base.Meta;
 
-        export function Block$normalize(arg0: Block): Block;
+        export function block$normalize(arg0: Block): Block;
 
         export interface BlockHeading {
           readonly layout: BlockHeadingLayout;
@@ -659,7 +659,7 @@ describe("generateDts with real packages", () => {
           readonly id: BlockHeadingId | undefined;
         }
 
-        export function BlockHeading$new(id?: BlockHeadingId | undefined, layout?: BlockHeadingLayout, level: number, arg0: Inline): BlockHeading;
+        export function block_heading$new(id?: BlockHeadingId | undefined, layout?: BlockHeadingLayout, level: number, arg0: Inline): BlockHeading;
 
         export interface BlockHeadingAtxLayout {
           readonly indent: number;
@@ -667,22 +667,22 @@ describe("generateDts with real packages", () => {
           readonly closing: string;
         }
 
-        export function BlockHeadingAtxLayout$default(): BlockHeadingAtxLayout;
+        export function block_heading_atx_layout$default(): BlockHeadingAtxLayout;
 
         export interface BlockHeadingId_Auto { readonly $tag: "Auto"; readonly $0: string; }
         export interface BlockHeadingId_Id { readonly $tag: "Id"; readonly $0: string; }
         export type BlockHeadingId = BlockHeadingId_Auto | BlockHeadingId_Id;
 
-        export function BlockHeadingId$Auto($0: string): BlockHeadingId_Auto;
-        export function BlockHeadingId$Id($0: string): BlockHeadingId_Id;
+        export function block_heading_id$auto($0: string): BlockHeadingId_Auto;
+        export function block_heading_id$id($0: string): BlockHeadingId_Id;
 
 
         export interface BlockHeadingLayout_Atx { readonly $tag: "Atx"; readonly $0: BlockHeadingAtxLayout; }
         export interface BlockHeadingLayout_Setext { readonly $tag: "Setext"; readonly $0: BlockHeadingSetextLayout; }
         export type BlockHeadingLayout = BlockHeadingLayout_Atx | BlockHeadingLayout_Setext;
 
-        export function BlockHeadingLayout$Atx($0: BlockHeadingAtxLayout): BlockHeadingLayout_Atx;
-        export function BlockHeadingLayout$Setext($0: BlockHeadingSetextLayout): BlockHeadingLayout_Setext;
+        export function block_heading_layout$atx($0: BlockHeadingAtxLayout): BlockHeadingLayout_Atx;
+        export function block_heading_layout$setext($0: BlockHeadingSetextLayout): BlockHeadingLayout_Setext;
 
 
         export interface BlockHeadingSetextLayout {
@@ -695,11 +695,11 @@ describe("generateDts with real packages", () => {
 
         export type BlockLine = [Node<string>];
 
-        export function BlockLine$inner(arg0: BlockLine): Node<string>;
+        export function block_line$inner(arg0: BlockLine): Node<string>;
 
-        export function BlockLine$listTextLoc(arg0: Seq<BlockLine>): cmark_base.TextLoc;
+        export function block_line$list_text_loc(arg0: Seq<BlockLine>): cmark_base.TextLoc;
 
-        export function BlockLine$toString(arg0: BlockLine): string;
+        export function block_line$to_string(arg0: BlockLine): string;
 
         export interface BlockList {
           readonly ty: cmark_base.ListType;
@@ -707,9 +707,9 @@ describe("generateDts with real packages", () => {
           readonly items: Seq<Node<ListItem>>;
         }
 
-        export function BlockList$mapItems(arg0: BlockList, arg1: (arg0: ListItem) => ListItem): BlockList;
+        export function block_list$map_items(arg0: BlockList, arg1: (arg0: ListItem) => ListItem): BlockList;
 
-        export function BlockList$normalizeItems(arg0: BlockList): BlockList;
+        export function block_list$normalize_items(arg0: BlockList): BlockList;
 
         export interface BlockParagraph {
           readonly leading_indent: number;
@@ -717,25 +717,25 @@ describe("generateDts with real packages", () => {
           readonly trailing_blanks: string;
         }
 
-        export function BlockParagraph$new(leading_indent?: number, trailing_blanks?: string, arg0: Inline): BlockParagraph;
+        export function block_paragraph$new(leading_indent?: number, trailing_blanks?: string, arg0: Inline): BlockParagraph;
 
         export interface BlockQuote {
           readonly indent: number;
           readonly block: Block;
         }
 
-        export function BlockQuote$mapBlock(arg0: BlockQuote, arg1: (arg0: Block) => Block): BlockQuote;
+        export function block_quote$map_block(arg0: BlockQuote, arg1: (arg0: Block) => Block): BlockQuote;
 
-        export function BlockQuote$new(indent?: number, arg0: Block): BlockQuote;
+        export function block_quote$new(indent?: number, arg0: Block): BlockQuote;
 
-        export function BlockQuote$normalizeBlock(arg0: BlockQuote): BlockQuote;
+        export function block_quote$normalize_block(arg0: BlockQuote): BlockQuote;
 
         export interface BlockThematicBreak {
           readonly indent: number;
           readonly layout: string;
         }
 
-        export function BlockThematicBreak$new(indent?: number, layout?: string): BlockThematicBreak;
+        export function block_thematic_break$new(indent?: number, layout?: string): BlockThematicBreak;
 
         export interface CodeBlock {
           readonly layout: CodeBlockLayout;
@@ -743,11 +743,11 @@ describe("generateDts with real packages", () => {
           readonly code: Seq<Node<string>>;
         }
 
-        export function CodeBlock$languageOfInfoString(arg0: string): [string, string] | undefined;
+        export function code_block$language_of_info_string(arg0: string): [string, string] | undefined;
 
-        export function CodeBlock$makeFence(arg0: CodeBlock): [Char, number];
+        export function code_block$make_fence(arg0: CodeBlock): [Char, number];
 
-        export function CodeBlock$new(layout?: CodeBlockLayout, info_string?: Node<string> | undefined, arg0: Seq<Node<string>>): CodeBlock;
+        export function code_block$new(layout?: CodeBlockLayout, info_string?: Node<string> | undefined, arg0: Seq<Node<string>>): CodeBlock;
 
         export interface CodeBlockFencedLayout {
           readonly indent: number;
@@ -755,14 +755,14 @@ describe("generateDts with real packages", () => {
           readonly closing_fence: Node<string> | undefined;
         }
 
-        export function CodeBlockFencedLayout$default(): CodeBlockFencedLayout;
+        export function code_block_fenced_layout$default(): CodeBlockFencedLayout;
 
         export interface CodeBlockLayout_Indented { readonly $tag: "Indented"; }
         export interface CodeBlockLayout_Fenced { readonly $tag: "Fenced"; readonly $0: CodeBlockFencedLayout; }
         export type CodeBlockLayout = CodeBlockLayout_Indented | CodeBlockLayout_Fenced;
 
         export const CodeBlockLayout$Indented: CodeBlockLayout_Indented;
-        export function CodeBlockLayout$Fenced($0: CodeBlockFencedLayout): CodeBlockLayout_Fenced;
+        export function code_block_layout$fenced($0: CodeBlockFencedLayout): CodeBlockLayout_Fenced;
 
 
         export interface Doc {
@@ -771,15 +771,15 @@ describe("generateDts with real packages", () => {
           readonly defs: Map<string, LabelDef>;
         }
 
-        export function Doc$empty(): Doc;
+        export function doc$empty(): Doc;
 
-        export function Doc$fromString(defs?: Map<string, LabelDef>, resolver?: LabelResolverFn, nested_links?: boolean, heading_auto_ids?: boolean, layout?: boolean, locs?: boolean, file?: string, strict?: boolean, arg0: string): Doc;
+        export function doc$from_string(defs?: Map<string, LabelDef>, resolver?: LabelResolverFn, nested_links?: boolean, heading_auto_ids?: boolean, layout?: boolean, locs?: boolean, file?: string, strict?: boolean, arg0: string): Doc;
 
-        export function Doc$new(nl?: string, defs?: Map<string, LabelDef>, arg0: Block): Doc;
+        export function doc$new(nl?: string, defs?: Map<string, LabelDef>, arg0: Block): Doc;
 
         export type FoldFn<A, B> = [(arg0: Folder<B>, arg1: B, arg2: A) => B];
 
-        export function FoldFn$inner<A, B>(arg0: FoldFn<A, B>): (arg0: Folder<B>, arg1: B, arg2: A) => B;
+        export function fold_fn$inner<A, B>(arg0: FoldFn<A, B>): (arg0: Folder<B>, arg1: B, arg2: A) => B;
 
         export interface Folder<A> {
           readonly inline_ext_default: FoldFn<Inline, A>;
@@ -788,32 +788,32 @@ describe("generateDts with real packages", () => {
           readonly block: FolderFn<Block, A>;
         }
 
-        export function Folder$blockExtNone<A>(arg0: Folder<A>, arg1: A, arg2: Block): A;
+        export function folder$block_ext_none<A>(arg0: Folder<A>, arg1: A, arg2: Block): A;
 
-        export function Folder$foldBlock<A>(arg0: Folder<A>, arg1: A, arg2: Block): A;
+        export function folder$fold_block<A>(arg0: Folder<A>, arg1: A, arg2: Block): A;
 
-        export function Folder$foldDoc<A>(arg0: Folder<A>, arg1: A, arg2: Doc): A;
+        export function folder$fold_doc<A>(arg0: Folder<A>, arg1: A, arg2: Doc): A;
 
-        export function Folder$foldInline<A>(arg0: Folder<A>, arg1: A, arg2: Inline): A;
+        export function folder$fold_inline<A>(arg0: Folder<A>, arg1: A, arg2: Inline): A;
 
-        export function Folder$inlineExtNone<A>(arg0: Folder<A>, arg1: A, arg2: Inline): A;
+        export function folder$inline_ext_none<A>(arg0: Folder<A>, arg1: A, arg2: Inline): A;
 
-        export function Folder$new<A>(inline_ext_default?: FoldFn<Inline, A>, block_ext_default?: FoldFn<Block, A>, inline?: FolderFn<Inline, A>, block?: FolderFn<Block, A>): Folder<A>;
+        export function folder$new<A>(inline_ext_default?: FoldFn<Inline, A>, block_ext_default?: FoldFn<Block, A>, inline?: FolderFn<Inline, A>, block?: FolderFn<Block, A>): Folder<A>;
 
-        export function Folder$none<A, B>(arg0: Folder<A>, arg1: A, arg2: B): FolderResult<A>;
+        export function folder$none<A, B>(arg0: Folder<A>, arg1: A, arg2: B): FolderResult<A>;
 
-        export function Folder$ret<A>(arg0: A): FolderResult<A>;
+        export function folder$ret<A>(arg0: A): FolderResult<A>;
 
         export type FolderFn<A, B> = [(arg0: Folder<B>, arg1: B, arg2: A) => FolderResult<B>];
 
-        export function FolderFn$inner<A, B>(arg0: FolderFn<A, B>): (arg0: Folder<B>, arg1: B, arg2: A) => FolderResult<B>;
+        export function folder_fn$inner<A, B>(arg0: FolderFn<A, B>): (arg0: Folder<B>, arg1: B, arg2: A) => FolderResult<B>;
 
         export interface FolderResult_Default<A> { readonly $tag: "Default"; }
         export interface FolderResult_Fold<A> { readonly $tag: "Fold"; readonly $0: A; }
         export type FolderResult<A> = FolderResult_Default<A> | FolderResult_Fold<A>;
 
         export const FolderResult$Default: FolderResult_Default;
-        export function FolderResult$Fold($0: A): FolderResult_Fold;
+        export function folder_result$fold($0: A): FolderResult_Fold;
 
 
         export interface Footnote {
@@ -823,15 +823,15 @@ describe("generateDts with real packages", () => {
           readonly block: Block;
         }
 
-        export function Footnote$mapBlock(arg0: Footnote, arg1: (arg0: Block) => Block): Footnote;
+        export function footnote$map_block(arg0: Footnote, arg1: (arg0: Block) => Block): Footnote;
 
-        export function Footnote$new(indent?: number, defined_label?: Label | undefined, arg0: Label, arg1: Block): Footnote;
+        export function footnote$new(indent?: number, defined_label?: Label | undefined, arg0: Label, arg1: Block): Footnote;
 
-        export function Footnote$normalizeBlock(arg0: Footnote): Footnote;
+        export function footnote$normalize_block(arg0: Footnote): Footnote;
 
         export type HtmlBlock = [Seq<Node<string>>];
 
-        export function HtmlBlock$inner(arg0: HtmlBlock): Seq<Node<string>>;
+        export function html_block$inner(arg0: HtmlBlock): Seq<Node<string>>;
 
         export interface Inline_Autolink { readonly $tag: "Autolink"; readonly $0: Node<InlineAutolink>; }
         export interface Inline_Break { readonly $tag: "Break"; readonly $0: Node<InlineBreak>; }
@@ -847,38 +847,38 @@ describe("generateDts with real packages", () => {
         export interface Inline_ExtMathSpan { readonly $tag: "ExtMathSpan"; readonly $0: Node<InlineMathSpan>; }
         export type Inline = Inline_Autolink | Inline_Break | Inline_CodeSpan | Inline_Emphasis | Inline_Image | Inline_Inlines | Inline_Link | Inline_RawHtml | Inline_StrongEmphasis | Inline_Text | Inline_ExtStrikethrough | Inline_ExtMathSpan;
 
-        export function Inline$Autolink($0: Node<InlineAutolink>): Inline_Autolink;
-        export function Inline$Break($0: Node<InlineBreak>): Inline_Break;
-        export function Inline$CodeSpan($0: Node<InlineCodeSpan>): Inline_CodeSpan;
-        export function Inline$Emphasis($0: Node<InlineEmphasis>): Inline_Emphasis;
-        export function Inline$Image($0: Node<InlineLink>): Inline_Image;
-        export function Inline$Inlines($0: Node<Seq<Inline>>): Inline_Inlines;
-        export function Inline$Link($0: Node<InlineLink>): Inline_Link;
-        export function Inline$RawHtml($0: Node<InlineRawHtml>): Inline_RawHtml;
-        export function Inline$StrongEmphasis($0: Node<InlineEmphasis>): Inline_StrongEmphasis;
-        export function Inline$Text($0: Node<string>): Inline_Text;
-        export function Inline$ExtStrikethrough($0: Node<InlineStrikethrough>): Inline_ExtStrikethrough;
-        export function Inline$ExtMathSpan($0: Node<InlineMathSpan>): Inline_ExtMathSpan;
+        export function inline$autolink($0: Node<InlineAutolink>): Inline_Autolink;
+        export function inline$break($0: Node<InlineBreak>): Inline_Break;
+        export function inline$code_span($0: Node<InlineCodeSpan>): Inline_CodeSpan;
+        export function inline$emphasis($0: Node<InlineEmphasis>): Inline_Emphasis;
+        export function inline$image($0: Node<InlineLink>): Inline_Image;
+        export function inline$inlines($0: Node<Seq<Inline>>): Inline_Inlines;
+        export function inline$link($0: Node<InlineLink>): Inline_Link;
+        export function inline$raw_html($0: Node<InlineRawHtml>): Inline_RawHtml;
+        export function inline$strong_emphasis($0: Node<InlineEmphasis>): Inline_StrongEmphasis;
+        export function inline$text($0: Node<string>): Inline_Text;
+        export function inline$ext_strikethrough($0: Node<InlineStrikethrough>): Inline_ExtStrikethrough;
+        export function inline$ext_math_span($0: Node<InlineMathSpan>): Inline_ExtMathSpan;
 
 
-        export function Inline$empty(): Inline;
+        export function inline$empty(): Inline;
 
-        export function Inline$id(arg0: Inline, buf?: StringBuilder): string;
+        export function inline$id(arg0: Inline, buf?: StringBuilder): string;
 
-        export function Inline$isEmpty(arg0: Inline): boolean;
+        export function inline$is_empty(arg0: Inline): boolean;
 
-        export function Inline$meta(arg0: Inline): cmark_base.Meta;
+        export function inline$meta(arg0: Inline): cmark_base.Meta;
 
-        export function Inline$normalize(arg0: Inline): Inline;
+        export function inline$normalize(arg0: Inline): Inline;
 
-        export function Inline$toPlainText(arg0: Inline, break_on_soft: boolean): Seq<Seq<string>>;
+        export function inline$to_plain_text(arg0: Inline, break_on_soft: boolean): Seq<Seq<string>>;
 
         export interface InlineAutolink {
           readonly is_email: boolean;
           readonly link: Node<string>;
         }
 
-        export function InlineAutolink$new(arg0: Node<string>): InlineAutolink;
+        export function inline_autolink$new(arg0: Node<string>): InlineAutolink;
 
         export interface InlineBreak {
           readonly layout_before: Node<string>;
@@ -886,7 +886,7 @@ describe("generateDts with real packages", () => {
           readonly layout_after: Node<string>;
         }
 
-        export function InlineBreak$new(layout_before?: Node<string>, layout_after?: Node<string>, arg0: InlineBreakType): InlineBreak;
+        export function inline_break$new(layout_before?: Node<string>, layout_after?: Node<string>, arg0: InlineBreakType): InlineBreak;
 
         export interface InlineBreakType_Hard { readonly $tag: "Hard"; }
         export interface InlineBreakType_Soft { readonly $tag: "Soft"; }
@@ -901,46 +901,46 @@ describe("generateDts with real packages", () => {
           readonly code_layout: Seq<Tight>;
         }
 
-        export function InlineCodeSpan$code(arg0: InlineCodeSpan): string;
+        export function inline_code_span$code(arg0: InlineCodeSpan): string;
 
-        export function InlineCodeSpan$fromString(meta?: cmark_base.Meta, arg0: string): InlineCodeSpan;
+        export function inline_code_span$from_string(meta?: cmark_base.Meta, arg0: string): InlineCodeSpan;
 
-        export function InlineCodeSpan$new(backticks: number, arg0: Seq<Tight>): InlineCodeSpan;
+        export function inline_code_span$new(backticks: number, arg0: Seq<Tight>): InlineCodeSpan;
 
         export interface InlineEmphasis {
           readonly delim: Char;
           readonly inline: Inline;
         }
 
-        export function InlineEmphasis$new(delim?: Char, arg0: Inline): InlineEmphasis;
+        export function inline_emphasis$new(delim?: Char, arg0: Inline): InlineEmphasis;
 
         export interface InlineLink {
           readonly text: Inline;
           readonly reference: ReferenceKind;
         }
 
-        export function InlineLink$isUnsafe(arg0: string): boolean;
+        export function inline_link$is_unsafe(arg0: string): boolean;
 
-        export function InlineLink$new(arg0: Inline, arg1: ReferenceKind): InlineLink;
+        export function inline_link$new(arg0: Inline, arg1: ReferenceKind): InlineLink;
 
-        export function InlineLink$referenceDefinition(arg0: InlineLink, arg1: Map<string, LabelDef>): LabelDef | undefined;
+        export function inline_link$reference_definition(arg0: InlineLink, arg1: Map<string, LabelDef>): LabelDef | undefined;
 
-        export function InlineLink$referencedLabel(arg0: InlineLink): Label | undefined;
+        export function inline_link$referenced_label(arg0: InlineLink): Label | undefined;
 
         export interface InlineMathSpan {
           readonly display: boolean;
           readonly tex_layout: Seq<Tight>;
         }
 
-        export function InlineMathSpan$tex(arg0: InlineMathSpan): string;
+        export function inline_math_span$tex(arg0: InlineMathSpan): string;
 
         export type InlineRawHtml = [Seq<Tight>];
 
-        export function InlineRawHtml$inner(arg0: InlineRawHtml): Seq<Tight>;
+        export function inline_raw_html$inner(arg0: InlineRawHtml): Seq<Tight>;
 
         export type InlineStrikethrough = [Inline];
 
-        export function InlineStrikethrough$inner(arg0: InlineStrikethrough): Inline;
+        export function inline_strikethrough$inner(arg0: InlineStrikethrough): Inline;
 
         export interface Label {
           readonly meta: cmark_base.Meta;
@@ -948,33 +948,33 @@ describe("generateDts with real packages", () => {
           readonly text: Seq<Tight>;
         }
 
-        export function Label$compare(arg0: Label, arg1: Label): number;
+        export function label$compare(arg0: Label, arg1: Label): number;
 
-        export function Label$new(meta?: cmark_base.Meta, key: string, arg0: Seq<Tight>): Label;
+        export function label$new(meta?: cmark_base.Meta, key: string, arg0: Seq<Tight>): Label;
 
-        export function Label$textLoc(arg0: Label): cmark_base.TextLoc;
+        export function label$text_loc(arg0: Label): cmark_base.TextLoc;
 
         export interface LabelContext_Def { readonly $tag: "Def"; readonly $0: Label | undefined; readonly $1: Label; }
         export interface LabelContext_Ref { readonly $tag: "Ref"; readonly $0: LinkKind; readonly $1: Label; readonly $2: Label | undefined; }
         export type LabelContext = LabelContext_Def | LabelContext_Ref;
 
-        export function LabelContext$Def($0: Label | undefined, $1: Label): LabelContext_Def;
-        export function LabelContext$Ref($0: LinkKind, $1: Label, $2: Label | undefined): LabelContext_Ref;
+        export function label_context$def($0: Label | undefined, $1: Label): LabelContext_Def;
+        export function label_context$ref($0: LinkKind, $1: Label, $2: Label | undefined): LabelContext_Ref;
 
 
-        export function LabelContext$defaultResolver(arg0: LabelContext): Label | undefined;
+        export function label_context$default_resolver(arg0: LabelContext): Label | undefined;
 
         export interface LabelDef_LinkDef { readonly $tag: "LinkDef"; readonly $0: Node<LinkDefinition>; }
         export interface LabelDef_FootnoteDef { readonly $tag: "FootnoteDef"; readonly $0: Node<Footnote>; }
         export type LabelDef = LabelDef_LinkDef | LabelDef_FootnoteDef;
 
-        export function LabelDef$LinkDef($0: Node<LinkDefinition>): LabelDef_LinkDef;
-        export function LabelDef$FootnoteDef($0: Node<Footnote>): LabelDef_FootnoteDef;
+        export function label_def$link_def($0: Node<LinkDefinition>): LabelDef_LinkDef;
+        export function label_def$footnote_def($0: Node<Footnote>): LabelDef_FootnoteDef;
 
 
         export type LabelResolverFn = [(arg0: LabelContext) => Label | undefined];
 
-        export function LabelResolverFn$inner(arg0: LabelResolverFn): (arg0: LabelContext) => Label | undefined;
+        export function label_resolver_fn$inner(arg0: LabelResolverFn): (arg0: LabelContext) => Label | undefined;
 
         export interface LinkDefinition {
           readonly layout: LinkDefinitionLayout;
@@ -984,7 +984,7 @@ describe("generateDts with real packages", () => {
           readonly title: Seq<Tight> | undefined;
         }
 
-        export function LinkDefinition$new(layout?: LinkDefinitionLayout, label?: Label | undefined, defined_label?: Label | undefined, dest?: Node<string> | undefined, title?: Seq<Tight> | undefined): LinkDefinition;
+        export function link_definition$new(layout?: LinkDefinitionLayout, label?: Label | undefined, defined_label?: Label | undefined, dest?: Node<string> | undefined, title?: Seq<Tight> | undefined): LinkDefinition;
 
         export interface LinkDefinitionLayout {
           readonly indent: number;
@@ -995,9 +995,9 @@ describe("generateDts with real packages", () => {
           readonly after_title: Seq<Node<string>>;
         }
 
-        export function LinkDefinitionLayout$default(): LinkDefinitionLayout;
+        export function link_definition_layout$default(): LinkDefinitionLayout;
 
-        export function LinkDefinitionLayout$forDest(arg0: string): LinkDefinitionLayout;
+        export function link_definition_layout$for_dest(arg0: string): LinkDefinitionLayout;
 
         export interface LinkKind_Link { readonly $tag: "Link"; }
         export interface LinkKind_Image { readonly $tag: "Image"; }
@@ -1015,11 +1015,11 @@ describe("generateDts with real packages", () => {
           readonly ext_task_marker: Node<Char> | undefined;
         }
 
-        export function ListItem$mapBlock(arg0: ListItem, arg1: (arg0: Block) => Block): ListItem;
+        export function list_item$map_block(arg0: ListItem, arg1: (arg0: Block) => Block): ListItem;
 
-        export function ListItem$new(before_marker?: number, marker?: Node<string>, after_marker?: number, ext_task_marker: Node<Char> | undefined, arg0: Block): ListItem;
+        export function list_item$new(before_marker?: number, marker?: Node<string>, after_marker?: number, ext_task_marker: Node<Char> | undefined, arg0: Block): ListItem;
 
-        export function ListItem$normalizeBlock(arg0: ListItem): ListItem;
+        export function list_item$normalize_block(arg0: ListItem): ListItem;
 
         export interface ListTaskStatus_Cancelled { readonly $tag: "Cancelled"; }
         export interface ListTaskStatus_Checked { readonly $tag: "Checked"; }
@@ -1030,14 +1030,14 @@ describe("generateDts with real packages", () => {
         export const ListTaskStatus$Cancelled: ListTaskStatus_Cancelled;
         export const ListTaskStatus$Checked: ListTaskStatus_Checked;
         export const ListTaskStatus$Unchecked: ListTaskStatus_Unchecked;
-        export function ListTaskStatus$Other($0: Char): ListTaskStatus_Other;
+        export function list_task_status$other($0: Char): ListTaskStatus_Other;
 
 
-        export function ListTaskStatus$fromMarker(arg0: Char): ListTaskStatus;
+        export function list_task_status$from_marker(arg0: Char): ListTaskStatus;
 
         export type MapFn<A> = [(arg0: Mapper, arg1: A) => A | undefined];
 
-        export function MapFn$inner<A>(arg0: MapFn<A>): (arg0: Mapper, arg1: A) => A | undefined;
+        export function map_fn$inner<A>(arg0: MapFn<A>): (arg0: Mapper, arg1: A) => A | undefined;
 
         export interface Mapper {
           readonly inline_ext_default: MapFn<Inline>;
@@ -1046,34 +1046,34 @@ describe("generateDts with real packages", () => {
           readonly block: MapperFn<Block>;
         }
 
-        export function Mapper$blockExtNone<A>(arg0: Mapper, arg1: A): A | undefined;
+        export function mapper$block_ext_none<A>(arg0: Mapper, arg1: A): A | undefined;
 
-        export function Mapper$delete<A>(): MapperResult<A>;
+        export function mapper$delete<A>(): MapperResult<A>;
 
-        export function Mapper$inlineExtNone<A>(arg0: Mapper, arg1: A): A | undefined;
+        export function mapper$inline_ext_none<A>(arg0: Mapper, arg1: A): A | undefined;
 
-        export function Mapper$mapBlock(arg0: Mapper, arg1: Block): Block | undefined;
+        export function mapper$map_block(arg0: Mapper, arg1: Block): Block | undefined;
 
-        export function Mapper$mapDoc(arg0: Mapper, arg1: Doc): Doc;
+        export function mapper$map_doc(arg0: Mapper, arg1: Doc): Doc;
 
-        export function Mapper$mapInline(arg0: Mapper, arg1: Inline): Inline | undefined;
+        export function mapper$map_inline(arg0: Mapper, arg1: Inline): Inline | undefined;
 
-        export function Mapper$new(inline_ext_default?: MapFn<Inline>, block_ext_default?: MapFn<Block>, inline?: MapperFn<Inline>, block?: MapperFn<Block>): Mapper;
+        export function mapper$new(inline_ext_default?: MapFn<Inline>, block_ext_default?: MapFn<Block>, inline?: MapperFn<Inline>, block?: MapperFn<Block>): Mapper;
 
-        export function Mapper$none<A>(arg0: Mapper, arg1: A): MapperResult<A>;
+        export function mapper$none<A>(arg0: Mapper, arg1: A): MapperResult<A>;
 
-        export function Mapper$ret<A>(arg0: A): MapperResult<A>;
+        export function mapper$ret<A>(arg0: A): MapperResult<A>;
 
         export type MapperFn<A> = [(arg0: Mapper, arg1: A) => MapperResult<A>];
 
-        export function MapperFn$inner<A>(arg0: MapperFn<A>): (arg0: Mapper, arg1: A) => MapperResult<A>;
+        export function mapper_fn$inner<A>(arg0: MapperFn<A>): (arg0: Mapper, arg1: A) => MapperResult<A>;
 
         export interface MapperResult_Default<A> { readonly $tag: "Default"; }
         export interface MapperResult_Map<A> { readonly $tag: "Map"; readonly $0: A | undefined; }
         export type MapperResult<A> = MapperResult_Default<A> | MapperResult_Map<A>;
 
         export const MapperResult$Default: MapperResult_Default;
-        export function MapperResult$Map($0: A | undefined): MapperResult_Map;
+        export function mapper_result$map($0: A | undefined): MapperResult_Map;
 
 
         export interface Node<A> {
@@ -1081,18 +1081,18 @@ describe("generateDts with real packages", () => {
           readonly meta: cmark_base.Meta;
         }
 
-        export function Node$empty(meta?: cmark_base.Meta): Node<string>;
+        export function node$empty(meta?: cmark_base.Meta): Node<string>;
 
-        export function Node$map<A, B>(arg0: Node<A>, arg1: (arg0: A) => B): Node<B>;
+        export function node$map<A, B>(arg0: Node<A>, arg1: (arg0: A) => B): Node<B>;
 
-        export function Node$new<A>(arg0: A, meta?: cmark_base.Meta): Node<A>;
+        export function node$new<A>(arg0: A, meta?: cmark_base.Meta): Node<A>;
 
         export interface ReferenceKind_Inline { readonly $tag: "Inline"; readonly $0: Node<LinkDefinition>; }
         export interface ReferenceKind_Ref { readonly $tag: "Ref"; readonly $0: ReferenceLayout; readonly $1: Label; readonly $2: Label; }
         export type ReferenceKind = ReferenceKind_Inline | ReferenceKind_Ref;
 
-        export function ReferenceKind$Inline($0: Node<LinkDefinition>): ReferenceKind_Inline;
-        export function ReferenceKind$Ref($0: ReferenceLayout, $1: Label, $2: Label): ReferenceKind_Ref;
+        export function reference_kind$inline($0: Node<LinkDefinition>): ReferenceKind_Inline;
+        export function reference_kind$ref($0: ReferenceLayout, $1: Label, $2: Label): ReferenceKind_Ref;
 
 
         export interface ReferenceLayout_Collapsed { readonly $tag: "Collapsed"; }
@@ -1109,31 +1109,31 @@ describe("generateDts with real packages", () => {
           readonly __brand: "Seq";
         }
 
-        export function Seq$empty<A>(): Seq<A>;
+        export function seq$empty<A>(): Seq<A>;
 
-        export function Seq$fold<A, B>(arg0: Seq<A>, init: B, arg1: (arg0: B, arg1: A) => B): B;
+        export function seq$fold<A, B>(arg0: Seq<A>, init: B, arg1: (arg0: B, arg1: A) => B): B;
 
-        export function Seq$fromArray<A>(arg0: Array<A>): Seq<A>;
+        export function seq$from_array<A>(arg0: Array<A>): Seq<A>;
 
-        export function Seq$fromIter<A>(arg0: Iter<A>): Seq<A>;
+        export function seq$from_iter<A>(arg0: Iter<A>): Seq<A>;
 
-        export function Seq$get<A>(arg0: Seq<A>, arg1: number): A | undefined;
+        export function seq$get<A>(arg0: Seq<A>, arg1: number): A | undefined;
 
-        export function Seq$isEmpty<A>(arg0: Seq<A>): boolean;
+        export function seq$is_empty<A>(arg0: Seq<A>): boolean;
 
-        export function Seq$iter<A>(arg0: Seq<A>): Iter<A>;
+        export function seq$iter<A>(arg0: Seq<A>): Iter<A>;
 
-        export function Seq$length<A>(arg0: Seq<A>): number;
+        export function seq$length<A>(arg0: Seq<A>): number;
 
-        export function Seq$map<A, B>(arg0: Seq<A>, arg1: (arg0: A) => B): Seq<B>;
+        export function seq$map<A, B>(arg0: Seq<A>, arg1: (arg0: A) => B): Seq<B>;
 
-        export function Seq$opGet<A>(arg0: Seq<A>, arg1: number): A;
+        export function seq$op_get<A>(arg0: Seq<A>, arg1: number): A;
 
-        export function Seq$opSet<A>(arg0: Seq<A>, arg1: number, arg2: A): void;
+        export function seq$op_set<A>(arg0: Seq<A>, arg1: number, arg2: A): void;
 
-        export function Seq$revFold<A, B>(arg0: Seq<A>, init: B, arg1: (arg0: B, arg1: A) => B): B;
+        export function seq$rev_fold<A, B>(arg0: Seq<A>, init: B, arg1: (arg0: B, arg1: A) => B): B;
 
-        export function Seq$toArray<A>(arg0: Seq<A>): Array<A>;
+        export function seq$to_array<A>(arg0: Seq<A>): Array<A>;
 
         export interface Table {
           readonly indent: number;
@@ -1141,7 +1141,7 @@ describe("generateDts with real packages", () => {
           readonly rows: Seq<[Node<TableRow>, string]>;
         }
 
-        export function Table$new(indent?: number, arg0: Seq<[Node<TableRow>, string]>): Table;
+        export function table$new(indent?: number, arg0: Seq<[Node<TableRow>, string]>): Table;
 
         export interface TableAlign_Left { readonly $tag: "Left"; }
         export interface TableAlign_Center { readonly $tag: "Center"; }
@@ -1155,32 +1155,32 @@ describe("generateDts with real packages", () => {
 
         export type TableCellLayout = [[string, string]];
 
-        export function TableCellLayout$inner(arg0: TableCellLayout): [string, string];
+        export function table_cell_layout$inner(arg0: TableCellLayout): [string, string];
 
         export interface TableRow_Header { readonly $tag: "Header"; readonly $0: Seq<[Inline, TableCellLayout]>; }
         export interface TableRow_Sep { readonly $tag: "Sep"; readonly $0: Seq<Node<TableSep>>; }
         export interface TableRow_Data { readonly $tag: "Data"; readonly $0: Seq<[Inline, TableCellLayout]>; }
         export type TableRow = TableRow_Header | TableRow_Sep | TableRow_Data;
 
-        export function TableRow$Header($0: Seq<[Inline, TableCellLayout]>): TableRow_Header;
-        export function TableRow$Sep($0: Seq<Node<TableSep>>): TableRow_Sep;
-        export function TableRow$Data($0: Seq<[Inline, TableCellLayout]>): TableRow_Data;
+        export function table_row$header($0: Seq<[Inline, TableCellLayout]>): TableRow_Header;
+        export function table_row$sep($0: Seq<Node<TableSep>>): TableRow_Sep;
+        export function table_row$data($0: Seq<[Inline, TableCellLayout]>): TableRow_Data;
 
 
         export type TableSep = [[TableAlign | undefined, number]];
 
-        export function TableSep$inner(arg0: TableSep): [TableAlign | undefined, number];
+        export function table_sep$inner(arg0: TableSep): [TableAlign | undefined, number];
 
         export interface Tight {
           readonly blanks: string;
           readonly node: Node<string>;
         }
 
-        export function Tight$empty(meta?: cmark_base.Meta): Tight;
+        export function tight$empty(meta?: cmark_base.Meta): Tight;
 
-        export function Tight$listTextLoc(arg0: Seq<Tight>): cmark_base.TextLoc;
+        export function tight$list_text_loc(arg0: Seq<Tight>): cmark_base.TextLoc;
 
-        export function Tight$toString(arg0: Tight): string;
+        export function tight$to_string(arg0: Tight): string;
 
         export type Blanks = string;
 
@@ -1269,8 +1269,8 @@ pub enum Result {
       export interface Result_Err { readonly $tag: "Err"; readonly $0: string; }
       export type Result = Result_Ok | Result_Err;
 
-      export function Result$Ok($0: string): Result_Ok;
-      export function Result$Err($0: string): Result_Err;"
+      export function result$ok($0: string): Result_Ok;
+      export function result$err($0: string): Result_Err;"
     `);
   });
 
@@ -1301,7 +1301,7 @@ fn get_user_name(String) -> String
     expect(result).toMatchInlineSnapshot(`
       "// Generated from .mbti file - DO NOT EDIT
 
-      export function getUserName(arg0: string): string;"
+      export function get_user_name(arg0: string): string;"
     `);
   });
 
@@ -1325,9 +1325,9 @@ fn Position::distance(Self) -> Int
         readonly y: number;
       }
 
-      export function Position$new(arg0: number, arg1: number): Position;
+      export function position$new(arg0: number, arg1: number): Position;
 
-      export function Position$distance(arg0: Position): number;"
+      export function position$distance(arg0: Position): number;"
     `);
   });
 
