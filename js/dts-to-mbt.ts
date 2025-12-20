@@ -450,13 +450,9 @@ function generateFunction(func: MbtFunction): string {
       ? `[${func.typeParams.join(", ")}]`
       : "";
 
+  // For extern functions, parameters need names: (arg0 : Type, arg1 : Type)
   const params = func.params
-    .map((p) => {
-      if (p.optional) {
-        return `${p.name}? : ${p.type}`;
-      }
-      return `${p.name}~ : ${p.type}`;
-    })
+    .map((p, i) => `${p.name || `arg${i}`} : ${p.type}`)
     .join(", ");
 
   // Don't wrap in Promise if already a Promise type (async functions already have Promise return type)
@@ -464,14 +460,8 @@ function generateFunction(func: MbtFunction): string {
     ? `Promise[${func.returnType}]`
     : func.returnType;
 
-  // Use positional parameters if names are just arg0, arg1, etc.
-  const isPositional = func.params.every((p, i) => p.name === `arg${i}`);
-  const paramStr = isPositional
-    ? func.params.map((p) => p.type).join(", ")
-    : params;
-
-  return `@ffi.ffi("${func.jsName}")
-pub extern fn ${func.name}${typeParams}(${paramStr}) -> ${returnType}
+  // MoonBit extern fn syntax: extern "js" fn name(params) -> ReturnType = "jsName"
+  return `extern "js" fn ${func.name}${typeParams}(${params}) -> ${returnType} = "${func.jsName}"
 `;
 }
 

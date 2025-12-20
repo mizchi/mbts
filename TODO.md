@@ -135,10 +135,10 @@ export function Show$toString<Self>(arg0: Self): string;
 
 ### 未検証
 
-- [ ] 生成した `.mbt` バインディングで MoonBit のコンパイルが通ること
-  - `@ffi.ffi("name")` 属性の構文が正しいか
-  - `extern fn` の宣言形式が正しいか
-  - 生成された型定義が MoonBit の文法に準拠しているか
+- [x] 生成した `.mbt` バインディングで MoonBit のコンパイルが通ること
+  - `extern "js" fn name(...) = "jsName"` 構文で生成
+  - JS ターゲット (`moon check --target js`) でコンパイル成功
+  - パラメータ名付きの正しい形式で出力
 
 - [ ] ランタイムで実際に動作すること
   - JS → MoonBit の FFI 呼び出しが機能するか
@@ -147,9 +147,13 @@ export function Show$toString<Self>(arg0: Self): string;
 - [ ] 双方向変換の一貫性
   - `.mbti → .d.ts → .mbt` の変換が往復して意味的に等価になるか
 
-- [ ] 具体的なゴールの検証
+- [x] 具体的なゴールの検証
   - mizchi/markdown の `.mbti` → `.d.ts` 生成が実用的か
-  - 現在手動で書いている `js/api.js`, `js/api.d.ts` を自動生成できるか
+    - 低レベル FFI API は生成可能 (`mdToHtml`, `mdParseToAst` など)
+    - 外部パッケージ参照 (`markdown.Document`) は未解決
+  - 現在手動で書いている `js/api.d.ts` を自動生成できるか
+    - **部分的に可能**: 低レベル API は自動生成可能
+    - **完全置換は不可**: 高レベルラッパー (DocumentHandle, parse など) は手動実装が必要
 
 ## 疑問点・課題
 

@@ -108,7 +108,7 @@ export interface Point {
     expect(mbt).toContain("y : Int");
   });
 
-  it("should generate function with @ffi attribute", () => {
+  it("should generate extern function with js binding", () => {
     const binding = parseDts(
       `
 export function calculateSum(a: number, b: number): number;
@@ -116,8 +116,8 @@ export function calculateSum(a: number, b: number): number;
       "test.d.ts"
     );
     const mbt = generateMbt(binding);
-    expect(mbt).toContain('@ffi.ffi("calculateSum")');
-    expect(mbt).toContain("pub extern fn calculate_sum");
+    expect(mbt).toContain('extern "js" fn calculate_sum');
+    expect(mbt).toContain('= "calculateSum"');
     expect(mbt).toContain("-> Int");
   });
 
@@ -155,10 +155,10 @@ export function getUser(id: number): User | undefined;
     expect(mbt).toContain("id : Int");
     expect(mbt).toContain("name : String");
     expect(mbt).toContain("email : String?");
-    expect(mbt).toContain('@ffi.ffi("createUser")');
-    expect(mbt).toContain("pub extern fn create_user");
-    expect(mbt).toContain('@ffi.ffi("getUser")');
-    expect(mbt).toContain("pub extern fn get_user");
+    expect(mbt).toContain('extern "js" fn create_user');
+    expect(mbt).toContain('= "createUser"');
+    expect(mbt).toContain('extern "js" fn get_user');
+    expect(mbt).toContain('= "getUser"');
   });
 
   it("should handle TypeScript built-in types", () => {
@@ -200,8 +200,8 @@ export function querySelector(selector: string): Element | undefined;
 
     expect(mbt).toContain("pub struct Element");
     expect(mbt).toContain("pub struct Document");
-    expect(mbt).toContain("pub extern fn get_element_by_id");
-    expect(mbt).toContain("pub extern fn create_element");
-    expect(mbt).toContain("pub extern fn query_selector");
+    expect(mbt).toContain('extern "js" fn get_element_by_id');
+    expect(mbt).toContain('extern "js" fn create_element');
+    expect(mbt).toContain('extern "js" fn query_selector');
   });
 });
