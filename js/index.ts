@@ -305,8 +305,11 @@ export function getTypeName(ty: MbtiType): string | null {
 export {
   parseDts,
   dtsToMbt,
+  dtsToMbtWithGlue,
   generateMbt,
+  generateGlueCode,
   type MbtBinding,
+  type MbtClass,
   type MbtType,
   type MbtField,
   type MbtVariant,

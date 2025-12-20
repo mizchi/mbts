@@ -1,0 +1,12 @@
+{
+  "is-main": true,
+  "import": [
+    { "path": "mizchi/js/js", "alias": "js" }
+  ],
+  "link": {
+    "js": {
+      "format": "esm",
+      "exports": ["test_promise"]
+    }
+  }
+}

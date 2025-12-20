@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseDts, dtsToMbt, generateMbt } from "./dts-to-mbt.js";
+import { parseDts, dtsToMbt, generateMbt, generateGlueCode, dtsToMbtWithGlue } from "./dts-to-mbt.js";
 
 describe("parseDts", () => {
   it("should parse interface to struct", () => {
@@ -51,7 +51,7 @@ export async function fetchData(url: string): Promise<string>;
 `;
     const binding = parseDts(dts, "test.d.ts");
     expect(binding.functions[0].isAsync).toBe(true);
-    expect(binding.functions[0].returnType).toBe("Promise[String]");
+    expect(binding.functions[0].returnType).toBe("@js.Promise[String]");
   });
 
   it("should parse string literal union as enum", () => {
@@ -193,16 +193,24 @@ export class Counter {
     // Should have extern type
     expect(binding.externTypes).toContain("type Counter");
 
-    // Should have constructor
-    const ctorFn = binding.functions.find((f) => f.name === "counter_new");
+    // Should have constructor with Type::new format
+    const ctorFn = binding.functions.find((f) => f.name === "Counter::new");
     expect(ctorFn).toBeDefined();
     expect(ctorFn?.returnType).toBe("Counter");
+    expect(ctorFn?.isMethod).toBe(true);
+    expect(ctorFn?.className).toBe("Counter");
 
-    // Should have methods with self parameter
-    const incrFn = binding.functions.find((f) => f.name === "counter_increment");
+    // Should have methods with Type::method format and self parameter
+    const incrFn = binding.functions.find((f) => f.name === "Counter::increment");
     expect(incrFn).toBeDefined();
     expect(incrFn?.params[0].name).toBe("self");
     expect(incrFn?.params[0].type).toBe("Counter");
+    expect(incrFn?.isMethod).toBe(true);
+
+    // Should have class info for glue code generation
+    expect(binding.classes).toHaveLength(1);
+    expect(binding.classes[0].name).toBe("Counter");
+    expect(binding.classes[0].hasConstructor).toBe(true);
   });
 
   it("should generate correct MoonBit code for class", () => {
@@ -216,11 +224,16 @@ export class HttpClient {
 `;
     const mbt = dtsToMbt(dts, "test.d.ts");
 
-    expect(mbt).toContain("extern type HttpClient");
-    expect(mbt).toContain('extern "js" fn http_client_new');
+    // New #external syntax
+    expect(mbt).toContain("#external");
+    expect(mbt).toContain("type HttpClient");
+    // Type::method format
+    expect(mbt).toContain('extern "js" fn HttpClient::new');
     expect(mbt).toContain('= "HttpClient"');
-    expect(mbt).toContain('extern "js" fn http_client_get');
-    expect(mbt).toContain('extern "js" fn http_client_post');
+    expect(mbt).toContain('extern "js" fn HttpClient::get');
+    expect(mbt).toContain('extern "js" fn HttpClient::post');
+    // @js.Promise
+    expect(mbt).toContain("@js.Promise[String]");
   });
 
   it("should handle generic class", () => {
@@ -236,9 +249,54 @@ export class Container<T> {
 
     expect(binding.externTypes).toContain("type Container[T]");
 
-    const ctorFn = binding.functions.find((f) => f.name === "container_new");
+    const ctorFn = binding.functions.find((f) => f.name === "Container::new");
     expect(ctorFn?.typeParams).toContain("T");
     expect(ctorFn?.returnType).toBe("Container[T]");
+  });
+
+  it("should generate glue code for class", () => {
+    const dts = `
+export class Counter {
+  constructor(initial: number);
+  increment(): number;
+  getValue(): number;
+}
+`;
+    const binding = parseDts(dts, "test.d.ts");
+    const glue = generateGlueCode(binding, "./counter.js");
+
+    // Should have factory function
+    expect(glue).toContain("export function Counter(...args)");
+    expect(glue).toContain("new _original.Counter(...args)");
+
+    // Should have method wrappers
+    expect(glue).toContain("Counter.prototype.increment = function(self, ...args)");
+    expect(glue).toContain("Counter.prototype.getValue = function(self, ...args)");
+
+    // Should re-export other items
+    expect(glue).toContain("export * from './counter.js'");
+  });
+
+  it("should generate both .mbt and glue code with dtsToMbtWithGlue", () => {
+    const dts = `
+export class Timer {
+  constructor();
+  start(): void;
+  stop(): void;
+}
+export function createTimer(): Timer;
+`;
+    const result = dtsToMbtWithGlue(dts, "test.d.ts", "./timer.js");
+
+    // Should have .mbt content
+    expect(result.mbt).toContain("#external");
+    expect(result.mbt).toContain("type Timer");
+    expect(result.mbt).toContain("Timer::new");
+    expect(result.mbt).toContain("Timer::start");
+
+    // Should have glue code
+    expect(result.glue).toContain("export function Timer");
+    expect(result.glue).toContain("Timer.prototype.start");
   });
 });
 

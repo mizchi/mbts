@@ -19,6 +19,15 @@ export interface MbtBinding {
   functions: MbtFunction[];
   /** Extern type declarations */
   externTypes: string[];
+  /** Class information for glue code generation */
+  classes: MbtClass[];
+}
+
+export interface MbtClass {
+  name: string;
+  typeParams?: string[];
+  methods: { name: string; jsName: string }[];
+  hasConstructor: boolean;
 }
 
 export interface MbtType {
@@ -46,8 +55,12 @@ export interface MbtFunction {
   params: MbtParam[];
   returnType: string;
   isAsync: boolean;
-  jsName: string; // Original JS name for @ffi
+  jsName: string; // Original JS name for extern "js"
   typeParams?: string[];
+  /** If true, this is a class method using Type::method syntax */
+  isMethod?: boolean;
+  /** Class name for methods/constructors */
+  className?: string;
 }
 
 export interface MbtParam {
@@ -113,10 +126,10 @@ function mapTypeString(typeString: string): string {
     return `Array[${mapTypeString(arrayMatch[1])}]`;
   }
 
-  // Handle Promise<T>
+  // Handle Promise<T> - use @js.Promise from mizchi/js/js
   const promiseMatch = typeString.match(/^Promise<(.+)>$/);
   if (promiseMatch) {
-    return `Promise[${mapTypeString(promiseMatch[1])}]`;
+    return `@js.Promise[${mapTypeString(promiseMatch[1])}]`;
   }
 
   // Handle Map<K, V>
@@ -310,7 +323,7 @@ function processClass(
       }
 
       binding.functions.push({
-        name: `${toSnakeCase(className)}_${toSnakeCase(methodName)}`,
+        name: `${className}::${toSnakeCase(methodName)}`,
         params,
         returnType,
         isAsync,
@@ -318,10 +331,12 @@ function processClass(
         typeParams: [...typeParams, ...methodTypeParams].length > 0
           ? [...typeParams, ...methodTypeParams]
           : undefined,
+        isMethod: true,
+        className,
       });
     }
 
-    // Constructor -> ClassName_new
+    // Constructor -> ClassName::new
     if (ts.isConstructorDeclaration(member)) {
       const params: MbtParam[] = [];
 
@@ -340,12 +355,14 @@ function processClass(
       });
 
       binding.functions.push({
-        name: `${toSnakeCase(className)}_new`,
+        name: `${className}::new`,
         params,
         returnType: className + (typeParams.length > 0 ? `[${typeParams.join(", ")}]` : ""),
         isAsync: false,
         jsName: className,
         typeParams: typeParams.length > 0 ? typeParams : undefined,
+        isMethod: true,
+        className,
       });
     }
   });
@@ -356,6 +373,29 @@ function processClass(
       ? `type ${className}[${typeParams.join(", ")}]`
       : `type ${className}`
   );
+
+  // Collect class info for glue code generation
+  const classInfo: MbtClass = {
+    name: className,
+    typeParams: typeParams.length > 0 ? typeParams : undefined,
+    methods: [],
+    hasConstructor: false,
+  };
+
+  node.members.forEach((member) => {
+    if (ts.isMethodDeclaration(member) && member.name) {
+      const methodName = member.name.getText();
+      classInfo.methods.push({
+        name: methodName,
+        jsName: `${className}.prototype.${methodName}`,
+      });
+    }
+    if (ts.isConstructorDeclaration(member)) {
+      classInfo.hasConstructor = true;
+    }
+  });
+
+  binding.classes.push(classInfo);
 }
 
 function processTypeAlias(
@@ -521,13 +561,14 @@ export function generateMbt(binding: MbtBinding): string {
     lines.push("");
   }
 
-  // Extern type declarations
+  // Extern type declarations (using new #external syntax)
   if (binding.externTypes.length > 0) {
     lines.push("// Extern types");
     binding.externTypes.forEach((t) => {
-      lines.push(`extern ${t}`);
+      lines.push("#external");
+      lines.push(t);
+      lines.push("");
     });
-    lines.push("");
   }
 
   // Type definitions
@@ -663,6 +704,7 @@ export function parseDts(
     types: [],
     functions: [],
     externTypes: [],
+    classes: [],
   };
 
   sourceFile.statements.forEach((stmt) => {
@@ -682,4 +724,69 @@ export function dtsToMbt(
 ): string {
   const binding = parseDts(content, filename, options);
   return generateMbt(binding);
+}
+
+/**
+ * Generate JavaScript glue code for class bindings
+ * This creates factory functions and method wrappers needed for MoonBit FFI
+ */
+export function generateGlueCode(binding: MbtBinding, modulePath: string): string {
+  if (binding.classes.length === 0) {
+    return "";
+  }
+
+  const lines: string[] = [];
+  lines.push(`// Generated glue code for MoonBit FFI`);
+  lines.push(`// Import the original module`);
+  lines.push(`import * as _original from '${modulePath}';`);
+  lines.push("");
+
+  binding.classes.forEach((cls) => {
+    const className = cls.name;
+
+    // Factory function (constructor without 'new')
+    if (cls.hasConstructor) {
+      lines.push(`// Factory function for ${className} (called without 'new')`);
+      lines.push(`export function ${className}(...args) {`);
+      lines.push(`  return new _original.${className}(...args);`);
+      lines.push(`}`);
+      lines.push("");
+    }
+
+    // Method wrappers (accept self as first argument)
+    if (cls.methods.length > 0) {
+      lines.push(`// Method wrappers for ${className}`);
+      lines.push(`${className}.prototype = Object.create(_original.${className}.prototype);`);
+      lines.push("");
+
+      cls.methods.forEach((method) => {
+        lines.push(`${className}.prototype.${method.name} = function(self, ...args) {`);
+        lines.push(`  return _original.${className}.prototype.${method.name}.call(self, ...args);`);
+        lines.push(`};`);
+      });
+      lines.push("");
+    }
+  });
+
+  // Re-export non-class items
+  lines.push(`// Re-export other items`);
+  lines.push(`export * from '${modulePath}';`);
+
+  return lines.join("\n");
+}
+
+/**
+ * Convert a .d.ts file and generate both .mbt and glue .js
+ */
+export function dtsToMbtWithGlue(
+  content: string,
+  filename: string,
+  modulePath: string,
+  options: ConvertOptions = {}
+): { mbt: string; glue: string } {
+  const binding = parseDts(content, filename, options);
+  return {
+    mbt: generateMbt(binding),
+    glue: generateGlueCode(binding, modulePath),
+  };
 }

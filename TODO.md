@@ -86,6 +86,25 @@ export function Show$toString<Self>(arg0: Self): string;
 - B) import 文を生成
 - C) 現状維持 (利用者が解決)
 
+### 7. クラス変換 (.d.ts → .mbt) ✅ 決定済み
+**方針**: `mizchi/js/js` パッケージを使用
+- コンストラクタ: `Type::new` として生成
+- メソッド: `Type::method` として生成、self を第一引数に
+- Promise: `@js.Promise[T]` を使用 (mizchi/js パッケージが必要)
+- extern type: `#external type T` (新構文)
+
+```moonbit
+#external
+type Counter
+
+extern "js" fn Counter::new(initial : Int) -> Counter = "Counter"
+extern "js" fn Counter::increment(self : Counter) -> Int = "Counter.prototype.increment"
+```
+
+**グルーコード**: .mbt と一緒に .js グルーコードも生成
+- ファクトリ関数 (new なしで呼べるように)
+- メソッドラッパー (self を第一引数として受け取る)
+
 ### Phase 3: MoonBit Parser の JS ビルド + TS ラッパー (完了)
 
 - [x] `moonbitlang/parser` を JS ターゲットでビルド
@@ -110,8 +129,8 @@ export function Show$toString<Self>(arg0: Self): string;
   - function → extern fn (引数・戻り値の型変換)
   - string literal union → enum
   - 型パラメータ対応
-- [x] `@ffi` 属性の自動付与
-  - `@ffi.ffi("originalName")` 形式で出力
+- [x] `extern "js"` 構文での出力
+  - `extern "js" fn name(...) = "originalName"` 形式で出力
   - snake_case への変換も自動
 - [x] 型マッピング
   - string → String, number → Int, boolean → Bool
@@ -140,11 +159,22 @@ export function Show$toString<Self>(arg0: Self): string;
   - JS ターゲット (`moon check --target js`) でコンパイル成功
   - パラメータ名付きの正しい形式で出力
 
-- [ ] ランタイムで実際に動作すること
-  - JS → MoonBit の FFI 呼び出しが機能するか
-  - 型のマーシャリングが正しく行われるか (特に Optional, Array, Promise)
-  - **課題**: 独立した MoonBit プロジェクトで extern "js" の動作確認が必要
-  - 生成された関数名 (`ClassName.prototype.method`) が正しく動作するか要検証
+- [x] ランタイムで実際に動作すること
+  - `runtime-test/` ディレクトリで検証済み
+  - **動作確認済み**:
+    - 関数呼び出し (`add`, `greet`) ✅
+    - 文字列マーシャリング ✅
+    - 配列マーシャリング (`Array[Int]`) ✅
+    - struct (JavaScript オブジェクトとして動作) ✅
+    - クラスのコンストラクタとメソッド ✅
+    - Promise (`@js.Promise[T]` with `mizchi/js`) ✅
+  - **重要な発見**:
+    - クラスコンストラクタ: `new` なしで呼び出されるため、ファクトリ関数が必要
+    - メソッド: `ClassName.prototype.method(self)` 形式で呼び出される
+      - JS 側で `self` を第一引数として受け取るラッパーが必要
+    - MoonBit 構文の更新:
+      - `extern type X` → `#external type X` (deprecated warning)
+      - `fn method(self : Type)` → `fn Type::method(self : Type)`
 
 - [ ] 双方向変換の一貫性
   - `.mbti → .d.ts → .mbt` の変換が往復して意味的に等価になるか
@@ -165,15 +195,17 @@ export function Show$toString<Self>(arg0: Self): string;
 |------------|-----------|--------|
 | `number` | `Int` | `Float`/`Double` にすべきケースの判別ができない |
 | `T \| undefined` | `T?` | MoonBit の `Option[T]` との整合性 |
-| `Promise<T>` | `Promise[T]` | MoonBit の async/await との統合方法 |
+| `Promise<T>` | `@js.Promise[T]` | `mizchi/js` パッケージで動作確認済み |
 | `Map<K,V>` | `Map[K,V]` | MoonBit の `Map` との互換性 |
-| `class` | 未実装 | メソッドをどう表現するか |
+| `class` | ✅実装済み | `Type::method` で表現 |
 
 ### 未実装・部分実装の機能
 
 | 機能 | 状態 | 詳細 |
 |------|------|------|
-| class 変換 | ✅完了 | `extern type` + メソッド関数 (`ClassName_method`) |
+| class 変換 | ✅完了 | `#external type` + メソッド関数 (`Type::method`) |
+| クラス用グルーコード | ✅完了 | `generateGlueCode()` でファクトリ + ラッパー生成 |
+| Promise 型 | ✅完了 | `@js.Promise[T]` (mizchi/js パッケージ依存) |
 | namespace/module | 部分的 | ネストした namespace の扱い |
 | overload | 未実装 | 同名関数の複数シグネチャ |
 | generics 制約 | 未実装 | `T extends X` の変換 |
@@ -181,10 +213,11 @@ export function Show$toString<Self>(arg0: Self): string;
 
 ### 優先度
 
-1. **高**: 生成した `.mbt` が実際にコンパイル通るか (簡単なサンプルで試す)
-2. **高**: mizchi/markdown の `.mbti` → `.d.ts` 生成が実用的か
-3. **中**: class 変換の実装
-4. **低**: セルフホスティング (Phase 5)
+1. ~~**高**: 生成した `.mbt` が実際にコンパイル通るか~~ ✅ 完了
+2. ~~**高**: mizchi/markdown の `.mbti` → `.d.ts` 生成が実用的か~~ ✅ 部分的に完了
+3. ~~**中**: class 変換の実装~~ ✅ 完了
+4. **中**: クラス用 JS グルーコードの自動生成
+5. **低**: セルフホスティング (Phase 5)
 
 ## 依存関係
 
