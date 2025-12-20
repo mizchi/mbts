@@ -8,7 +8,7 @@ export interface Storage {
   readonly length: number;
 }
 
-export function Storage$asAny(arg0: Storage): core.Any;
+export function Storage$asAny(arg0: Storage): any /* TODO: @core.Any */;
 
 export function Storage$clear(arg0: Storage): void;
 

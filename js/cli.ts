@@ -300,7 +300,7 @@ async function main(): Promise<void> {
         console.error("Usage: mbts link <path>");
         process.exit(1);
       }
-      const targets = options.targets
+      const targets: ("js" | "wasm" | "wasm-gc")[] = options.targets
         ? (options.targets as string).split(",") as ("js" | "wasm" | "wasm-gc")[]
         : ["js"];
       await linkCommand(target, {

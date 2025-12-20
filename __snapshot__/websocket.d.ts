@@ -1,6 +1,6 @@
 // Generated from .mbti file - DO NOT EDIT
 
-export function getCloseCode(arg0: core.Any): number;
+export function getCloseCode(arg0: any /* TODO: @core.Any */): number;
 
 export interface WebSocket {
   readonly url: string;

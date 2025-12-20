@@ -637,22 +637,27 @@ fn generate_type(ty : @syntax.Type) -> String {
     Name(constr_id~, tys~, loc~) => {
       ignore(loc)
       let name = long_ident_to_string(constr_id.id)
-      let mapped = map_moonbit_type(name)
-      let tys_arr = tys.to_array()
-      if tys_arr.length() == 0 {
-        mapped
+      // External package reference (e.g., @pkg.Type) - output as any with TODO comment
+      if name.contains(".") {
+        "any /* TODO: @\{name} */"
       } else {
-        let buf = StringBuilder::new()
-        buf.write_string(mapped)
-        buf.write_string("<")
-        for i, t in tys_arr {
-          if i > 0 {
-            buf.write_string(", ")
+        let mapped = map_moonbit_type(name)
+        let tys_arr = tys.to_array()
+        if tys_arr.length() == 0 {
+          mapped
+        } else {
+          let buf = StringBuilder::new()
+          buf.write_string(mapped)
+          buf.write_string("<")
+          for i, t in tys_arr {
+            if i > 0 {
+              buf.write_string(", ")
+            }
+            buf.write_string(generate_type(t))
           }
-          buf.write_string(generate_type(t))
+          buf.write_string(">")
+          buf.to_string()
         }
-        buf.write_string(">")
-        buf.to_string()
       }
     }
     Option(ty~, loc~, question_loc~) => {

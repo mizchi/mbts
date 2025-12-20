@@ -501,15 +501,15 @@ describe("generateDts with real packages", () => {
         export function zero(): Decimal;
 
         export interface Decimal {
-          readonly coefficient: bigint.BigInt;
+          readonly coefficient: any /* TODO: @bigint.BigInt */;
           readonly scale: number;
         }
 
         export function decimal$abs(arg0: Decimal): Decimal;
 
-        export function decimal$coefficient(arg0: Decimal): bigint.BigInt;
+        export function decimal$coefficient(arg0: Decimal): any /* TODO: @bigint.BigInt */;
 
-        export function decimal$from_bigint(arg0: bigint.BigInt): Decimal;
+        export function decimal$from_bigint(arg0: any /* TODO: @bigint.BigInt */): Decimal;
 
         export function decimal$from_double(arg0: number, arg1: number): Decimal | undefined;
 
@@ -523,7 +523,7 @@ describe("generateDts with real packages", () => {
 
         export function decimal$is_zero(arg0: Decimal): boolean;
 
-        export function decimal$new(arg0: bigint.BigInt, arg1: number): Decimal | undefined;
+        export function decimal$new(arg0: any /* TODO: @bigint.BigInt */, arg1: number): Decimal | undefined;
 
         export function decimal$round(arg0: Decimal, arg1: number): Decimal | undefined;
 
@@ -533,7 +533,7 @@ describe("generateDts with real packages", () => {
 
         export function decimal$signum(arg0: Decimal): number;
 
-        export function decimal$to_bigint(arg0: Decimal): bigint.BigInt;
+        export function decimal$to_bigint(arg0: Decimal): any /* TODO: @bigint.BigInt */;
 
         export function decimal$to_double(arg0: Decimal): number;
 
@@ -612,7 +612,7 @@ describe("generateDts with real packages", () => {
       expect(result).toMatchInlineSnapshot(`
         "// Generated from .mbti file - DO NOT EDIT
 
-        export function layout_of_string(meta?: cmark_base.Meta, arg0: string): Node<string>;
+        export function layout_of_string(meta?: any /* TODO: @cmark_base.Meta */, arg0: string): Node<string>;
 
         export interface Block_BlankLine { readonly $tag: "BlankLine"; readonly $0: Node<string>; }
         export interface Block_BlockQuote { readonly $tag: "BlockQuote"; readonly $0: Node<BlockQuote>; }
@@ -648,7 +648,7 @@ describe("generateDts with real packages", () => {
 
         export function block$empty(): Block;
 
-        export function block$meta(arg0: Block): cmark_base.Meta;
+        export function block$meta(arg0: Block): any /* TODO: @cmark_base.Meta */;
 
         export function block$normalize(arg0: Block): Block;
 
@@ -697,12 +697,12 @@ describe("generateDts with real packages", () => {
 
         export function block_line$inner(arg0: BlockLine): Node<string>;
 
-        export function block_line$list_text_loc(arg0: Seq<BlockLine>): cmark_base.TextLoc;
+        export function block_line$list_text_loc(arg0: Seq<BlockLine>): any /* TODO: @cmark_base.TextLoc */;
 
         export function block_line$to_string(arg0: BlockLine): string;
 
         export interface BlockList {
-          readonly ty: cmark_base.ListType;
+          readonly ty: any /* TODO: @cmark_base.ListType */;
           readonly tight: boolean;
           readonly items: Seq<Node<ListItem>>;
         }
@@ -867,7 +867,7 @@ describe("generateDts with real packages", () => {
 
         export function inline$is_empty(arg0: Inline): boolean;
 
-        export function inline$meta(arg0: Inline): cmark_base.Meta;
+        export function inline$meta(arg0: Inline): any /* TODO: @cmark_base.Meta */;
 
         export function inline$normalize(arg0: Inline): Inline;
 
@@ -903,7 +903,7 @@ describe("generateDts with real packages", () => {
 
         export function inline_code_span$code(arg0: InlineCodeSpan): string;
 
-        export function inline_code_span$from_string(meta?: cmark_base.Meta, arg0: string): InlineCodeSpan;
+        export function inline_code_span$from_string(meta?: any /* TODO: @cmark_base.Meta */, arg0: string): InlineCodeSpan;
 
         export function inline_code_span$new(backticks: number, arg0: Seq<Tight>): InlineCodeSpan;
 
@@ -943,16 +943,16 @@ describe("generateDts with real packages", () => {
         export function inline_strikethrough$inner(arg0: InlineStrikethrough): Inline;
 
         export interface Label {
-          readonly meta: cmark_base.Meta;
+          readonly meta: any /* TODO: @cmark_base.Meta */;
           readonly key: string;
           readonly text: Seq<Tight>;
         }
 
         export function label$compare(arg0: Label, arg1: Label): number;
 
-        export function label$new(meta?: cmark_base.Meta, key: string, arg0: Seq<Tight>): Label;
+        export function label$new(meta?: any /* TODO: @cmark_base.Meta */, key: string, arg0: Seq<Tight>): Label;
 
-        export function label$text_loc(arg0: Label): cmark_base.TextLoc;
+        export function label$text_loc(arg0: Label): any /* TODO: @cmark_base.TextLoc */;
 
         export interface LabelContext_Def { readonly $tag: "Def"; readonly $0: Label | undefined; readonly $1: Label; }
         export interface LabelContext_Ref { readonly $tag: "Ref"; readonly $0: LinkKind; readonly $1: Label; readonly $2: Label | undefined; }
@@ -1078,14 +1078,14 @@ describe("generateDts with real packages", () => {
 
         export interface Node<A> {
           readonly v: A;
-          readonly meta: cmark_base.Meta;
+          readonly meta: any /* TODO: @cmark_base.Meta */;
         }
 
-        export function node$empty(meta?: cmark_base.Meta): Node<string>;
+        export function node$empty(meta?: any /* TODO: @cmark_base.Meta */): Node<string>;
 
         export function node$map<A, B>(arg0: Node<A>, arg1: (arg0: A) => B): Node<B>;
 
-        export function node$new<A>(arg0: A, meta?: cmark_base.Meta): Node<A>;
+        export function node$new<A>(arg0: A, meta?: any /* TODO: @cmark_base.Meta */): Node<A>;
 
         export interface ReferenceKind_Inline { readonly $tag: "Inline"; readonly $0: Node<LinkDefinition>; }
         export interface ReferenceKind_Ref { readonly $tag: "Ref"; readonly $0: ReferenceLayout; readonly $1: Label; readonly $2: Label; }
@@ -1176,9 +1176,9 @@ describe("generateDts with real packages", () => {
           readonly node: Node<string>;
         }
 
-        export function tight$empty(meta?: cmark_base.Meta): Tight;
+        export function tight$empty(meta?: any /* TODO: @cmark_base.Meta */): Tight;
 
-        export function tight$list_text_loc(arg0: Seq<Tight>): cmark_base.TextLoc;
+        export function tight$list_text_loc(arg0: Seq<Tight>): any /* TODO: @cmark_base.TextLoc */;
 
         export function tight$to_string(arg0: Tight): string;
 

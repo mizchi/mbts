@@ -235,13 +235,13 @@ declare const Json: unique symbol;
 type Json = { readonly [Json]: true };
 
 declare namespace bigint {
-  interface BigInt { readonly __brand: "bigint.BigInt"; }
+  interface BigInt { readonly __brand: "any /* TODO: @bigint.BigInt */"; }
 }
 
 declare namespace cmark_base {
-  interface Meta { readonly __brand: "cmark_base.Meta"; }
-  interface TextLoc { readonly __brand: "cmark_base.TextLoc"; }
-  interface ListType { readonly __brand: "cmark_base.ListType"; }
+  interface Meta { readonly __brand: "any /* TODO: @cmark_base.Meta */"; }
+  interface TextLoc { readonly __brand: "any /* TODO: @cmark_base.TextLoc */"; }
+  interface ListType { readonly __brand: "any /* TODO: @cmark_base.ListType */"; }
 }
 
 ${validDts.join("\n\n")}
@@ -548,7 +548,7 @@ fn to_json(String) -> @json.Json
     expect(dts).toMatchInlineSnapshot(`
       "// Generated from .mbti file - DO NOT EDIT
 
-      export function to_json(arg0: string): json.Json;"
+      export function to_json(arg0: string): any /* TODO: @json.Json */;"
     `);
   });
 });
