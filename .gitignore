@@ -3,3 +3,4 @@ target/
 node_modules
 fixtures/.mooncakes
 .temp-typecheck
+package-lock.json
