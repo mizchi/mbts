@@ -1,4 +1,4 @@
-// Tests for tsnize
+// Tests for mbts
 
 ///|
 test "parse enum mbti" {

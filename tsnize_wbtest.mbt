@@ -1,4 +1,4 @@
-// Whitebox tests for tsnize - test with real mbti files
+// Whitebox tests for mbts - test with real mbti files
 // Snapshots are written to __snapshot__/*.d.ts for TypeScript type checking
 
 ///|

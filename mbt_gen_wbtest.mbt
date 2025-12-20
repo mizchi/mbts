@@ -1,12 +1,12 @@
 ///|
 /// Tests for mbt_gen.mbt - MoonBit code generation
-
 test "generate_mbt: empty binding" {
   let binding = MbtBinding::new()
   let result = generate_mbt(binding)
   assert_eq(result, "")
 }
 
+///|
 test "generate_mbt: extern types" {
   let binding = MbtBinding::{
     package_name: "",
@@ -28,6 +28,7 @@ test "generate_mbt: extern types" {
   assert_eq(result, expected)
 }
 
+///|
 test "generate_mbt: struct type" {
   let t = MbtType::{
     name: "User",
@@ -59,6 +60,7 @@ test "generate_mbt: struct type" {
   assert_eq(result, expected)
 }
 
+///|
 test "generate_mbt: enum type" {
   let t = MbtType::{
     name: "Status",
@@ -92,6 +94,7 @@ test "generate_mbt: enum type" {
   assert_eq(result, expected)
 }
 
+///|
 test "generate_mbt: functions" {
   let f1 = MbtFunction::{
     name: "greet",
@@ -129,6 +132,7 @@ test "generate_mbt: functions" {
   assert_eq(result, expected)
 }
 
+///|
 test "generate_mbt: async function" {
   let f = MbtFunction::{
     name: "fetch_data",
@@ -155,6 +159,7 @@ test "generate_mbt: async function" {
   assert_eq(result, expected)
 }
 
+///|
 test "generate_mbt: generic function" {
   let f = MbtFunction::{
     name: "identity",
@@ -181,6 +186,7 @@ test "generate_mbt: generic function" {
   assert_eq(result, expected)
 }
 
+///|
 test "generate_mbt: class method" {
   let f = MbtFunction::{
     name: "Counter::increment",
@@ -216,6 +222,7 @@ test "generate_mbt: class method" {
 // JSON Parsing Tests
 // ============================================================
 
+///|
 test "from_json: simple function" {
   let json : Json = {
     "packageName": "mylib",
@@ -239,6 +246,7 @@ test "from_json: simple function" {
   assert_eq(binding.functions[0].params[0].type_, "String")
 }
 
+///|
 test "from_json: struct type" {
   let json : Json = {
     "packageName": "",
@@ -266,6 +274,7 @@ test "from_json: struct type" {
   assert_eq(t.fields[1].mutable, true)
 }
 
+///|
 test "from_json: enum type" {
   let json : Json = {
     "packageName": "",
@@ -293,6 +302,7 @@ test "from_json: enum type" {
   assert_eq(t.variants[1].payload[0], "Int")
 }
 
+///|
 test "from_json: async function" {
   let json : Json = {
     "packageName": "",
@@ -313,6 +323,7 @@ test "from_json: async function" {
   assert_eq(binding.functions[0].is_async, true)
 }
 
+///|
 test "from_json: class with methods" {
   let json : Json = {
     "packageName": "",
@@ -335,6 +346,7 @@ test "from_json: class with methods" {
   assert_eq(binding.classes[0].methods[0].name, "increment")
 }
 
+///|
 test "from_json: roundtrip with generate_mbt" {
   // Test that parsing JSON and generating MBT produces expected output
   let json : Json = {

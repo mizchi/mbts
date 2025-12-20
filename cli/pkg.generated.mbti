@@ -1,12 +1,18 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "mizchi/tsnize/cli"
+package "mizchi/mbts/cli"
 
 // Values
+pub fn generate_dts_from_mbt_string(String, String) -> String
+
 pub fn generate_dts_from_string(String, String) -> String
 
 pub fn generate_dts_namespace_from_string(String, String) -> String
 
 pub fn generate_dts_with_preamble_from_string(String, String) -> String
+
+pub fn generate_mbt_from_json(String) -> String
+
+pub fn parse_mbti_to_json(String, String) -> String
 
 // Errors
 

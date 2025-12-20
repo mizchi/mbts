@@ -1,4 +1,4 @@
-// tsnize - Generate TypeScript definitions from MoonBit .mbti files
+// mbts - Generate TypeScript definitions from MoonBit .mbti files
 //
 // Uses moonbitlang/parser to correctly parse MBTI and generate TypeScript
 
@@ -11,9 +11,9 @@ pub fn preprocess_mbti(content : String) -> String {
     let trimmed = line.trim_space().to_string()
     // Skip unsupported syntax in mbti_parser
     not(trimmed.has_prefix("pub impl ")) &&
-      not(trimmed.has_prefix("pub using ")) &&
-      not(trimmed.has_prefix("pub let ")) &&
-      not(is_type_alias(trimmed)) // type alias (pub type X = Y) not supported
+    not(trimmed.has_prefix("pub using ")) &&
+    not(trimmed.has_prefix("pub let ")) &&
+    not(is_type_alias(trimmed)) // type alias (pub type X = Y) not supported
   })
   // Convert "pub fn" to "fn" for parser compatibility
   let processed = filtered.map(fn(line) {
@@ -61,7 +61,10 @@ pub fn parse_mbti(content : String, filename : String) -> @mbti_ast.Mbti raise {
 /// Extract namespace name from package name
 /// e.g., "moonbitlang/parser/basic" -> "basic"
 pub fn package_to_namespace(package_name : String) -> String {
-  let parts : Array[String] = package_name.split("/").map(fn(s) { s.to_string() }).collect()
+  let parts : Array[String] = package_name
+    .split("/")
+    .map(fn(s) { s.to_string() })
+    .collect()
   if parts.length() > 0 {
     parts[parts.length() - 1]
   } else {
@@ -142,7 +145,6 @@ pub fn generate_combined_dts(packages : Array[@mbti_ast.Mbti]) -> String {
   let buf = StringBuilder::new()
   buf.write_string("// Generated from .mbti files - DO NOT EDIT\n")
   buf.write_string("// MoonBit Parser TypeScript Definitions\n\n")
-
   for pkg in packages {
     buf.write_string(generate_dts_namespace(pkg))
     buf.write_string("\n")
@@ -197,9 +199,9 @@ fn replace_self(code : String, type_name : String) -> String {
 fn is_alnum(c : Char) -> Bool {
   let code = c.to_int()
   (code >= 48 && code <= 57) || // 0-9
-    (code >= 65 && code <= 90) || // A-Z
-    (code >= 97 && code <= 122) || // a-z
-    c == '_'
+  (code >= 65 && code <= 90) || // A-Z
+  (code >= 97 && code <= 122) || // a-z
+  c == '_'
 }
 
 ///|
@@ -252,8 +254,19 @@ fn generate_func_sig(func : @mbti_ast.FuncSig) -> String {
 /// Check if type name conflicts with TypeScript built-in types
 fn is_ts_builtin_type(name : String) -> Bool {
   match name {
-    "Promise" | "Error" | "Array" | "Map" | "Set" | "Date" | "RegExp" | "Symbol"
-    | "Function" | "Object" | "Number" | "String" | "Boolean" => true
+    "Promise"
+    | "Error"
+    | "Array"
+    | "Map"
+    | "Set"
+    | "Date"
+    | "RegExp"
+    | "Symbol"
+    | "Function"
+    | "Object"
+    | "Number"
+    | "String"
+    | "Boolean" => true
     _ => false
   }
 }
@@ -264,7 +277,7 @@ fn generate_type_sig(type_sig : @mbti_ast.TypeSig) -> String {
   let name = type_sig.name.name
   let type_params = generate_type_params_no_constraints(type_sig.type_params)
   match type_sig.components {
-    Abstract => {
+    Abstract =>
       // Skip TypeScript built-in types (use TS native ones)
       if is_ts_builtin_type(name) {
         buf.write_string("// Using TypeScript built-in: ")
@@ -277,8 +290,7 @@ fn generate_type_sig(type_sig : @mbti_ast.TypeSig) -> String {
         buf.write_string(name)
         buf.write_string("\";\n}")
       }
-    }
-    Extern => {
+    Extern =>
       // Skip TypeScript built-in types (use TS native ones)
       if is_ts_builtin_type(name) {
         buf.write_string("// Using TypeScript built-in: ")
@@ -291,7 +303,6 @@ fn generate_type_sig(type_sig : @mbti_ast.TypeSig) -> String {
         buf.write_string(name)
         buf.write_string("\";\n}")
       }
-    }
     Newtype(ty) => {
       buf.write_string("export type ")
       buf.write_string(name)
@@ -324,7 +335,7 @@ fn generate_type_sig(type_sig : @mbti_ast.TypeSig) -> String {
       buf.write_string(generate_type(ty))
       buf.write_string(";")
     }
-    Error(exception_decl) => {
+    Error(exception_decl) =>
       match exception_decl {
         NoPayload => {
           // Simple error type with no payload
@@ -344,12 +355,10 @@ fn generate_type_sig(type_sig : @mbti_ast.TypeSig) -> String {
           buf.write_string(generate_type(ty))
           buf.write_string(";\n}")
         }
-        EnumPayload(constrs) => {
+        EnumPayload(constrs) =>
           // Error with enum-like variants - same as enum
           generate_error_enum_type(buf, name, type_params, constrs)
-        }
       }
-    }
   }
   buf.to_string()
 }
@@ -362,7 +371,13 @@ fn generate_error_enum_type(
   constrs : @list.List[@syntax.ConstrDecl],
 ) -> Unit {
   // Same as generate_enum_type but extends Error
-  generate_enum_type_internal(buf, name, type_params, constrs, extends_error=true)
+  generate_enum_type_internal(
+    buf,
+    name,
+    type_params,
+    constrs,
+    extends_error=true,
+  )
 }
 
 ///|
@@ -372,7 +387,13 @@ fn generate_enum_type(
   type_params : String,
   constrs : @list.List[@syntax.ConstrDecl],
 ) -> Unit {
-  generate_enum_type_internal(buf, name, type_params, constrs, extends_error=false)
+  generate_enum_type_internal(
+    buf,
+    name,
+    type_params,
+    constrs,
+    extends_error=false,
+  )
 }
 
 ///|
@@ -1022,13 +1043,11 @@ fn generate_type_decl(decl : @syntax.TypeDecl) -> String {
   if not(is_pub_visibility(decl.type_vis)) {
     return ""
   }
-
   let name = decl.tycon
   let type_params = generate_mbt_type_params(decl.params)
   let buf = StringBuilder::new()
-
   match decl.components {
-    Abstract => {
+    Abstract =>
       if is_ts_builtin_type(name) {
         buf.write_string("// Using TypeScript built-in: ")
         buf.write_string(name)
@@ -1040,8 +1059,7 @@ fn generate_type_decl(decl : @syntax.TypeDecl) -> String {
         buf.write_string(name)
         buf.write_string("\";\n}")
       }
-    }
-    Extern => {
+    Extern =>
       if is_ts_builtin_type(name) {
         buf.write_string("// Using TypeScript built-in: ")
         buf.write_string(name)
@@ -1053,7 +1071,6 @@ fn generate_type_decl(decl : @syntax.TypeDecl) -> String {
         buf.write_string(name)
         buf.write_string("\";\n}")
       }
-    }
     Newtype(ty) => {
       buf.write_string("export type ")
       buf.write_string(name)
@@ -1099,7 +1116,9 @@ fn generate_type_decl(decl : @syntax.TypeDecl) -> String {
 
 ///|
 /// Generate TypeScript type params from MBT TypeDeclBinder list
-fn generate_mbt_type_params(params : @list.List[@syntax.TypeDeclBinder]) -> String {
+fn generate_mbt_type_params(
+  params : @list.List[@syntax.TypeDeclBinder],
+) -> String {
   let params_arr = params.to_array()
   if params_arr.length() == 0 {
     return ""
@@ -1126,7 +1145,6 @@ fn generate_fun_decl(decl : @syntax.FunDecl) -> String {
   if not(is_pub_visibility(decl.vis)) {
     return ""
   }
-
   let buf = StringBuilder::new()
   let func_name = escape_func_name(to_camel_case(decl.name.name))
 
@@ -1271,13 +1289,11 @@ fn generate_mbt_trait_decl(decl : @syntax.TraitDecl) -> String {
   if not(is_pub_visibility(decl.vis)) {
     return ""
   }
-
   let trait_name = decl.name.name
   let buf = StringBuilder::new()
   buf.write_string("// trait ")
   buf.write_string(trait_name)
   buf.write_string("\n")
-
   for m in decl.methods {
     buf.write_string("export function ")
     buf.write_string(trait_name)

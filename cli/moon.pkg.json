@@ -1,7 +1,10 @@
 {
   "is-main": true,
   "import": [
-    { "path": "mizchi/tsnize", "alias": "tsnize" }
+    {
+      "path": "mizchi/mbts",
+      "alias": "mbts"
+    }
   ],
   "link": {
     "js": {

@@ -1,88 +1,88 @@
 # mbts
 
-MoonBit と TypeScript 間の型定義を相互変換するツールです。
+Bidirectional type definition converter between MoonBit and TypeScript.
 
-## 機能
+## Features
 
-- `.mbti` → `.d.ts` 生成
-- `.d.ts` → `.mbt` / `.mbti` 生成
-- `moon.pkg.json` の exports 自動更新
+- `.mbti` → `.d.ts` generation
+- `.d.ts` → `.mbt` / `.mbti` generation
+- Auto-update `moon.pkg.json` exports
 
-## インストール
+## Installation
 
 ```bash
-# MoonBit パッケージとして
-moon add mizchi/tsnize
+# As a MoonBit package
+moon add mizchi/mbts
 
-# CLI ツールとして
+# As a CLI tool
 pnpm add mbts
 ```
 
 ## CLI
 
-### コマンド一覧
+### Commands
 
 ```
-mbts link <path>                .mbti → moon.pkg.json exports 更新
-mbts dts <src> [--out <dir>]    .mbti → .d.ts 生成
-mbts mbt <file.d.ts> [options]  .d.ts → .mbt 生成
+mbts link <path>                Update moon.pkg.json exports from .mbti
+mbts dts <src> [--out <dir>]    Generate .d.ts from .mbti
+mbts mbt <file.d.ts> [options]  Generate .mbt from .d.ts
 ```
 
-### mbts mbt - TypeScript から MoonBit バインディング生成
+### mbts mbt - Generate MoonBit bindings from TypeScript
 
 ```bash
-# 基本的な変換
+# Basic conversion
 mbts mbt lib.d.ts
 
-# 出力先とパッケージ名を指定
+# Specify output directory and package name
 mbts mbt lib.d.ts --out src --package myapp
 
-# .mbti も同時生成
+# Also generate .mbti interface file
 mbts mbt lib.d.ts --mbti
 ```
 
-**オプション:**
-- `--out <dir>` - 出力ディレクトリ
-- `--package <name>` - パッケージ名
-- `--mbti` - .mbti インターフェースファイルも生成
+**Options:**
+- `--out <dir>` - Output directory
+- `--package <name>` - Package name
+- `--mbti` - Also generate .mbti interface file
 
-### mbts dts - MoonBit から TypeScript 型定義生成
+### mbts dts - Generate TypeScript definitions from MoonBit
 
 ```bash
-# .mbti から .d.ts を生成
+# Generate .d.ts from .mbti
 mbts dts src --out js
 
-# namespace でラップ
+# Wrap in namespace
 mbts dts src --namespace
 
-# ランタイム型プリアンブルを含める
+# Include runtime type preamble
 mbts dts src --preamble
 ```
 
-**オプション:**
-- `--out <dir>` - 出力ディレクトリ
-- `--namespace` - namespace でラップ
-- `--preamble` - ランタイム型を含める
-- `--naming <type>` - preserve (default) または camelCase
+**Options:**
+- `--out <dir>` - Output directory
+- `--namespace` - Wrap in namespace
+- `--preamble` - Include runtime types
+- `--naming <type>` - preserve (default) or camelCase
 
-### mbts link - exports 自動更新
+### mbts link - Auto-update exports
 
 ```bash
-# moon info 実行後に exports を更新
+# Update exports after running 'moon info'
 moon info
 mbts link src/moon.pkg.json
 
-# 複数ターゲット
+# Multiple targets
 mbts link src --targets js,wasm-gc
 
-# メソッドを除外
+# Exclude methods
 mbts link src --no-methods
 
-# ドライラン
+# Dry run
 mbts link src --dry-run
 ```
 
-## プログラム API
+## Programmatic API
 
 ### .mbti → .d.ts
 
@@ -114,18 +114,18 @@ export interface User {
 export function createUser(name: string): User;
 `;
 
-// 方法1: 個別に生成
+// Method 1: Generate separately
 const binding = parseDts(dtsContent, "lib.d.ts", { packageName: "myapp" });
 const mbt = generateMbt(binding);
 const mbti = generateMbti(binding);
 
-// 方法2: 一括生成
+// Method 2: Generate together
 const result = dtsToMbtWithMbti(dtsContent, "lib.d.ts", { packageName: "myapp" });
-console.log(result.mbt);   // .mbt コード
-console.log(result.mbti);  // .mbti インターフェース
+console.log(result.mbt);   // .mbt code
+console.log(result.mbti);  // .mbti interface
 ```
 
-## 型変換ルール
+## Type Mapping
 
 ### MoonBit → TypeScript
 
@@ -160,7 +160,7 @@ console.log(result.mbti);  // .mbti インターフェース
 | `T \| undefined` | `T?` |
 | `any` / `unknown` | `Json` |
 
-### 関数
+### Functions
 
 ```mbti
 // MoonBit
@@ -172,7 +172,7 @@ fn get_user_name(user_id : Int) -> String
 export function getUserName(userId: number): string;
 ```
 
-### 構造体
+### Structs
 
 ```mbti
 // MoonBit
@@ -192,7 +192,7 @@ export interface User {
 }
 ```
 
-### クラス
+### Classes
 
 ```typescript
 // TypeScript
@@ -204,7 +204,7 @@ export class Counter {
 ```
 
 ```moonbit
-// 生成される MoonBit
+// Generated MoonBit
 #external
 type Counter
 
@@ -218,7 +218,7 @@ extern "js" fn Counter::get_value(self : Counter) -> Int =
   #| (self) => self.getValue()
 ```
 
-### 列挙型
+### Enums
 
 ```mbti
 // MoonBit
@@ -237,7 +237,7 @@ export interface LoadState_Success { readonly $tag: "Success"; readonly $0: stri
 export type LoadState = LoadState_Idle | LoadState_Loading | LoadState_Success | LoadState_Error;
 ```
 
-## 変換フロー
+## Conversion Flow
 
 ```
 TypeScript (.d.ts)          MoonBit (.mbti)
@@ -246,29 +246,32 @@ TypeScript (.d.ts)          MoonBit (.mbti)
         ▼                         ▼
     MoonBit (.mbt)  ◄──────►  TypeScript (.d.ts)
         │
-        │ --mbti オプション
+        │ --mbti option
         ▼
     MoonBit (.mbti)
 ```
 
-## 開発
+## Development
 
 ```bash
-# 依存関係のインストール
+# Install dependencies
 moon update
 pnpm install
 
-# MoonBit ビルド
+# Build MoonBit
 moon build --target js
 
-# テスト実行
+# Build CLI
+pnpm build
+
+# Run tests
 moon test
 pnpm test
 
-# スナップショットの更新
+# Update snapshots
 moon test --update
 ```
 
-## ライセンス
+## License
 
 MIT

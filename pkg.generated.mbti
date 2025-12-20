@@ -1,8 +1,11 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "mizchi/tsnize"
+package "mizchi/mbts"
 
 import(
+  "moonbitlang/core/list"
+  "moonbitlang/parser/basic"
   "moonbitlang/parser/mbti_ast"
+  "moonbitlang/parser/syntax"
 )
 
 // Values
@@ -10,11 +13,17 @@ pub fn generate_combined_dts(Array[@mbti_ast.Mbti]) -> String
 
 pub fn generate_dts(@mbti_ast.Mbti) -> String
 
+pub fn generate_dts_from_mbt(String, String) -> String
+
 pub fn generate_dts_namespace(@mbti_ast.Mbti) -> String
 
 pub fn generate_dts_with_preamble(@mbti_ast.Mbti, include_preamble~ : Bool) -> String
 
+pub fn generate_mbt(MbtBinding) -> String
+
 pub fn package_to_namespace(String) -> String
+
+pub fn parse_mbt(String, String) -> (@list.List[@syntax.Impl], Array[@basic.Report])
 
 pub fn parse_mbti(String, String) -> @mbti_ast.Mbti raise
 
@@ -23,6 +32,82 @@ pub fn preprocess_mbti(String) -> String
 // Errors
 
 // Types and methods
+pub struct MbtBinding {
+  package_name : String
+  types : Array[MbtType]
+  functions : Array[MbtFunction]
+  extern_types : Array[String]
+  classes : Array[MbtClass]
+}
+pub fn MbtBinding::from_json(Json) -> Self?
+pub fn MbtBinding::new() -> Self
+
+pub struct MbtClass {
+  name : String
+  type_params : Array[String]
+  methods : Array[MbtMethod]
+  has_constructor : Bool
+}
+pub fn MbtClass::from_json(Json) -> Self?
+
+pub struct MbtField {
+  name : String
+  type_ : String
+  mutable : Bool
+}
+pub fn MbtField::from_json(Json) -> Self?
+pub fn MbtField::new(String, String) -> Self
+
+pub struct MbtFunction {
+  name : String
+  params : Array[MbtParam]
+  return_type : String
+  is_async : Bool
+  js_name : String
+  type_params : Array[String]
+  is_method : Bool
+  class_name : String
+}
+pub fn MbtFunction::from_json(Json) -> Self?
+pub fn MbtFunction::new(String, String) -> Self
+
+pub struct MbtMethod {
+  name : String
+  js_name : String
+}
+pub fn MbtMethod::from_json(Json) -> Self?
+
+pub struct MbtParam {
+  name : String
+  type_ : String
+  optional : Bool
+}
+pub fn MbtParam::from_json(Json) -> Self?
+pub fn MbtParam::new(String, String) -> Self
+
+pub struct MbtType {
+  name : String
+  kind : MbtTypeKind
+  fields : Array[MbtField]
+  variants : Array[MbtVariant]
+  type_params : Array[String]
+  js_name : String
+}
+pub fn MbtType::from_json(Json) -> Self?
+pub fn MbtType::new(String, MbtTypeKind) -> Self
+
+pub enum MbtTypeKind {
+  Struct
+  Type
+  Enum
+}
+
+pub struct MbtVariant {
+  name : String
+  payload : Array[String]
+}
+pub fn MbtVariant::from_json(Json) -> Self?
+pub fn MbtVariant::new(String) -> Self
 
 // Type aliases
 

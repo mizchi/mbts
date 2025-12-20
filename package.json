@@ -1,14 +1,17 @@
 {
   "name": "mbts",
   "version": "0.0.1",
-  "description": "MoonBit と TypeScript 間の型定義を相互変換するツールです。",
+  "description": "MoonBit / TypeScript interoperability helpers",
   "main": "js/index.ts",
   "scripts": {
-    "build": "moon build --target js",
+    "build": "moon build --target js && pnpm build:cli",
+    "build:cli": "esbuild js/cli.ts --bundle --platform=node --format=cjs --outfile=js/cli.cjs --external:typescript",
     "test": "vitest run",
     "test:watch": "vitest",
     "mbts": "npx tsx js/cli.ts"
   },
+  "files": ["js", "target/js/release/build/cli"],
+  "bin": "js/cli.cjs",
   "keywords": [
     "moonbit",
     "typescript",
@@ -20,6 +23,7 @@
   "type": "module",
   "devDependencies": {
     "@types/node": "^25.0.3",
+    "esbuild": "^0.27.2",
     "typescript": "^5.9.3",
     "vitest": "^4.0.16"
   },

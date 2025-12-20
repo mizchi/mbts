@@ -13,8 +13,8 @@ fn main {
 /// Exported for JS usage
 pub fn generate_dts_from_string(content : String, filename : String) -> String {
   try {
-    let mbti = @tsnize.parse_mbti(content, filename)
-    @tsnize.generate_dts(mbti)
+    let mbti = @mbts.parse_mbti(content, filename)
+    @mbts.generate_dts(mbti)
   } catch {
     e => "// Error: \{e}"
   }
@@ -27,8 +27,8 @@ pub fn generate_dts_with_preamble_from_string(
   filename : String,
 ) -> String {
   try {
-    let mbti = @tsnize.parse_mbti(content, filename)
-    @tsnize.generate_dts_with_preamble(mbti, include_preamble=true)
+    let mbti = @mbts.parse_mbti(content, filename)
+    @mbts.generate_dts_with_preamble(mbti, include_preamble=true)
   } catch {
     e => "// Error: \{e}"
   }
@@ -41,8 +41,8 @@ pub fn generate_dts_namespace_from_string(
   filename : String,
 ) -> String {
   try {
-    let mbti = @tsnize.parse_mbti(content, filename)
-    @tsnize.generate_dts_namespace(mbti)
+    let mbti = @mbts.parse_mbti(content, filename)
+    @mbts.generate_dts_namespace(mbti)
   } catch {
     e => "// Error: \{e}"
   }
@@ -53,7 +53,7 @@ pub fn generate_dts_namespace_from_string(
 /// This enables TypeScript to work with the parsed structure directly
 pub fn parse_mbti_to_json(content : String, filename : String) -> String {
   try {
-    let mbti = @tsnize.parse_mbti(content, filename)
+    let mbti = @mbts.parse_mbti(content, filename)
     mbti.to_json().stringify()
   } catch {
     e => {
@@ -72,8 +72,8 @@ pub fn generate_mbt_from_json(json_str : String) -> String {
   let json = @json.parse(json_str) catch {
     e => return "// Error: JSON parse error: \{e}"
   }
-  match @tsnize.MbtBinding::from_json(json) {
-    Some(binding) => @tsnize.generate_mbt(binding)
+  match @mbts.MbtBinding::from_json(json) {
+    Some(binding) => @mbts.generate_mbt(binding)
     None => "// Error: Failed to parse MbtBinding from JSON"
   }
 }
@@ -81,6 +81,9 @@ pub fn generate_mbt_from_json(json_str : String) -> String {
 ///|
 /// Parse .mbt source code and generate TypeScript definitions
 /// This enables direct .mbt -> .d.ts conversion without intermediate .mbti
-pub fn generate_dts_from_mbt_string(content : String, filename : String) -> String {
-  @tsnize.generate_dts_from_mbt(content, filename)
+pub fn generate_dts_from_mbt_string(
+  content : String,
+  filename : String,
+) -> String {
+  @mbts.generate_dts_from_mbt(content, filename)
 }

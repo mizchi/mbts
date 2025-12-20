@@ -138,7 +138,7 @@ fn gen_mbt_type(t : MbtType) -> String {
     ""
   }
   match t.kind {
-    Struct => {
+    Struct =>
       if t.fields.length() == 0 {
         "pub struct \{t.name}\{type_params} {}"
       } else {
@@ -160,7 +160,6 @@ fn gen_mbt_type(t : MbtType) -> String {
         buf.write_string("}")
         buf.to_string()
       }
-    }
     Enum => {
       let buf = StringBuilder::new()
       buf.write_string("pub enum ")
@@ -428,9 +427,7 @@ pub fn MbtBinding::from_json(json : Json) -> MbtBinding? {
       let types = parse_mbt_types(get_array(obj, "types"))
       let functions = parse_mbt_functions(get_array(obj, "functions"))
       let classes = parse_mbt_classes(get_array(obj, "classes"))
-      Some(
-        MbtBinding::{ package_name, types, functions, extern_types, classes },
-      )
+      Some(MbtBinding::{ package_name, types, functions, extern_types, classes })
     }
   }
 }
@@ -612,18 +609,16 @@ pub fn MbtFunction::from_json(json : Json) -> MbtFunction? {
       let is_method = get_bool(obj, "isMethod").unwrap_or(false)
       let class_name = get_string(obj, "className").unwrap_or("")
       let params = parse_mbt_params(get_array(obj, "params"))
-      Some(
-        MbtFunction::{
-          name,
-          params,
-          return_type,
-          is_async,
-          js_name,
-          type_params,
-          is_method,
-          class_name,
-        },
-      )
+      Some(MbtFunction::{
+        name,
+        params,
+        return_type,
+        is_async,
+        js_name,
+        type_params,
+        is_method,
+        class_name,
+      })
     }
   }
 }
