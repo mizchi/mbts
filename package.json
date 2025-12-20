@@ -1,5 +1,5 @@
 {
-  "name": "mbts",
+  "name": "@mizchi/mbts",
   "version": "0.0.1",
   "description": "MoonBit / TypeScript interoperability helpers",
   "main": "js/index.ts",
