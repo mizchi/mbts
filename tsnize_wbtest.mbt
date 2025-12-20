@@ -256,6 +256,182 @@ test "snapshot: complex types" (t : @test.Test) {
 }
 
 ///|
+test "snapshot: mbti_ast package - full mbti file" (t : @test.Test) {
+  // Test with actual pkg.generated.mbti content including pub impl and pub using
+  let content =
+    #|// Generated using `moon info`, DON'T EDIT IT
+    #|package "moonbitlang/parser/mbti_ast"
+    #|
+    #|import(
+    #|  "moonbitlang/core/list"
+    #|  "moonbitlang/parser/basic"
+    #|  "moonbitlang/parser/syntax"
+    #|)
+    #|
+    #|// Values
+    #|
+    #|// Errors
+    #|
+    #|// Types and methods
+    #|pub(all) enum AliasSig {
+    #|  TypeAlias(name~ : Name, type_params~ : @list.List[TypeParamNoConstraints], type_~ : @syntax.Type, vis~ : @syntax.Visibility)
+    #|  TraitAlias(name~ : Name, trait_name~ : QualifiedName, vis~ : @syntax.Visibility)
+    #|  FnAlias(name~ : Name, type_name~ : QualifiedName, loc~ : @basic.Location)
+    #|}
+    #|pub impl ToJson for AliasSig
+    #|
+    #|pub(all) struct ConstSig {
+    #|  name : Name
+    #|  type_ : @syntax.Type
+    #|  value : @syntax.Constant
+    #|}
+    #|pub impl ToJson for ConstSig
+    #|
+    #|pub(all) struct FuncSig {
+    #|  attr : @list.List[(String, String?, String)]
+    #|  type_name : Name?
+    #|  name : Name
+    #|  params : @list.List[Parameter]
+    #|  return_ : (@syntax.Type, @syntax.ErrorType)
+    #|  type_params : @list.List[TypeParamWithConstraints]
+    #|}
+    #|pub impl ToJson for FuncSig
+    #|
+    #|pub(all) enum ImplSig {
+    #|  Trait(type_params~ : @list.List[TypeParamWithConstraints], type_~ : @syntax.Type, trait_name~ : QualifiedName)
+    #|  DefaultImpl(trait_name~ : Name, method_name~ : Name)
+    #|}
+    #|pub impl ToJson for ImplSig
+    #|
+    #|pub(all) struct Mbti {
+    #|  package_name : String
+    #|  imports : @list.List[PackageImport]
+    #|  sigs : @list.List[(Sig, @basic.Location)]
+    #|}
+    #|pub impl ToJson for Mbti
+    #|
+    #|pub(all) struct Name {
+    #|  name : String
+    #|  loc : @basic.Location
+    #|}
+    #|pub impl ToJson for Name
+    #|
+    #|pub(all) struct PackageImport {
+    #|  name : String
+    #|  alias_ : String?
+    #|}
+    #|pub impl ToJson for PackageImport
+    #|
+    #|pub(all) enum Parameter {
+    #|  Positional(@syntax.Type)
+    #|  Labelled(@syntax.Label, @syntax.Type)
+    #|  Autofill(@syntax.Label, @syntax.Type)
+    #|  OptionalDefault(@syntax.Label, @syntax.Type)
+    #|  OptionalOption(@syntax.Label, @syntax.Type)
+    #|}
+    #|pub impl ToJson for Parameter
+    #|
+    #|pub(all) struct QualifiedName {
+    #|  name : @syntax.LongIdent
+    #|  loc : @basic.Location
+    #|}
+    #|pub impl ToJson for QualifiedName
+    #|
+    #|pub(all) enum Sig {
+    #|  Func(FuncSig)
+    #|  Type(TypeSig)
+    #|  Alias(AliasSig)
+    #|  Trait(TraitSig)
+    #|  Impl(ImplSig)
+    #|  Const(ConstSig)
+    #|  Value(ValueSig)
+    #|}
+    #|pub impl ToJson for Sig
+    #|
+    #|pub(all) enum TraitMethodParameter {
+    #|  Positional(@syntax.Type)
+    #|  Labelled(@syntax.Label, @syntax.Type)
+    #|}
+    #|pub impl ToJson for TraitMethodParameter
+    #|
+    #|pub(all) struct TraitMethodSig {
+    #|  name : Name
+    #|  params : @list.List[TraitMethodParameter]
+    #|  has_default : Bool
+    #|  return_ : (@syntax.Type, @syntax.ErrorType)
+    #|}
+    #|pub impl ToJson for TraitMethodSig
+    #|
+    #|pub(all) struct TraitSig {
+    #|  name : Name
+    #|  super_traits : @list.List[QualifiedName]
+    #|  methods : @list.List[TraitMethodSig]
+    #|  vis : @syntax.Visibility
+    #|}
+    #|pub impl ToJson for TraitSig
+    #|
+    #|pub(all) enum TypeParamNoConstraints {
+    #|  Name(Name)
+    #|  Underscore(@basic.Location)
+    #|}
+    #|pub impl ToJson for TypeParamNoConstraints
+    #|
+    #|pub(all) struct TypeParamWithConstraints {
+    #|  name : Name
+    #|  constraints : @list.List[QualifiedName]
+    #|}
+    #|pub impl ToJson for TypeParamWithConstraints
+    #|
+    #|pub(all) struct TypeSig {
+    #|  name : Name
+    #|  type_params : @list.List[TypeParamNoConstraints]
+    #|  components : @syntax.TypeDesc
+    #|  vis : @syntax.Visibility
+    #|}
+    #|pub impl ToJson for TypeSig
+    #|
+    #|pub(all) struct ValueSig {
+    #|  name : Name
+    #|  type_ : @syntax.Type
+    #|}
+    #|pub impl ToJson for ValueSig
+    #|
+    #|// Type aliases
+    #|pub using @syntax {type Constant}
+    #|
+    #|pub using @syntax {type ConstrDecl}
+    #|
+    #|pub using @syntax {type ConstrId}
+    #|
+    #|pub using @syntax {type ConstrName}
+    #|
+    #|pub using @syntax {type ConstrParam}
+    #|
+    #|pub using @syntax {type ErrorType}
+    #|
+    #|pub using @syntax {type FieldDecl}
+    #|
+    #|pub using @syntax {type FieldName}
+    #|
+    #|pub using @syntax {type Label}
+    #|
+    #|pub using @syntax {type LongIdent as QualifiedIdent}
+    #|
+    #|pub using @syntax {type Type}
+    #|
+    #|pub using @syntax {type TypeDesc}
+    #|
+    #|pub using @syntax {type Visibility}
+    #|
+    #|// Traits
+    #|
+  let mbti = parse_mbti(content, "mbti_ast.mbti")
+  let dts = generate_dts(mbti)
+  t.write(dts)
+  t.snapshot(filename="mbti_ast.d.ts")
+}
+
+///|
 // Test case from mod.test.ts - WebSocket
 test "snapshot: websocket mbti" (t : @test.Test) {
   let content =
@@ -290,4 +466,285 @@ test "snapshot: websocket mbti" (t : @test.Test) {
   let dts = generate_dts(mbti)
   t.write(dts)
   t.snapshot(filename="websocket.d.ts")
+}
+
+///|
+test "snapshot: basic package with namespace" (t : @test.Test) {
+  let content =
+    #|package "moonbitlang/parser/basic"
+    #|
+    #|pub(all) enum LocStyle {
+    #|  Hidden
+    #|  Json
+    #|  String
+    #|}
+    #|
+    #|pub(all) struct Location {
+    #|  start : Position
+    #|  end : Position
+    #|}
+    #|fn Location::merge(Self, Self) -> Self
+    #|
+    #|pub(all) struct Position {
+    #|  fname : String
+    #|  lnum : Int
+    #|  bol : Int
+    #|  cnum : Int
+    #|}
+    #|fn Position::column(Self) -> Int
+    #|
+  let mbti = parse_mbti(content, "basic.mbti")
+  let dts = generate_dts_namespace(mbti)
+  t.write(dts)
+  t.snapshot(filename="basic_namespace.d.ts")
+}
+
+///|
+test "package_to_namespace" {
+  inspect(package_to_namespace("moonbitlang/parser/basic"), content="basic")
+  inspect(package_to_namespace("moonbitlang/parser/syntax"), content="syntax")
+  inspect(package_to_namespace("test"), content="test")
+}
+
+// ============================================================
+// 曖昧性のあるケース - Phase 3 前に意思決定が必要
+// ============================================================
+
+///|
+// Q: メソッド (Type::method) をどう出力するか？
+// 現状: コメントとして出力 "// Method: Type::method"
+// 選択肢:
+//   A) interface のメソッドとして出力
+//   B) スタンドアロン関数として出力 (Type$method)
+//   C) コメントのまま (現状)
+test "snapshot: ambiguous - methods" (t : @test.Test) {
+  let content =
+    #|package "test/methods"
+    #|
+    #|pub(all) struct Position {
+    #|  line : Int
+    #|  column : Int
+    #|}
+    #|fn Position::new(Int, Int) -> Self
+    #|fn Position::offset(Self) -> Int
+    #|fn Position::compare(Self, Self) -> Int
+    #|
+  let mbti = parse_mbti(content, "methods.mbti")
+  let dts = generate_dts(mbti)
+  t.write(dts)
+  t.snapshot(filename="ambiguous_methods.d.ts")
+}
+
+///|
+// Q: suberror をどう出力するか？
+// 選択肢:
+//   A) Error クラスを継承した型として出力
+//   B) Discriminated Union として出力
+//   C) スキップ (現状)
+test "snapshot: ambiguous - suberror" (t : @test.Test) {
+  let content =
+    #|package "test/error"
+    #|
+    #|pub suberror ParseError {
+    #|  UnexpectedToken(String)
+    #|  UnexpectedEndOfInput
+    #|  InvalidSyntax(line~ : Int, message~ : String)
+    #|}
+    #|
+  let mbti = parse_mbti(content, "error.mbti")
+  let dts = generate_dts(mbti)
+  t.write(dts)
+  t.snapshot(filename="ambiguous_suberror.d.ts")
+}
+
+///|
+// Q: トップレベル関数 (pub fn) をどう出力するか？
+// 現状: export function として出力
+// 確認: snake_case → camelCase 変換は適切か？
+test "snapshot: ambiguous - top level functions" (t : @test.Test) {
+  let content =
+    #|package "test/functions"
+    #|
+    #|fn create_instance() -> Instance
+    #|fn parse_with_options(String, Options) -> Result
+    #|fn[T] identity(T) -> T
+    #|fn[A, B] map_result(Result[A, Error], (A) -> B) -> Result[B, Error]
+    #|
+    #|pub type Instance
+    #|pub type Options
+    #|pub type Result[T, E]
+    #|pub type Error
+    #|
+  let mbti = parse_mbti(content, "functions.mbti")
+  let dts = generate_dts(mbti)
+  t.write(dts)
+  t.snapshot(filename="ambiguous_functions.d.ts")
+}
+
+///|
+// Q: trait をどう出力するか？
+// 現状: interface として出力
+// 課題: Self 型パラメータの扱い
+test "snapshot: ambiguous - traits" (t : @test.Test) {
+  let content =
+    #|package "test/traits"
+    #|
+    #|pub trait Show {
+    #|  to_string(Self) -> String
+    #|}
+    #|
+    #|pub trait Compare {
+    #|  compare(Self, Self) -> Int
+    #|}
+    #|
+    #|pub trait Default {
+    #|  default() -> Self
+    #|}
+    #|
+  let mbti = parse_mbti(content, "traits.mbti")
+  let dts = generate_dts(mbti)
+  t.write(dts)
+  t.snapshot(filename="ambiguous_traits.d.ts")
+}
+
+///|
+// Q: 特殊な型 (Ref, FixedArray, etc.) をどう扱うか？
+// 現状: そのまま出力
+// 選択肢:
+//   A) TypeScript の Ref<T> として出力 (定義が必要)
+//   B) { value: T } として展開
+//   C) そのまま (現状)
+test "snapshot: ambiguous - special types" (t : @test.Test) {
+  let content =
+    #|package "test/special"
+    #|
+    #|pub(all) struct Config {
+    #|  mut counter : Ref[Int]
+    #|  buffer : FixedArray[Byte]
+    #|  items : @list.List[String]
+    #|  table : @hashmap.HashMap[String, Int]
+    #|}
+    #|
+  let mbti = parse_mbti(content, "special.mbti")
+  let dts = generate_dts(mbti)
+  t.write(dts)
+  t.snapshot(filename="ambiguous_special_types.d.ts")
+}
+
+///|
+// Q: typealias をどう出力するか？
+// 注意: mbti_parser が typealias をサポートしていない可能性
+// TODO: パーサーのバージョンアップ後に再確認
+// test "snapshot: ambiguous - typealias" (t : @test.Test) {
+//   let content =
+//     #|package "test/alias"
+//     #|
+//     #|pub typealias UserId = Int
+//     #|pub typealias Handler[T] = (T) -> Unit
+//     #|pub typealias Callback = (String, Int) -> Bool
+//     #|
+//   let mbti = parse_mbti(content, "alias.mbti")
+//   let dts = generate_dts(mbti)
+//   t.write(dts)
+//   t.snapshot(filename="ambiguous_typealias.d.ts")
+// }
+
+///|
+// Q: async 関数 / Promise をどう扱うか？
+// 現状: 戻り値が Promise[T] の場合は Promise<T>
+// 確認: async の情報は .mbti に含まれるか？
+test "snapshot: ambiguous - async functions" (t : @test.Test) {
+  let content =
+    #|package "test/async"
+    #|
+    #|fn fetch_data(String) -> Promise[String]
+    #|fn fetch_json(String) -> Promise[Json]
+    #|fn delay(Int) -> Promise[Unit]
+    #|
+    #|pub type Promise[T]
+    #|pub type Json
+    #|
+  let mbti = parse_mbti(content, "async.mbti")
+  let dts = generate_dts(mbti)
+  t.write(dts)
+  t.snapshot(filename="ambiguous_async.d.ts")
+}
+
+///|
+// Q: 外部パッケージ参照をどう解決するか？
+// 現状: @pkg.Type → pkg.Type
+// 課題: pkg が定義されていない場合の扱い
+test "snapshot: ambiguous - external references" (t : @test.Test) {
+  let content =
+    #|package "test/external"
+    #|
+    #|import(
+    #|  "some/external/pkg"
+    #|)
+    #|
+    #|pub(all) struct Wrapper {
+    #|  loc : @pkg.Location
+    #|  tokens : @pkg.TokenList
+    #|  ast : @another.Node
+    #|}
+    #|
+    #|fn process(@pkg.Input) -> @pkg.Output
+    #|
+  let mbti = parse_mbti(content, "external.mbti")
+  let dts = generate_dts(mbti)
+  t.write(dts)
+  t.snapshot(filename="ambiguous_external.d.ts")
+}
+
+///|
+test "snapshot: combined packages" (t : @test.Test) {
+  let basic_content =
+    #|package "moonbitlang/parser/basic"
+    #|
+    #|pub(all) struct Position {
+    #|  fname : String
+    #|  lnum : Int
+    #|  bol : Int
+    #|  cnum : Int
+    #|}
+    #|
+    #|pub(all) struct Location {
+    #|  start : Position
+    #|  end : Position
+    #|}
+    #|
+  let tokens_content =
+    #|package "moonbitlang/parser/tokens"
+    #|
+    #|import(
+    #|  "moonbitlang/parser/basic"
+    #|)
+    #|
+    #|pub(all) struct Comment {
+    #|  content : String
+    #|  kind : CommentKind
+    #|  mut consumed_by_docstring : Bool
+    #|}
+    #|
+    #|pub(all) enum CommentKind {
+    #|  InlineTrailing
+    #|  Ownline(leading_blank_line~ : Bool, trailing_blank_line~ : Bool)
+    #|}
+    #|
+    #|pub(all) enum Token {
+    #|  CHAR(String)
+    #|  INT(String)
+    #|  STRING(String)
+    #|  LIDENT(String)
+    #|  UIDENT(String)
+    #|  COMMENT(Comment)
+    #|  NEWLINE
+    #|  EOF
+    #|}
+    #|
+  let basic = parse_mbti(basic_content, "basic.mbti")
+  let tokens = parse_mbti(tokens_content, "tokens.mbti")
+  let dts = generate_combined_dts([basic, tokens])
+  t.write(dts)
+  t.snapshot(filename="combined_packages.d.ts")
 }

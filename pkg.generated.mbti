@@ -1,0 +1,30 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "mizchi/tsnize"
+
+import(
+  "moonbitlang/parser/mbti_ast"
+)
+
+// Values
+pub fn generate_combined_dts(Array[@mbti_ast.Mbti]) -> String
+
+pub fn generate_dts(@mbti_ast.Mbti) -> String
+
+pub fn generate_dts_namespace(@mbti_ast.Mbti) -> String
+
+pub fn generate_dts_with_preamble(@mbti_ast.Mbti, include_preamble~ : Bool) -> String
+
+pub fn package_to_namespace(String) -> String
+
+pub fn parse_mbti(String, String) -> @mbti_ast.Mbti raise
+
+pub fn preprocess_mbti(String) -> String
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

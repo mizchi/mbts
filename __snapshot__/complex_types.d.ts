@@ -12,6 +12,4 @@ export interface Any {
   readonly __brand: "Any";
 }
 
-export interface Map<K, V> {
-  readonly __brand: "Map";
-}
+// Using TypeScript built-in: Map

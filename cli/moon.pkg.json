@@ -1,0 +1,17 @@
+{
+  "is-main": true,
+  "import": [
+    { "path": "mizchi/tsnize", "alias": "tsnize" }
+  ],
+  "link": {
+    "js": {
+      "exports": [
+        "generate_dts_from_string",
+        "generate_dts_with_preamble_from_string",
+        "generate_dts_namespace_from_string",
+        "parse_mbti_to_json"
+      ],
+      "format": "esm"
+    }
+  }
+}

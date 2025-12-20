@@ -8,22 +8,22 @@ export interface Storage {
   readonly length: number;
 }
 
-// Method: Storage::as_any
+export function Storage$asAny(arg0: Storage): core.Any;
 
-// Method: Storage::clear
+export function Storage$clear(arg0: Storage): void;
 
-// Method: Storage::entries
+export function Storage$entries(arg0: Storage): Array<[string, string]>;
 
-// Method: Storage::getItem
+export function Storage$getItem(arg0: Storage, arg1: string): string | undefined;
 
-// Method: Storage::hasItem
+export function Storage$hasItem(arg0: Storage, arg1: string): boolean;
 
-// Method: Storage::key
+export function Storage$key(arg0: Storage, arg1: number): string | undefined;
 
-// Method: Storage::keys
+export function Storage$keys(arg0: Storage): Array<string>;
 
-// Method: Storage::removeItem
+export function Storage$removeItem(arg0: Storage, arg1: string): void;
 
-// Method: Storage::setItem
+export function Storage$setItem(arg0: Storage, arg1: string, arg2: string): void;
 
-// Method: Storage::values
+export function Storage$values(arg0: Storage): Array<string>;

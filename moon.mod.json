@@ -1,6 +1,9 @@
 {
   "name": "mizchi/tsnize",
+  "version": "0.0.1",
   "deps": {
-    "moonbitlang/parser": "0.1.12"
+    "moonbitlang/parser": "0.1.12",
+    "mizchi/js": "0.10.3",
+    "mizchi/markdown": "0.1.2"
   }
 }

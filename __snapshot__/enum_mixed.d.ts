@@ -6,7 +6,7 @@ export interface LoadState_Success { readonly $tag: "Success"; readonly $0: stri
 export interface LoadState_Error { readonly $tag: "Error"; readonly $0: string; }
 export type LoadState = LoadState_Idle | LoadState_Loading | LoadState_Success | LoadState_Error;
 
-export const LoadState$Idle: LoadState_Idle = { $tag: "Idle" };
-export const LoadState$Loading: LoadState_Loading = { $tag: "Loading" };
-export function LoadState$Success($0: string): LoadState_Success { return { $tag: "Success", $0 }; }
-export function LoadState$Error($0: string): LoadState_Error { return { $tag: "Error", $0 }; }
+export const LoadState$Idle: LoadState_Idle;
+export const LoadState$Loading: LoadState_Loading;
+export function LoadState$Success($0: string): LoadState_Success;
+export function LoadState$Error($0: string): LoadState_Error;

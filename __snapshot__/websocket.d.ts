@@ -8,11 +8,11 @@ export interface WebSocket {
   binaryType: string;
 }
 
-// Method: WebSocket::new
+export function WebSocket$new(arg0: string, protocols?: Array<string>): WebSocket;
 
-// Method: WebSocket::close
+export function WebSocket$close(arg0: WebSocket, code?: number, reason?: string): void;
 
-// Method: WebSocket::send_string
+export function WebSocket$sendString(arg0: WebSocket, arg1: string): void;
 
 export interface WebSocketReadyState_Connecting { readonly $tag: "Connecting"; }
 export interface WebSocketReadyState_Open { readonly $tag: "Open"; }
@@ -20,10 +20,10 @@ export interface WebSocketReadyState_Closing { readonly $tag: "Closing"; }
 export interface WebSocketReadyState_Closed { readonly $tag: "Closed"; }
 export type WebSocketReadyState = WebSocketReadyState_Connecting | WebSocketReadyState_Open | WebSocketReadyState_Closing | WebSocketReadyState_Closed;
 
-export const WebSocketReadyState$Connecting: WebSocketReadyState_Connecting = { $tag: "Connecting" };
-export const WebSocketReadyState$Open: WebSocketReadyState_Open = { $tag: "Open" };
-export const WebSocketReadyState$Closing: WebSocketReadyState_Closing = { $tag: "Closing" };
-export const WebSocketReadyState$Closed: WebSocketReadyState_Closed = { $tag: "Closed" };
+export const WebSocketReadyState$Connecting: WebSocketReadyState_Connecting;
+export const WebSocketReadyState$Open: WebSocketReadyState_Open;
+export const WebSocketReadyState$Closing: WebSocketReadyState_Closing;
+export const WebSocketReadyState$Closed: WebSocketReadyState_Closed;
 
 
-// Method: WebSocketReadyState::to_int
+export function WebSocketReadyState$toInt(arg0: WebSocketReadyState): number;

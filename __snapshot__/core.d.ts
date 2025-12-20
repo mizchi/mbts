@@ -22,21 +22,19 @@ export interface Any {
   readonly __brand: "Any";
 }
 
-// Method: Any::_get
+export function Any$Get(arg0: Any, arg1: string): Any;
 
-// Method: Any::_set
+export function Any$Set(arg0: Any, arg1: string, arg2: Any): void;
 
-// Method: Any::cast
+export function Any$cast<T>(arg0: Any): T;
 
-export interface Promise<T> {
-  readonly __brand: "Promise";
-}
+// Using TypeScript built-in: Promise
 
-// Method: Promise::wait
+export function Promise$wait<T>(arg0: Promise<T>): T;
 
-// Method: Promise::resolve
+export function Promise$resolve<A>(arg0: A): Promise<A>;
 
-// Method: Promise::reject
+export function Promise$reject(arg0: Any): Promise<Any>;
 
 export interface PromiseResolvers<T> {
   readonly promise: Promise<T>;

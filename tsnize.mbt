@@ -3,11 +3,47 @@
 // Uses moonbitlang/parser to correctly parse MBTI and generate TypeScript
 
 ///|
+/// Preprocess MBTI content to remove unsupported syntax
+/// (pub impl and pub using are not yet supported by mbti_parser)
+pub fn preprocess_mbti(content : String) -> String {
+  let lines = content.split("\n")
+  let filtered = lines.filter(fn(line) {
+    let trimmed = line.trim_space().to_string()
+    // Skip unsupported syntax in mbti_parser
+    not(trimmed.has_prefix("pub impl ")) &&
+      not(trimmed.has_prefix("pub using ")) &&
+      not(trimmed.has_prefix("pub let ")) &&
+      not(is_type_alias(trimmed)) // type alias (pub type X = Y) not supported
+  })
+  // Convert "pub fn" to "fn" for parser compatibility
+  let processed = filtered.map(fn(line) {
+    let s = line.to_string()
+    if s.trim_space().to_string().has_prefix("pub fn ") {
+      s.replace(old="pub fn ", new="fn ")
+    } else {
+      s
+    }
+  })
+  processed.collect().join("\n")
+}
+
+///|
+/// Check if line is a type alias (pub type X = Y), not abstract type (pub type X)
+fn is_type_alias(line : String) -> Bool {
+  if line.has_prefix("pub type ") {
+    line.contains(" = ")
+  } else {
+    false
+  }
+}
+
+///|
 /// Parse MBTI content and return the AST
 pub fn parse_mbti(content : String, filename : String) -> @mbti_ast.Mbti raise {
+  let preprocessed = preprocess_mbti(content)
   let lex_result = @lexer.tokens_from_string(
     name=filename,
-    content,
+    preprocessed,
     comment=false,
   )
   let tokens = lex_result.tokens.filter(fn(triple) {
@@ -22,10 +58,44 @@ pub fn parse_mbti(content : String, filename : String) -> @mbti_ast.Mbti raise {
 }
 
 ///|
+/// Extract namespace name from package name
+/// e.g., "moonbitlang/parser/basic" -> "basic"
+pub fn package_to_namespace(package_name : String) -> String {
+  let parts : Array[String] = package_name.split("/").map(fn(s) { s.to_string() }).collect()
+  if parts.length() > 0 {
+    parts[parts.length() - 1]
+  } else {
+    package_name
+  }
+}
+
+///|
+/// Generate preamble with runtime type definitions
+fn generate_preamble() -> String {
+  let buf = StringBuilder::new()
+  buf.write_string("// Runtime types\n")
+  buf.write_string("export interface Ref<T> { value: T }\n")
+  buf.write_string("\n")
+  buf.to_string()
+}
+
+///|
 /// Generate TypeScript .d.ts content from MBTI AST
 pub fn generate_dts(mbti : @mbti_ast.Mbti) -> String {
+  generate_dts_with_preamble(mbti, include_preamble=false)
+}
+
+///|
+/// Generate TypeScript .d.ts with optional preamble
+pub fn generate_dts_with_preamble(
+  mbti : @mbti_ast.Mbti,
+  include_preamble~ : Bool,
+) -> String {
   let buf = StringBuilder::new()
   buf.write_string("// Generated from .mbti file - DO NOT EDIT\n\n")
+  if include_preamble {
+    buf.write_string(generate_preamble())
+  }
 
   // Generate each signature
   for item in mbti.sigs {
@@ -35,6 +105,47 @@ pub fn generate_dts(mbti : @mbti_ast.Mbti) -> String {
       buf.write_string(ts)
       buf.write_string("\n\n")
     }
+  }
+  buf.to_string().trim_space().to_string()
+}
+
+///|
+/// Generate TypeScript .d.ts content wrapped in a namespace
+pub fn generate_dts_namespace(mbti : @mbti_ast.Mbti) -> String {
+  let ns = package_to_namespace(mbti.package_name)
+  let buf = StringBuilder::new()
+  buf.write_string("declare namespace ")
+  buf.write_string(ns)
+  buf.write_string(" {\n")
+
+  // Generate each signature with indentation
+  for item in mbti.sigs {
+    let (sig, _loc) = item
+    let ts = generate_sig(sig)
+    if ts.length() > 0 {
+      // Indent each line
+      for line in ts.split("\n") {
+        buf.write_string("  ")
+        buf.write_string(line.to_string())
+        buf.write_string("\n")
+      }
+      buf.write_string("\n")
+    }
+  }
+  buf.write_string("}\n")
+  buf.to_string()
+}
+
+///|
+/// Generate combined TypeScript .d.ts from multiple MBTI packages
+pub fn generate_combined_dts(packages : Array[@mbti_ast.Mbti]) -> String {
+  let buf = StringBuilder::new()
+  buf.write_string("// Generated from .mbti files - DO NOT EDIT\n")
+  buf.write_string("// MoonBit Parser TypeScript Definitions\n\n")
+
+  for pkg in packages {
+    buf.write_string(generate_dts_namespace(pkg))
+    buf.write_string("\n")
   }
   buf.to_string().trim_space().to_string()
 }
@@ -53,6 +164,45 @@ fn generate_sig(sig : @mbti_ast.Sig) -> String {
 }
 
 ///|
+/// Replace Self with actual type name in generated code
+fn replace_self(code : String, type_name : String) -> String {
+  let buf = StringBuilder::new()
+  let chars : Array[Char] = code.to_array()
+  let len = chars.length()
+  let mut i = 0
+  while i < len {
+    // Check for "Self" (must not be preceded/followed by alphanumeric)
+    if i + 4 <= len &&
+      chars[i] == 'S' &&
+      chars[i + 1] == 'e' &&
+      chars[i + 2] == 'l' &&
+      chars[i + 3] == 'f' {
+      // Check if preceded by alphanumeric
+      let preceded_by_alnum = i > 0 && is_alnum(chars[i - 1])
+      // Check if followed by alphanumeric
+      let followed_by_alnum = i + 4 < len && is_alnum(chars[i + 4])
+      if not(preceded_by_alnum) && not(followed_by_alnum) {
+        buf.write_string(type_name)
+        i += 4
+        continue
+      }
+    }
+    buf.write_char(chars[i])
+    i += 1
+  }
+  buf.to_string()
+}
+
+///|
+fn is_alnum(c : Char) -> Bool {
+  let code = c.to_int()
+  (code >= 48 && code <= 57) || // 0-9
+    (code >= 65 && code <= 90) || // A-Z
+    (code >= 97 && code <= 122) || // a-z
+    c == '_'
+}
+
+///|
 fn generate_func_sig(func : @mbti_ast.FuncSig) -> String {
   let buf = StringBuilder::new()
   let func_name = escape_func_name(to_camel_case(func.name.name))
@@ -68,12 +218,20 @@ fn generate_func_sig(func : @mbti_ast.FuncSig) -> String {
   let return_ts = generate_type(ret_type)
   match func.type_name {
     Some(type_name) => {
-      // Method
+      // Method: Type::method -> Type$method
       let ts_type_name = type_name.name
-      buf.write_string("// Method: ")
+      buf.write_string("export function ")
       buf.write_string(ts_type_name)
-      buf.write_string("::")
-      buf.write_string(func.name.name)
+      buf.write_string("$")
+      buf.write_string(to_camel_case(func.name.name))
+      buf.write_string(type_params)
+      buf.write_string("(")
+      buf.write_string(params)
+      buf.write_string("): ")
+      buf.write_string(return_ts)
+      buf.write_string(";")
+      // Replace Self with actual type name
+      replace_self(buf.to_string(), ts_type_name)
     }
     None => {
       // Standalone function
@@ -85,9 +243,19 @@ fn generate_func_sig(func : @mbti_ast.FuncSig) -> String {
       buf.write_string("): ")
       buf.write_string(return_ts)
       buf.write_string(";")
+      buf.to_string()
     }
   }
-  buf.to_string()
+}
+
+///|
+/// Check if type name conflicts with TypeScript built-in types
+fn is_ts_builtin_type(name : String) -> Bool {
+  match name {
+    "Promise" | "Error" | "Array" | "Map" | "Set" | "Date" | "RegExp" | "Symbol"
+    | "Function" | "Object" | "Number" | "String" | "Boolean" => true
+    _ => false
+  }
 }
 
 ///|
@@ -97,20 +265,32 @@ fn generate_type_sig(type_sig : @mbti_ast.TypeSig) -> String {
   let type_params = generate_type_params_no_constraints(type_sig.type_params)
   match type_sig.components {
     Abstract => {
-      buf.write_string("export interface ")
-      buf.write_string(name)
-      buf.write_string(type_params)
-      buf.write_string(" {\n  readonly __brand: \"")
-      buf.write_string(name)
-      buf.write_string("\";\n}")
+      // Skip TypeScript built-in types (use TS native ones)
+      if is_ts_builtin_type(name) {
+        buf.write_string("// Using TypeScript built-in: ")
+        buf.write_string(name)
+      } else {
+        buf.write_string("export interface ")
+        buf.write_string(name)
+        buf.write_string(type_params)
+        buf.write_string(" {\n  readonly __brand: \"")
+        buf.write_string(name)
+        buf.write_string("\";\n}")
+      }
     }
     Extern => {
-      buf.write_string("export interface ")
-      buf.write_string(name)
-      buf.write_string(type_params)
-      buf.write_string(" {\n  readonly __brand: \"")
-      buf.write_string(name)
-      buf.write_string("\";\n}")
+      // Skip TypeScript built-in types (use TS native ones)
+      if is_ts_builtin_type(name) {
+        buf.write_string("// Using TypeScript built-in: ")
+        buf.write_string(name)
+      } else {
+        buf.write_string("export interface ")
+        buf.write_string(name)
+        buf.write_string(type_params)
+        buf.write_string(" {\n  readonly __brand: \"")
+        buf.write_string(name)
+        buf.write_string("\";\n}")
+      }
     }
     Newtype(ty) => {
       buf.write_string("export type ")
@@ -144,13 +324,45 @@ fn generate_type_sig(type_sig : @mbti_ast.TypeSig) -> String {
       buf.write_string(generate_type(ty))
       buf.write_string(";")
     }
-    Error(_) => {
-      buf.write_string("export type ")
-      buf.write_string(name)
-      buf.write_string(" = Error;")
+    Error(exception_decl) => {
+      match exception_decl {
+        NoPayload => {
+          // Simple error type with no payload
+          buf.write_string("export interface ")
+          buf.write_string(name)
+          buf.write_string(" extends Error {\n  readonly $tag: \"")
+          buf.write_string(name)
+          buf.write_string("\";\n}")
+        }
+        SinglePayload(ty) => {
+          // Error with single payload
+          buf.write_string("export interface ")
+          buf.write_string(name)
+          buf.write_string(" extends Error {\n  readonly $tag: \"")
+          buf.write_string(name)
+          buf.write_string("\";\n  readonly $0: ")
+          buf.write_string(generate_type(ty))
+          buf.write_string(";\n}")
+        }
+        EnumPayload(constrs) => {
+          // Error with enum-like variants - same as enum
+          generate_error_enum_type(buf, name, type_params, constrs)
+        }
+      }
     }
   }
   buf.to_string()
+}
+
+///|
+fn generate_error_enum_type(
+  buf : StringBuilder,
+  name : String,
+  type_params : String,
+  constrs : @list.List[@syntax.ConstrDecl],
+) -> Unit {
+  // Same as generate_enum_type but extends Error
+  generate_enum_type_internal(buf, name, type_params, constrs, extends_error=true)
 }
 
 ///|
@@ -159,6 +371,17 @@ fn generate_enum_type(
   name : String,
   type_params : String,
   constrs : @list.List[@syntax.ConstrDecl],
+) -> Unit {
+  generate_enum_type_internal(buf, name, type_params, constrs, extends_error=false)
+}
+
+///|
+fn generate_enum_type_internal(
+  buf : StringBuilder,
+  name : String,
+  type_params : String,
+  constrs : @list.List[@syntax.ConstrDecl],
+  extends_error~ : Bool,
 ) -> Unit {
   let constrs_arr = constrs.to_array()
 
@@ -170,6 +393,9 @@ fn generate_enum_type(
     buf.write_string("_")
     buf.write_string(variant_name)
     buf.write_string(type_params)
+    if extends_error {
+      buf.write_string(" extends Error")
+    }
     buf.write_string(" { readonly $tag: \"")
     buf.write_string(variant_name)
     buf.write_string("\"")
@@ -242,18 +468,7 @@ fn generate_enum_type(
         buf.write_string(name)
         buf.write_string("_")
         buf.write_string(variant_name)
-        buf.write_string(" { return { $tag: \"")
-        buf.write_string(variant_name)
-        buf.write_string("\"")
-        for i, arg in args_arr {
-          buf.write_string(", ")
-          let param_name = match arg.label {
-            Some(label) => escape_func_name(label.name)
-            None => "$\{i}"
-          }
-          buf.write_string(param_name)
-        }
-        buf.write_string(" }; }\n")
+        buf.write_string(";\n")
       }
       None => {
         // Unit variant - constant
@@ -265,9 +480,7 @@ fn generate_enum_type(
         buf.write_string(name)
         buf.write_string("_")
         buf.write_string(variant_name)
-        buf.write_string(" = { $tag: \"")
-        buf.write_string(variant_name)
-        buf.write_string("\" };\n")
+        buf.write_string(";\n")
       }
     }
   }
@@ -335,23 +548,25 @@ fn generate_alias_sig(alias_sig : @mbti_ast.AliasSig) -> String {
 
 ///|
 fn generate_trait_sig(trait_sig : @mbti_ast.TraitSig) -> String {
+  let trait_name = trait_sig.name.name
   let buf = StringBuilder::new()
-  buf.write_string("export interface ")
-  buf.write_string(trait_sig.name.name)
-  buf.write_string(" {\n")
+  buf.write_string("// trait ")
+  buf.write_string(trait_name)
+  buf.write_string("\n")
   for m in trait_sig.methods {
     let params = generate_trait_method_params(m.params)
     let (ret_type, _) = m.return_
-    buf.write_string("  ")
-    buf.write_string(m.name.name)
-    buf.write_string("(")
+    buf.write_string("export function ")
+    buf.write_string(trait_name)
+    buf.write_string("$")
+    buf.write_string(to_camel_case(m.name.name))
+    buf.write_string("<Self>(")
     buf.write_string(params)
     buf.write_string("): ")
     buf.write_string(generate_type(ret_type))
     buf.write_string(";\n")
   }
-  buf.write_string("}")
-  buf.to_string()
+  buf.to_string().trim_space().to_string()
 }
 
 ///|
@@ -457,13 +672,15 @@ fn map_moonbit_type(name : String) -> String {
   match name {
     "String" => "string"
     "Int" | "UInt" | "Float" | "Double" | "Int64" | "UInt64" => "number"
+    "Byte" => "number"
     "Bool" => "boolean"
     "Unit" => "void"
     "Bytes" => "Uint8Array"
     "BigInt" => "bigint"
-    "Array" => "Array"
+    "Array" | "FixedArray" => "Array"
     "Map" => "Map"
     "Json" => "any"
+    "Ref" => "Ref" // Will be defined in preamble
     _ => name
   }
 }

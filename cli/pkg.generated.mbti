@@ -1,0 +1,18 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "mizchi/tsnize/cli"
+
+// Values
+pub fn generate_dts_from_string(String, String) -> String
+
+pub fn generate_dts_namespace_from_string(String, String) -> String
+
+pub fn generate_dts_with_preamble_from_string(String, String) -> String
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+
