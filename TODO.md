@@ -176,8 +176,16 @@ extern "js" fn Counter::increment(self : Counter) -> Int = "Counter.prototype.in
       - `extern type X` → `#external type X` (deprecated warning)
       - `fn method(self : Type)` → `fn Type::method(self : Type)`
 
-- [ ] 双方向変換の一貫性
-  - `.mbti → .d.ts → .mbt` の変換が往復して意味的に等価になるか
+- [x] 双方向変換の一貫性
+  - `.mbti → .d.ts → .mbt` の変換をテスト済み
+  - **保持される要素**:
+    - struct (フィールド名・型が保持) ✅
+    - 関数名 (snake_case ↔ camelCase 相互変換) ✅
+    - パラメータ型・戻り値型 ✅
+  - **変換で変わる要素**:
+    - enum → Discriminated Union → struct (MoonBit enum に戻らない)
+    - 関数パラメータ名 (arg0, arg1 などに変換される)
+  - **結論**: 型情報は保持されるが、完全な往復変換ではない
 
 - [x] 具体的なゴールの検証
   - mizchi/markdown の `.mbti` → `.d.ts` 生成が実用的か
