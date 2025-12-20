@@ -3,13 +3,11 @@
   "version": "1.0.0",
   "description": "MoonBit と TypeScript 間の型定義を相互変換するツールです。",
   "main": "js/index.ts",
-  "bin": {
-    "mbts": "js/cli.ts"
-  },
   "scripts": {
     "build": "moon build --target js",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "mbts": "npx tsx js/cli.ts"
   },
   "keywords": [
     "moonbit",

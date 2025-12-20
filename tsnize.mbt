@@ -937,3 +937,360 @@ fn escape_func_name(name : String) -> String {
     name
   }
 }
+
+// ============================================================
+// .mbt file parsing and .d.ts generation
+// ============================================================
+
+///|
+/// Parse .mbt content and return the AST
+pub fn parse_mbt(
+  content : String,
+  filename : String,
+) -> (@list.List[@syntax.Impl], Array[@basic.Report]) {
+  @parser.parse_string(content, name=filename)
+}
+
+///|
+/// Generate TypeScript .d.ts from .mbt source code
+pub fn generate_dts_from_mbt(content : String, filename : String) -> String {
+  let (impls, _reports) = parse_mbt(content, filename)
+  let buf = StringBuilder::new()
+  buf.write_string("// Generated from .mbt file - DO NOT EDIT\n\n")
+
+  // Generate each top-level declaration
+  for impl_ in impls {
+    let ts = generate_impl(impl_)
+    if ts.length() > 0 {
+      buf.write_string(ts)
+      buf.write_string("\n\n")
+    }
+  }
+  buf.to_string().trim_space().to_string()
+}
+
+///|
+/// Generate TypeScript for a single Impl (top-level declaration)
+fn generate_impl(impl_ : @syntax.Impl) -> String {
+  match impl_ {
+    TopTypeDef(type_decl) => generate_type_decl(type_decl)
+    TopFuncDef(fun_decl~, decl_body~, loc~) => {
+      ignore(decl_body)
+      ignore(loc)
+      generate_fun_decl(fun_decl)
+    }
+    TopTrait(trait_decl) => generate_mbt_trait_decl(trait_decl)
+    TopLetDef(binder~, ty~, expr~, vis~, is_constant~, loc~, attrs~, doc~) => {
+      ignore(expr)
+      ignore(is_constant)
+      ignore(loc)
+      ignore(attrs)
+      ignore(doc)
+      // Only export pub items
+      if is_pub_visibility(vis) {
+        let buf = StringBuilder::new()
+        buf.write_string("export const ")
+        buf.write_string(binder.name)
+        buf.write_string(": ")
+        match ty {
+          Some(t) => buf.write_string(generate_type(t))
+          None => buf.write_string("any")
+        }
+        buf.write_string(";")
+        buf.to_string()
+      } else {
+        ""
+      }
+    }
+    _ => "" // Skip other declarations for now
+  }
+}
+
+///|
+/// Check if visibility is pub
+fn is_pub_visibility(vis : @syntax.Visibility) -> Bool {
+  match vis {
+    Pub(..) => true
+    _ => false
+  }
+}
+
+///|
+/// Generate TypeScript for TypeDecl
+fn generate_type_decl(decl : @syntax.TypeDecl) -> String {
+  // Only export pub types
+  if not(is_pub_visibility(decl.type_vis)) {
+    return ""
+  }
+
+  let name = decl.tycon
+  let type_params = generate_mbt_type_params(decl.params)
+  let buf = StringBuilder::new()
+
+  match decl.components {
+    Abstract => {
+      if is_ts_builtin_type(name) {
+        buf.write_string("// Using TypeScript built-in: ")
+        buf.write_string(name)
+      } else {
+        buf.write_string("export interface ")
+        buf.write_string(name)
+        buf.write_string(type_params)
+        buf.write_string(" {\n  readonly __brand: \"")
+        buf.write_string(name)
+        buf.write_string("\";\n}")
+      }
+    }
+    Extern => {
+      if is_ts_builtin_type(name) {
+        buf.write_string("// Using TypeScript built-in: ")
+        buf.write_string(name)
+      } else {
+        buf.write_string("export interface ")
+        buf.write_string(name)
+        buf.write_string(type_params)
+        buf.write_string(" {\n  readonly __brand: \"")
+        buf.write_string(name)
+        buf.write_string("\";\n}")
+      }
+    }
+    Newtype(ty) => {
+      buf.write_string("export type ")
+      buf.write_string(name)
+      buf.write_string(type_params)
+      buf.write_string(" = ")
+      buf.write_string(generate_type(ty))
+      buf.write_string(";")
+    }
+    Variant(constrs) => generate_enum_type(buf, name, type_params, constrs)
+    Record(fields) => generate_struct_type(buf, name, type_params, fields)
+    TupleStruct(types) => {
+      buf.write_string("export type ")
+      buf.write_string(name)
+      buf.write_string(type_params)
+      buf.write_string(" = [")
+      let types_arr = types.to_array()
+      for i, ty in types_arr {
+        if i > 0 {
+          buf.write_string(", ")
+        }
+        buf.write_string(generate_type(ty))
+      }
+      buf.write_string("];")
+    }
+    Alias(ty) => {
+      buf.write_string("export type ")
+      buf.write_string(name)
+      buf.write_string(type_params)
+      buf.write_string(" = ")
+      buf.write_string(generate_type(ty))
+      buf.write_string(";")
+    }
+    Error(_) => {
+      buf.write_string("export interface ")
+      buf.write_string(name)
+      buf.write_string(" extends Error {\n  readonly $tag: \"")
+      buf.write_string(name)
+      buf.write_string("\";\n}")
+    }
+  }
+  buf.to_string()
+}
+
+///|
+/// Generate TypeScript type params from MBT TypeDeclBinder list
+fn generate_mbt_type_params(params : @list.List[@syntax.TypeDeclBinder]) -> String {
+  let params_arr = params.to_array()
+  if params_arr.length() == 0 {
+    return ""
+  }
+  let buf = StringBuilder::new()
+  buf.write_string("<")
+  for i, param in params_arr {
+    if i > 0 {
+      buf.write_string(", ")
+    }
+    match param.name {
+      Some(name) => buf.write_string(name)
+      None => buf.write_string("_")
+    }
+  }
+  buf.write_string(">")
+  buf.to_string()
+}
+
+///|
+/// Generate TypeScript for FunDecl
+fn generate_fun_decl(decl : @syntax.FunDecl) -> String {
+  // Only export pub functions
+  if not(is_pub_visibility(decl.vis)) {
+    return ""
+  }
+
+  let buf = StringBuilder::new()
+  let func_name = escape_func_name(to_camel_case(decl.name.name))
+
+  // Generate type parameters
+  let type_params = generate_mbt_func_type_params(decl.quantifiers)
+
+  // Handle method vs standalone function
+  match decl.type_name {
+    Some(type_name) => {
+      // Method: Type::method -> Type$method
+      let ts_type_name = long_ident_to_string(type_name.name)
+      buf.write_string("export function ")
+      buf.write_string(ts_type_name)
+      buf.write_string("$")
+      buf.write_string(to_camel_case(decl.name.name))
+      buf.write_string(type_params)
+      buf.write_string("(")
+      // Generate parameters
+      match decl.decl_params {
+        Some(params) => buf.write_string(generate_mbt_func_params(params))
+        None => ()
+      }
+      buf.write_string("): ")
+      // Generate return type
+      match decl.return_type {
+        Some(ty) => buf.write_string(generate_type(ty))
+        None => buf.write_string("void")
+      }
+      buf.write_string(";")
+      // Replace Self with actual type name
+      replace_self(buf.to_string(), ts_type_name)
+    }
+    None => {
+      // Standalone function
+      buf.write_string("export function ")
+      buf.write_string(func_name)
+      buf.write_string(type_params)
+      buf.write_string("(")
+      // Generate parameters
+      match decl.decl_params {
+        Some(params) => buf.write_string(generate_mbt_func_params(params))
+        None => ()
+      }
+      buf.write_string("): ")
+      // Generate return type
+      match decl.return_type {
+        Some(ty) => buf.write_string(generate_type(ty))
+        None => buf.write_string("void")
+      }
+      buf.write_string(";")
+      buf.to_string()
+    }
+  }
+}
+
+///|
+/// Generate type params from TypeVarBinder list
+fn generate_mbt_func_type_params(
+  binders : @list.List[@syntax.TypeVarBinder],
+) -> String {
+  let arr = binders.to_array()
+  if arr.length() == 0 {
+    return ""
+  }
+  let buf = StringBuilder::new()
+  buf.write_string("<")
+  for i, binder in arr {
+    if i > 0 {
+      buf.write_string(", ")
+    }
+    buf.write_string(binder.name)
+  }
+  buf.write_string(">")
+  buf.to_string()
+}
+
+///|
+/// Generate params from Parameter list
+fn generate_mbt_func_params(params : @syntax.Parameters) -> String {
+  let buf = StringBuilder::new()
+  let arr = params.to_array()
+  let mut pos_index = 0
+  for i, param in arr {
+    if i > 0 {
+      buf.write_string(", ")
+    }
+    match param {
+      DiscardPositional(ty~, loc~) => {
+        ignore(loc)
+        buf.write_string("arg")
+        buf.write_string(pos_index.to_string())
+        buf.write_string(": ")
+        match ty {
+          Some(t) => buf.write_string(generate_type(t))
+          None => buf.write_string("any")
+        }
+        pos_index += 1
+      }
+      Positional(binder~, ty~) => {
+        buf.write_string(escape_func_name(binder.name))
+        buf.write_string(": ")
+        match ty {
+          Some(t) => buf.write_string(generate_type(t))
+          None => buf.write_string("any")
+        }
+        pos_index += 1
+      }
+      Labelled(binder~, ty~) => {
+        buf.write_string(escape_func_name(binder.name))
+        buf.write_string(": ")
+        match ty {
+          Some(t) => buf.write_string(generate_type(t))
+          None => buf.write_string("any")
+        }
+      }
+      Optional(binder~, default~, ty~) => {
+        ignore(default)
+        buf.write_string(escape_func_name(binder.name))
+        buf.write_string("?: ")
+        match ty {
+          Some(t) => buf.write_string(generate_type(t))
+          None => buf.write_string("any")
+        }
+      }
+      QuestionOptional(binder~, ty~) => {
+        buf.write_string(escape_func_name(binder.name))
+        buf.write_string("?: ")
+        match ty {
+          Some(t) => buf.write_string(generate_type(t))
+          None => buf.write_string("any")
+        }
+      }
+    }
+  }
+  buf.to_string()
+}
+
+///|
+/// Generate TypeScript for TraitDecl
+fn generate_mbt_trait_decl(decl : @syntax.TraitDecl) -> String {
+  // Only export pub traits
+  if not(is_pub_visibility(decl.vis)) {
+    return ""
+  }
+
+  let trait_name = decl.name.name
+  let buf = StringBuilder::new()
+  buf.write_string("// trait ")
+  buf.write_string(trait_name)
+  buf.write_string("\n")
+
+  for m in decl.methods {
+    buf.write_string("export function ")
+    buf.write_string(trait_name)
+    buf.write_string("$")
+    buf.write_string(to_camel_case(m.name.name))
+    buf.write_string("<Self>(")
+    buf.write_string(generate_mbt_func_params(m.params))
+    buf.write_string("): ")
+    match m.return_type {
+      Some(ty) => buf.write_string(generate_type(ty))
+      None => buf.write_string("void")
+    }
+    buf.write_string(";\n")
+  }
+  buf.to_string().trim_space().to_string()
+}

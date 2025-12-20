@@ -9,7 +9,9 @@
         "generate_dts_from_string",
         "generate_dts_with_preamble_from_string",
         "generate_dts_namespace_from_string",
-        "parse_mbti_to_json"
+        "parse_mbti_to_json",
+        "generate_mbt_from_json",
+        "generate_dts_from_mbt_string"
       ],
       "format": "esm"
     }

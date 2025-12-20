@@ -748,3 +748,129 @@ test "snapshot: combined packages" (t : @test.Test) {
   t.write(dts)
   t.snapshot(filename="combined_packages.d.ts")
 }
+
+// ============================================================
+// .mbt → .d.ts 変換テスト (Phase 5)
+// ============================================================
+
+///|
+test "snapshot: mbt to dts - pub struct" (t : @test.Test) {
+  let content =
+    #|pub struct User {
+    #|  name : String
+    #|  age : Int
+    #|  mut email : String
+    #|}
+    #|
+  let dts = generate_dts_from_mbt(content, "user.mbt")
+  t.write(dts)
+  t.snapshot(filename="mbt_struct.d.ts")
+}
+
+///|
+test "snapshot: mbt to dts - pub enum" (t : @test.Test) {
+  let content =
+    #|pub enum Status {
+    #|  Pending
+    #|  Active
+    #|  Done
+    #|}
+    #|
+  let dts = generate_dts_from_mbt(content, "status.mbt")
+  t.write(dts)
+  t.snapshot(filename="mbt_enum.d.ts")
+}
+
+///|
+test "snapshot: mbt to dts - pub fn" (t : @test.Test) {
+  let content =
+    #|pub fn greet(name : String) -> String {
+    #|  "Hello, " + name
+    #|}
+    #|
+    #|pub fn add(a : Int, b : Int) -> Int {
+    #|  a + b
+    #|}
+    #|
+  let dts = generate_dts_from_mbt(content, "functions.mbt")
+  t.write(dts)
+  t.snapshot(filename="mbt_functions.d.ts")
+}
+
+///|
+test "snapshot: mbt to dts - mixed public items" (t : @test.Test) {
+  let content =
+    #|pub struct Config {
+    #|  debug : Bool
+    #|  timeout : Int
+    #|}
+    #|
+    #|// Private struct - should not appear in output
+    #|struct Internal {
+    #|  data : String
+    #|}
+    #|
+    #|pub fn create_config(debug : Bool, timeout : Int) -> Config {
+    #|  { debug, timeout }
+    #|}
+    #|
+    #|// Private function - should not appear in output
+    #|fn internal_helper() -> Unit {
+    #|  ()
+    #|}
+    #|
+    #|pub enum LogLevel {
+    #|  Debug
+    #|  Info
+    #|  Warn
+    #|  Error
+    #|}
+    #|
+  let dts = generate_dts_from_mbt(content, "mixed.mbt")
+  t.write(dts)
+  t.snapshot(filename="mbt_mixed.d.ts")
+}
+
+///|
+test "snapshot: mbt to dts - generic types" (t : @test.Test) {
+  let content =
+    #|pub struct Container[T] {
+    #|  value : T
+    #|}
+    #|
+    #|pub fn[T] identity(x : T) -> T {
+    #|  x
+    #|}
+    #|
+    #|pub fn[A, B] map(container : Container[A], f : (A) -> B) -> Container[B] {
+    #|  { value: f(container.value) }
+    #|}
+    #|
+  let dts = generate_dts_from_mbt(content, "generics.mbt")
+  t.write(dts)
+  t.snapshot(filename="mbt_generics.d.ts")
+}
+
+///|
+test "snapshot: mbt to dts - method syntax" (t : @test.Test) {
+  let content =
+    #|pub struct Counter {
+    #|  value : Int
+    #|}
+    #|
+    #|pub fn Counter::new() -> Counter {
+    #|  { value: 0 }
+    #|}
+    #|
+    #|pub fn Counter::increment(self : Counter) -> Counter {
+    #|  { value: self.value + 1 }
+    #|}
+    #|
+    #|pub fn Counter::get(self : Counter) -> Int {
+    #|  self.value
+    #|}
+    #|
+  let dts = generate_dts_from_mbt(content, "counter.mbt")
+  t.write(dts)
+  t.snapshot(filename="mbt_methods.d.ts")
+}

@@ -2,35 +2,137 @@
 
 MoonBit と TypeScript 間の型定義を相互変換するツールです。
 
-## 目標
+## 機能
 
-- `.mbti` から `.d.ts` を生成 (実装済み)
-- `.d.ts` から `.mbt`, `.mbti` を生成 (TODO)
+- `.mbti` → `.d.ts` 生成
+- `.d.ts` → `.mbt` / `.mbti` 生成
+- `moon.pkg.json` の exports 自動更新
 
 ## インストール
 
 ```bash
+# MoonBit パッケージとして
 moon add mizchi/tsnize
+
+# CLI ツールとして
+pnpm add mbts
 ```
 
-## 使い方
+## CLI
+
+### コマンド一覧
+
+```
+mbts link <path>                .mbti → moon.pkg.json exports 更新
+mbts dts <src> [--out <dir>]    .mbti → .d.ts 生成
+mbts mbt <file.d.ts> [options]  .d.ts → .mbt 生成
+```
+
+### mbts mbt - TypeScript から MoonBit バインディング生成
+
+```bash
+# 基本的な変換
+mbts mbt lib.d.ts
+
+# 出力先とパッケージ名を指定
+mbts mbt lib.d.ts --out src --package myapp
+
+# .mbti も同時生成
+mbts mbt lib.d.ts --mbti
+```
+
+**オプション:**
+- `--out <dir>` - 出力ディレクトリ
+- `--package <name>` - パッケージ名
+- `--mbti` - .mbti インターフェースファイルも生成
+
+### mbts dts - MoonBit から TypeScript 型定義生成
+
+```bash
+# .mbti から .d.ts を生成
+mbts dts src --out js
+
+# namespace でラップ
+mbts dts src --namespace
+
+# ランタイム型プリアンブルを含める
+mbts dts src --preamble
+```
+
+**オプション:**
+- `--out <dir>` - 出力ディレクトリ
+- `--namespace` - namespace でラップ
+- `--preamble` - ランタイム型を含める
+- `--naming <type>` - preserve (default) または camelCase
+
+### mbts link - exports 自動更新
+
+```bash
+# moon info 実行後に exports を更新
+moon info
+mbts link src/moon.pkg.json
+
+# 複数ターゲット
+mbts link src --targets js,wasm-gc
+
+# メソッドを除外
+mbts link src --no-methods
+
+# ドライラン
+mbts link src --dry-run
+```
+
+## プログラム API
 
 ### .mbti → .d.ts
 
-```moonbit
-let content = "..."  // .mbti ファイルの内容
-let mbti = @tsnize.parse_mbti(content, "example.mbti")!
-let dts = @tsnize.generate_dts(mbti)
+```typescript
+import { generateDts } from "mbts";
+
+const mbtiContent = `
+package "myapp"
+pub struct User {
+  name : String
+  age : Int
+}
+pub fn get_user(id : Int) -> User
+`;
+
+const dts = generateDts(mbtiContent, "myapp.mbti");
+```
+
+### .d.ts → .mbt / .mbti
+
+```typescript
+import { parseDts, generateMbt, generateMbti, dtsToMbtWithMbti } from "mbts";
+
+const dtsContent = `
+export interface User {
+  name: string;
+  age: number;
+}
+export function createUser(name: string): User;
+`;
+
+// 方法1: 個別に生成
+const binding = parseDts(dtsContent, "lib.d.ts", { packageName: "myapp" });
+const mbt = generateMbt(binding);
+const mbti = generateMbti(binding);
+
+// 方法2: 一括生成
+const result = dtsToMbtWithMbti(dtsContent, "lib.d.ts", { packageName: "myapp" });
+console.log(result.mbt);   // .mbt コード
+console.log(result.mbti);  // .mbti インターフェース
 ```
 
 ## 型変換ルール
 
-### プリミティブ型
+### MoonBit → TypeScript
 
 | MoonBit | TypeScript |
 |---------|------------|
 | `String` | `string` |
-| `Int`, `UInt`, `Float`, `Double`, `Int64`, `UInt64` | `number` |
+| `Int`, `UInt`, `Float`, `Double` | `number` |
 | `Bool` | `boolean` |
 | `Unit` | `void` |
 | `Bytes` | `Uint8Array` |
@@ -38,34 +140,42 @@ let dts = @tsnize.generate_dts(mbti)
 | `Array[T]` | `Array<T>` |
 | `Map[K, V]` | `Map<K, V>` |
 | `Json` | `any` |
-| `Option[T]` | `T \| undefined` |
-| `(A, B, C)` | `[A, B, C]` (タプル) |
+| `T?` / `Option[T]` | `T \| undefined` |
+| `(A, B, C)` | `[A, B, C]` |
+
+### TypeScript → MoonBit
+
+| TypeScript | MoonBit |
+|------------|---------|
+| `string` | `String` |
+| `number` | `Int` |
+| `boolean` | `Bool` |
+| `void` | `Unit` |
+| `Uint8Array` | `Bytes` |
+| `bigint` | `BigInt` |
+| `T[]` / `Array<T>` | `Array[T]` |
+| `Map<K, V>` | `@collection.JsMap[K, V]` |
+| `Set<T>` | `@collection.JsSet[T]` |
+| `Promise<T>` | `@js.Promise[T]` |
+| `T \| undefined` | `T?` |
+| `any` / `unknown` | `Json` |
 
 ### 関数
 
-snake_case は camelCase に変換されます。
-
 ```mbti
+// MoonBit
 fn get_user_name(user_id : Int) -> String
 ```
 
 ```typescript
-export function getUserName(arg0: number): string;
+// TypeScript
+export function getUserName(userId: number): string;
 ```
 
-ラベル付き引数とオプショナル引数もサポート:
+### 構造体
 
 ```mbti
-fn create_user(name~ : String, age? : Int) -> User
-```
-
-```typescript
-export function createUser(name: string, age?: number): User;
-```
-
-### 構造体 (Struct)
-
-```mbti
+// MoonBit
 pub struct User {
   name : String
   age : Int
@@ -74,18 +184,44 @@ pub struct User {
 ```
 
 ```typescript
+// TypeScript
 export interface User {
   readonly name: string;
   readonly age: number;
-  email: string;  // mut なので readonly ではない
+  email: string;
 }
 ```
 
-### 列挙型 (Enum)
+### クラス
 
-Discriminated Union として生成されます。
+```typescript
+// TypeScript
+export class Counter {
+  constructor(initial: number);
+  increment(): void;
+  getValue(): number;
+}
+```
+
+```moonbit
+// 生成される MoonBit
+#external
+type Counter
+
+extern "js" fn Counter::new(initial : Int) -> Counter =
+  #| (initial) => new Counter(initial)
+
+extern "js" fn Counter::increment(self : Counter) -> Unit =
+  #| (self) => self.increment()
+
+extern "js" fn Counter::get_value(self : Counter) -> Int =
+  #| (self) => self.getValue()
+```
+
+### 列挙型
 
 ```mbti
+// MoonBit
 pub enum LoadState {
   Idle
   Loading
@@ -95,82 +231,24 @@ pub enum LoadState {
 ```
 
 ```typescript
+// TypeScript (Discriminated Union)
 export interface LoadState_Idle { readonly $tag: "Idle"; }
-export interface LoadState_Loading { readonly $tag: "Loading"; }
 export interface LoadState_Success { readonly $tag: "Success"; readonly $0: string; }
-export interface LoadState_Error { readonly $tag: "Error"; readonly $0: string; }
 export type LoadState = LoadState_Idle | LoadState_Loading | LoadState_Success | LoadState_Error;
-
-// コンストラクタ
-export const LoadState$Idle: LoadState_Idle = { $tag: "Idle" };
-export const LoadState$Loading: LoadState_Loading = { $tag: "Loading" };
-export function LoadState$Success($0: string): LoadState_Success { return { $tag: "Success", $0 }; }
-export function LoadState$Error($0: string): LoadState_Error { return { $tag: "Error", $0 }; }
 ```
 
-ラベル付きバリアント:
+## 変換フロー
 
-```mbti
-pub enum Result {
-  Ok(value~ : String)
-  Err(message~ : String, code~ : Int)
-}
 ```
-
-```typescript
-export interface Result_Ok { readonly $tag: "Ok"; readonly value: string; }
-export interface Result_Err { readonly $tag: "Err"; readonly message: string; readonly code: number; }
-export type Result = Result_Ok | Result_Err;
-```
-
-### 型エイリアス
-
-```mbti
-pub typealias UserId = Int
-```
-
-```typescript
-export type UserId = number;
-```
-
-### トレイト
-
-```mbti
-pub trait Show {
-  output(Self, Logger) -> Unit
-}
-```
-
-```typescript
-export interface Show<Self> {
-  output(self: Self, arg1: Logger): void;
-}
-```
-
-### 抽象型・外部型
-
-ブランド型として生成されます。
-
-```mbti
-pub type Handle
-```
-
-```typescript
-export interface Handle {
-  readonly __brand: "Handle";
-}
-```
-
-## 予約語のエスケープ
-
-TypeScript/JavaScript の予約語は自動的にアンダースコア付きに変換されます。
-
-```mbti
-fn type(value : String) -> Int  // "type" は予約語
-```
-
-```typescript
-export function type_(value: string): number;
+TypeScript (.d.ts)          MoonBit (.mbti)
+        │                         │
+        │ mbts mbt                │ mbts dts
+        ▼                         ▼
+    MoonBit (.mbt)  ◄──────►  TypeScript (.d.ts)
+        │
+        │ --mbti オプション
+        ▼
+    MoonBit (.mbti)
 ```
 
 ## 開発
@@ -178,9 +256,14 @@ export function type_(value: string): number;
 ```bash
 # 依存関係のインストール
 moon update
+pnpm install
+
+# MoonBit ビルド
+moon build --target js
 
 # テスト実行
 moon test
+pnpm test
 
 # スナップショットの更新
 moon test --update

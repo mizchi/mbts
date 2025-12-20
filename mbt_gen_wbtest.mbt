@@ -206,7 +206,159 @@ test "generate_mbt: class method" {
     #|type Counter
     #|
     #|// Functions
-    #|extern "js" fn Counter::increment(self : Counter) -> Int = "Counter.prototype.increment"
+    #|extern "js" fn Counter::increment(self : Counter) -> Int =
+    #|  #| (self) => self.increment()
+    #|
+  assert_eq(result, expected)
+}
+
+// ============================================================
+// JSON Parsing Tests
+// ============================================================
+
+test "from_json: simple function" {
+  let json : Json = {
+    "packageName": "mylib",
+    "functions": [
+      {
+        "name": "greet",
+        "jsName": "greet",
+        "returnType": "String",
+        "params": [{ "name": "name", "type": "String" }],
+      },
+    ],
+    "types": [],
+    "externTypes": [],
+    "classes": [],
+  }
+  let binding = MbtBinding::from_json(json).unwrap()
+  assert_eq(binding.package_name, "mylib")
+  assert_eq(binding.functions.length(), 1)
+  assert_eq(binding.functions[0].name, "greet")
+  assert_eq(binding.functions[0].params[0].name, "name")
+  assert_eq(binding.functions[0].params[0].type_, "String")
+}
+
+test "from_json: struct type" {
+  let json : Json = {
+    "packageName": "",
+    "functions": [],
+    "types": [
+      {
+        "name": "User",
+        "kind": "struct",
+        "fields": [
+          { "name": "name", "type": "String", "mutable": false },
+          { "name": "age", "type": "Int", "mutable": true },
+        ],
+      },
+    ],
+    "externTypes": [],
+    "classes": [],
+  }
+  let binding = MbtBinding::from_json(json).unwrap()
+  assert_eq(binding.types.length(), 1)
+  let t = binding.types[0]
+  assert_eq(t.name, "User")
+  assert_eq(t.fields.length(), 2)
+  assert_eq(t.fields[0].name, "name")
+  assert_eq(t.fields[0].mutable, false)
+  assert_eq(t.fields[1].mutable, true)
+}
+
+test "from_json: enum type" {
+  let json : Json = {
+    "packageName": "",
+    "functions": [],
+    "types": [
+      {
+        "name": "Status",
+        "kind": "enum",
+        "variants": [
+          { "name": "Pending" },
+          { "name": "Active", "payload": ["Int"] },
+        ],
+      },
+    ],
+    "externTypes": [],
+    "classes": [],
+  }
+  let binding = MbtBinding::from_json(json).unwrap()
+  let t = binding.types[0]
+  assert_eq(t.name, "Status")
+  assert_eq(t.variants.length(), 2)
+  assert_eq(t.variants[0].name, "Pending")
+  assert_eq(t.variants[0].payload.length(), 0)
+  assert_eq(t.variants[1].name, "Active")
+  assert_eq(t.variants[1].payload[0], "Int")
+}
+
+test "from_json: async function" {
+  let json : Json = {
+    "packageName": "",
+    "functions": [
+      {
+        "name": "fetch_data",
+        "jsName": "fetchData",
+        "returnType": "String",
+        "isAsync": true,
+        "params": [{ "name": "url", "type": "String" }],
+      },
+    ],
+    "types": [],
+    "externTypes": [],
+    "classes": [],
+  }
+  let binding = MbtBinding::from_json(json).unwrap()
+  assert_eq(binding.functions[0].is_async, true)
+}
+
+test "from_json: class with methods" {
+  let json : Json = {
+    "packageName": "",
+    "functions": [],
+    "types": [],
+    "externTypes": ["type Counter"],
+    "classes": [
+      {
+        "name": "Counter",
+        "hasConstructor": true,
+        "methods": [{ "name": "increment", "jsName": "increment" }],
+      },
+    ],
+  }
+  let binding = MbtBinding::from_json(json).unwrap()
+  assert_eq(binding.extern_types[0], "type Counter")
+  assert_eq(binding.classes.length(), 1)
+  assert_eq(binding.classes[0].name, "Counter")
+  assert_eq(binding.classes[0].has_constructor, true)
+  assert_eq(binding.classes[0].methods[0].name, "increment")
+}
+
+test "from_json: roundtrip with generate_mbt" {
+  // Test that parsing JSON and generating MBT produces expected output
+  let json : Json = {
+    "packageName": "",
+    "functions": [
+      {
+        "name": "add",
+        "jsName": "add",
+        "returnType": "Int",
+        "params": [
+          { "name": "a", "type": "Int" },
+          { "name": "b", "type": "Int" },
+        ],
+      },
+    ],
+    "types": [],
+    "externTypes": [],
+    "classes": [],
+  }
+  let binding = MbtBinding::from_json(json).unwrap()
+  let result = generate_mbt(binding)
+  let expected =
+    #|// Functions
+    #|extern "js" fn add(a : Int, b : Int) -> Int = "add"
     #|
   assert_eq(result, expected)
 }

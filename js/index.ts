@@ -10,6 +10,8 @@ import {
   generate_dts_namespace_from_string,
   generate_dts_with_preamble_from_string,
   parse_mbti_to_json,
+  generate_mbt_from_json,
+  generate_dts_from_mbt_string,
 } from "../target/js/release/build/cli/cli.js";
 
 // ============================================================
@@ -718,7 +720,9 @@ export {
   parseDts,
   dtsToMbt,
   dtsToMbtWithGlue,
+  dtsToMbtWithMbti,
   generateMbt,
+  generateMbti,
   generateGlueCode,
   type MbtBinding,
   type MbtClass,
@@ -729,3 +733,40 @@ export {
   type MbtParam,
   type ConvertOptions,
 } from "./dts-to-mbt.js";
+
+// ============================================================
+// MoonBit-native code generation (Phase 5)
+// ============================================================
+
+import type { MbtBinding } from "./dts-to-mbt.js";
+
+/**
+ * Generate MoonBit FFI bindings using the MoonBit implementation
+ *
+ * This is the Phase 5 self-hosted implementation.
+ * It takes a MbtBinding object and generates .mbt code using MoonBit code.
+ *
+ * @param binding - The MbtBinding object from parseDts()
+ * @returns Generated .mbt code string
+ *
+ * @example
+ * ```ts
+ * const binding = parseDts(dtsContent);
+ * const mbtCode = generateMbtNative(binding);
+ * ```
+ */
+export function generateMbtNative(binding: MbtBinding): string {
+  const json = JSON.stringify(binding);
+  return generate_mbt_from_json(json);
+}
+
+/**
+ * Generate TypeScript definitions directly from .mbt source code
+ * This enables .mbt -> .d.ts conversion without intermediate .mbti files
+ * @param content - MoonBit source code (.mbt file content)
+ * @param filename - Filename for error reporting
+ * @returns TypeScript definition string
+ */
+export function generateDtsFromMbt(content: string, filename: string): string {
+  return generate_dts_from_mbt_string(content, filename);
+}

@@ -13,6 +13,8 @@ import {
   getTypes,
   getFunctions,
   getTraits,
+  generateMbtNative,
+  generateDtsFromMbt,
 } from "./index.js";
 import { dtsToMbt, parseDts } from "./dts-to-mbt.js";
 
@@ -587,5 +589,188 @@ pub const PI : Double
 `;
     const result = parseMbti(mbti, "test.mbti");
     expect(result.success).toBe(true);
+  });
+});
+
+// ============================================================
+// Phase 5: MoonBit-native Code Generation
+// ============================================================
+
+import { generateMbt, generateMbtNative } from "./index.js";
+
+describe("Evaluation: MoonBit-native Code Generation (Phase 5)", () => {
+  it("should generate MBT code using MoonBit implementation", () => {
+    const dts = `
+export function greet(name: string): string;
+export function add(a: number, b: number): number;
+`;
+    const binding = parseDts(dts, "test.d.ts");
+    const result = generateMbtNative(binding);
+
+    expect(result).toContain("extern \"js\" fn greet");
+    expect(result).toContain("extern \"js\" fn add");
+    expect(result).toContain("-> String");
+    expect(result).toContain("-> Int");
+  });
+
+  it("should generate same output as TypeScript implementation for simple functions", () => {
+    const dts = `
+export function hello(name: string): string;
+`;
+    const binding = parseDts(dts, "test.d.ts");
+
+    const tsResult = generateMbt(binding);
+    const mbtResult = generateMbtNative(binding);
+
+    // Both should have the same core content
+    expect(mbtResult).toContain("extern \"js\" fn hello");
+    expect(tsResult).toContain("extern \"js\" fn hello");
+  });
+
+  it("should handle struct types", () => {
+    const dts = `
+export interface User {
+  name: string;
+  age: number;
+}
+`;
+    const binding = parseDts(dts, "test.d.ts");
+    const result = generateMbtNative(binding);
+
+    expect(result).toContain("pub struct User");
+    expect(result).toContain("name : String");
+    expect(result).toContain("age : Int");
+  });
+
+  it("should handle async functions", () => {
+    const dts = `
+export function fetchData(url: string): Promise<string>;
+`;
+    const binding = parseDts(dts, "test.d.ts");
+    const result = generateMbtNative(binding);
+
+    expect(result).toContain("Promise[String]");
+  });
+
+  it("should handle class methods with extern types", () => {
+    const dts = `
+export class Counter {
+  constructor(initial: number);
+  increment(): number;
+}
+`;
+    const binding = parseDts(dts, "test.d.ts");
+    const result = generateMbtNative(binding);
+
+    expect(result).toContain("#external");
+    expect(result).toContain("type Counter");
+    expect(result).toContain("Counter::new");
+    expect(result).toContain("Counter::increment");
+  });
+});
+
+// ============================================================
+// .mbt → .d.ts Conversion (Phase 5)
+// ============================================================
+
+describe("Evaluation: MBT to DTS Conversion", () => {
+  it("should convert pub struct to TypeScript interface", () => {
+    const mbt = `
+pub struct User {
+  name : String
+  age : Int
+}
+`;
+    const dts = generateDtsFromMbt(mbt, "user.mbt");
+    expect(dts).toContain("export interface User");
+    expect(dts).toContain("name: string");
+    expect(dts).toContain("age: number");
+  });
+
+  it("should convert pub enum to discriminated union", () => {
+    const mbt = `
+pub enum Status {
+  Pending
+  Active
+  Done
+}
+`;
+    const dts = generateDtsFromMbt(mbt, "status.mbt");
+    expect(dts).toContain("export interface Status_Pending");
+    expect(dts).toContain("export interface Status_Active");
+    expect(dts).toContain("export interface Status_Done");
+    expect(dts).toContain("export type Status =");
+  });
+
+  it("should convert pub fn to export function", () => {
+    const mbt = `
+pub fn greet(name : String) -> String {
+  "Hello, " + name
+}
+`;
+    const dts = generateDtsFromMbt(mbt, "greet.mbt");
+    expect(dts).toContain("export function greet");
+    expect(dts).toContain("name: string");
+    expect(dts).toContain("): string");
+  });
+
+  it("should skip private items", () => {
+    const mbt = `
+pub struct Public {
+  value : Int
+}
+
+struct Private {
+  data : String
+}
+
+pub fn public_fn() -> Unit {
+  ()
+}
+
+fn private_fn() -> Unit {
+  ()
+}
+`;
+    const dts = generateDtsFromMbt(mbt, "mixed.mbt");
+    expect(dts).toContain("export interface Public");
+    expect(dts).toContain("export function publicFn");
+    expect(dts).not.toContain("Private");
+    expect(dts).not.toContain("privateFn");
+  });
+
+  it("should handle generic types", () => {
+    const mbt = `
+pub struct Container[T] {
+  value : T
+}
+
+pub fn[T] identity(x : T) -> T {
+  x
+}
+`;
+    const dts = generateDtsFromMbt(mbt, "generics.mbt");
+    expect(dts).toContain("Container<T>");
+    expect(dts).toContain("identity<T>");
+  });
+
+  it("should handle method syntax", () => {
+    const mbt = `
+pub struct Counter {
+  value : Int
+}
+
+pub fn Counter::new() -> Counter {
+  { value: 0 }
+}
+
+pub fn Counter::increment(self : Counter) -> Counter {
+  { value: self.value + 1 }
+}
+`;
+    const dts = generateDtsFromMbt(mbt, "counter.mbt");
+    expect(dts).toContain("export interface Counter");
+    expect(dts).toContain("Counter$new");
+    expect(dts).toContain("Counter$increment");
   });
 });

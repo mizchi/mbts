@@ -13,6 +13,9 @@ import {
   extractExportSymbols,
   getExportNames,
   generateDts,
+  parseDts,
+  generateMbt,
+  generateMbti,
   type ExportSymbol,
 } from "./index.js";
 
@@ -204,6 +207,72 @@ async function dtsCommand(
   );
 }
 
+interface MbtOptions {
+  out?: string;
+  package?: string;
+  mbti?: boolean;
+}
+
+/**
+ * Generate .mbt (and optionally .mbti) from .d.ts
+ */
+async function mbtCommand(
+  dtsPath: string,
+  options: MbtOptions = {}
+): Promise<void> {
+  const { out, package: packageName, mbti: generateMbtiFile = false } = options;
+
+  // Resolve source path
+  const resolvedSrc = path.resolve(dtsPath);
+
+  if (!fs.existsSync(resolvedSrc)) {
+    console.error(`Error: File not found: ${resolvedSrc}`);
+    process.exit(1);
+  }
+
+  if (!resolvedSrc.endsWith(".d.ts") && !resolvedSrc.endsWith(".ts")) {
+    console.error("Error: Input file must be a .d.ts or .ts file");
+    process.exit(1);
+  }
+
+  // Determine output directory
+  const srcDir = path.dirname(resolvedSrc);
+  const outDir = out ? path.resolve(out) : srcDir;
+  if (!fs.existsSync(outDir)) {
+    fs.mkdirSync(outDir, { recursive: true });
+  }
+
+  // Determine output file names
+  const baseName = path.basename(resolvedSrc).replace(/\.d\.ts$/, "").replace(/\.ts$/, "");
+  const mbtOutputPath = path.join(outDir, `${baseName}.mbt`);
+  const mbtiOutputPath = path.join(outDir, `${baseName}.mbti`);
+
+  // Read .d.ts content
+  const dtsContent = fs.readFileSync(resolvedSrc, "utf8");
+
+  // Parse and generate
+  const binding = parseDts(dtsContent, path.basename(resolvedSrc), {
+    packageName: packageName || "",
+  });
+
+  // Generate .mbt
+  const mbtCode = generateMbt(binding);
+  fs.writeFileSync(mbtOutputPath, mbtCode);
+  console.log(`Generated ${mbtOutputPath}`);
+
+  // Optionally generate .mbti
+  if (generateMbtiFile) {
+    const mbtiCode = generateMbti(binding);
+    fs.writeFileSync(mbtiOutputPath, mbtiCode);
+    console.log(`Generated ${mbtiOutputPath}`);
+  }
+
+  // Print summary
+  console.log(`  Types: ${binding.types.length}`);
+  console.log(`  Functions: ${binding.functions.length}`);
+  console.log(`  Extern types: ${binding.externTypes.length}`);
+}
+
 // ============================================================
 // CLI Parser
 // ============================================================
@@ -213,18 +282,24 @@ function printUsage(): void {
 mbts - MoonBit TypeScript Type Generator
 
 Usage:
-  mbts link <path>              Update moon.pkg.json with exports from .mbti
-  mbts dts <src> [--out <dir>]  Generate .d.ts from .mbti
+  mbts link <path>                Update moon.pkg.json with exports from .mbti
+  mbts dts <src> [--out <dir>]    Generate .d.ts from .mbti
+  mbts mbt <file.d.ts> [options]  Generate .mbt from .d.ts
 
 Commands:
   link    Update moon.pkg.json's link.js.exports section
           <path> can be a directory or moon.pkg.json path
 
-  dts     Generate TypeScript definition file
+  dts     Generate TypeScript definition file from .mbti
           <src> is the source directory containing .mbti
+
+  mbt     Generate MoonBit FFI bindings from .d.ts
+          <file.d.ts> is the TypeScript definition file
 
 Options:
   --out <dir>       Output directory for generated files
+  --package <name>  Package name for generated .mbt file (mbt command)
+  --mbti            Also generate .mbti interface file (mbt command)
   --no-methods      Exclude methods from exports (link command)
   --targets <list>  Comma-separated targets: js,wasm,wasm-gc (default: js)
   --namespace       Wrap output in namespace (dts command)
@@ -234,6 +309,12 @@ Options:
   --help, -h        Show this help message
 
 Examples:
+  # Generate .mbt from .d.ts
+  $ mbts mbt lib.d.ts --out src --package myapp
+
+  # Generate .mbt and .mbti together
+  $ mbts mbt lib.d.ts --mbti
+
   # Update exports after running 'moon info'
   $ moon info
   $ mbts link src/moon.pkg.json
@@ -243,9 +324,6 @@ Examples:
 
   # Export for multiple targets
   $ mbts link src --targets js,wasm-gc
-
-  # Exclude methods (only top-level functions)
-  $ mbts link src --no-methods
 `);
 }
 
@@ -324,6 +402,21 @@ async function main(): Promise<void> {
         namespace: !!options.namespace,
         preamble: !!options.preamble,
         naming,
+      });
+      break;
+    }
+
+    case "mbt": {
+      const dtsFile = positional[0];
+      if (!dtsFile) {
+        console.error("Error: Missing .d.ts file argument for 'mbt' command");
+        console.error("Usage: mbts mbt <file.d.ts> [--out <dir>] [--package <name>] [--mbti]");
+        process.exit(1);
+      }
+      await mbtCommand(dtsFile, {
+        out: options.out as string | undefined,
+        package: options.package as string | undefined,
+        mbti: !!options.mbti,
       });
       break;
     }

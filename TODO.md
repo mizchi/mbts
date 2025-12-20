@@ -20,7 +20,7 @@ mizchi/markdown での検証完了。低レベル API は自動生成可能、�
 
 ### Phase 4 残タスク
 
-- [ ] `.mbti` 同時生成 (.d.ts → .mbt 変換時に .mbti も出力)
+- [x] `.mbti` 同時生成 (.d.ts → .mbt 変換時に .mbti も出力) ✅
 
 ### 未実装機能
 - [x] 外部パッケージ参照 → `any /* TODO: @pkg.Type */` で仮対応
@@ -29,9 +29,12 @@ mizchi/markdown での検証完了。低レベル API は自動生成可能、�
 
 ### Phase 5: セルフホスティング
 
-- [ ] Phase 4 の実装を MoonBit で書き直し
-- [ ] `.mbt` から直接 `.d.ts` を生成 (現在の逆方向)
-- [ ] グルーコード不要の完全な相互変換
+- [x] MbtBinding 型定義を MoonBit で実装 (`mbt_gen.mbt`)
+- [x] `generate_mbt()` を MoonBit で実装 (8 テストケース通過)
+- [x] JSON → MbtBinding パーサーを MoonBit で実装 (6 テストケース追加、計 14 テスト)
+- [x] TypeScript から MoonBit generate_mbt を呼び出す統合 (`generateMbtNative()`)
+- [x] `.mbt` から直接 `.d.ts` を生成 (`generateDtsFromMbt()`) ✅
+- [x] グルーコード不要の完全な相互変換 ✅ (インライン JS で `new`/メソッド呼び出しを直接生成)
 
 ## 外部パッケージ参照の課題
 
@@ -55,13 +58,14 @@ Node.js のリゾルバを実装して外部パッケージを解決するのは
 |------------|-----------|------|
 | `number` | `Int` | `Float`/`Double` にすべきケースの判別ができない |
 | `T \| undefined` | `T?` | MoonBit の `Option[T]` との整合性 |
-| `Map<K,V>` | `Map[K,V]` | MoonBit の `Map` との互換性 |
+| `Map<K,V>` | `@collection.JsMap[K, V]` | ✅ `mizchi/js/builtins/collection` を使用 |
+| `Set<T>` | `@collection.JsSet[T]` | ✅ `mizchi/js/builtins/collection` を使用 |
 
 ## 優先度
 
 1. **中**: namespace/module のネスト対応
-2. **中**: `.mbti` 同時生成
-3. **低**: セルフホスティング (Phase 5)
+2. ~~**中**: `.mbti` 同時生成~~ ✅ 完了
+3. ~~**低**: セルフホスティング (Phase 5)~~ ✅ 完了
 
 ## 依存関係
 
@@ -74,5 +78,10 @@ Phase 3 (完了)
     ↓
 Phase 4 (完了)
     ↓
-Phase 5 (セルフホスティング) ← 未着手
+Phase 5 (セルフホスティング) ✅ 完了
+  - generate_mbt() を MoonBit で実装済み ✅
+  - JSON → MbtBinding パーサー実装済み ✅
+  - TypeScript から MoonBit generate_mbt を呼び出す統合 ✅
+  - .mbt から直接 .d.ts を生成 ✅
+  - グルーコード不要化 ✅
 ```

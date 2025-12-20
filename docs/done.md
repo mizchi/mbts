@@ -174,3 +174,15 @@ Node.js リゾルバの実装が複雑なため、外部パッケージ参照は
     api.d.ts             # 手書き高レベル型
     api.js               # 手書きグルーコード
   ```
+
+## Phase 5: セルフホスティング (進行中)
+
+- [x] MbtBinding 型定義を MoonBit で実装 (`mbt_gen.mbt`)
+  - MbtBinding, MbtType, MbtFunction, MbtParam, MbtField, MbtVariant, MbtClass, MbtMethod
+- [x] `generate_mbt()` を MoonBit で実装
+  - extern type 宣言、struct/enum 定義、extern fn 宣言の生成
+  - 8 テストケース通過
+- [x] JSON → MbtBinding パーサーを MoonBit で実装
+  - `MbtBinding::from_json()` で TypeScript からの JSON を解析
+  - ヘルパー関数: `get_string()`, `get_bool()`, `get_array()`
+  - 6 テストケース追加 (計 14 テスト)

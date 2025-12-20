@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseDts, dtsToMbt, generateMbt, generateGlueCode, dtsToMbtWithGlue } from "./dts-to-mbt.js";
+import { parseDts, dtsToMbt, generateMbt, generateMbti, generateGlueCode, dtsToMbtWithGlue, dtsToMbtWithMbti } from "./dts-to-mbt.js";
 
 describe("parseDts", () => {
   it("should parse interface to struct", () => {
@@ -426,11 +426,14 @@ export class HttpClient {
       type HttpClient
 
       // Functions
-      extern "js" fn HttpClient::new(base_url : String) -> HttpClient = "HttpClient"
+      extern "js" fn HttpClient::new(base_url : String) -> HttpClient =
+        #| (base_url) => new HttpClient(base_url)
 
-      extern "js" fn HttpClient::get(self : HttpClient, path : String) -> @js.Promise[String] = "HttpClient.prototype.get"
+      extern "js" fn HttpClient::get(self : HttpClient, path : String) -> @js.Promise[String] =
+        #| (self, path) => self.get(path)
 
-      extern "js" fn HttpClient::post(self : HttpClient, path : String, body : String) -> @js.Promise[String] = "HttpClient.prototype.post"
+      extern "js" fn HttpClient::post(self : HttpClient, path : String, body : String) -> @js.Promise[String] =
+        #| (self, path, body) => self.post(path, body)
       "
     `);
   });
@@ -557,11 +560,14 @@ export function createTimer(): Timer;
       type Timer
 
       // Functions
-      extern "js" fn Timer::new() -> Timer = "Timer"
+      extern "js" fn Timer::new() -> Timer =
+        #| () => new Timer()
 
-      extern "js" fn Timer::start(self : Timer) -> Unit = "Timer.prototype.start"
+      extern "js" fn Timer::start(self : Timer) -> Unit =
+        #| (self) => self.start()
 
-      extern "js" fn Timer::stop(self : Timer) -> Unit = "Timer.prototype.stop"
+      extern "js" fn Timer::stop(self : Timer) -> Unit =
+        #| (self) => self.stop()
 
       extern "js" fn create_timer() -> Timer = "createTimer"
       ",
@@ -612,5 +618,147 @@ export function querySelector(selector: string): Element | undefined;
       extern "js" fn query_selector(selector : String) -> Element? = "querySelector"
       "
     `);
+  });
+});
+
+describe("generateMbti", () => {
+  it("should generate .mbti from struct binding", () => {
+    const binding = parseDts(
+      `
+export interface User {
+  name: string;
+  age: number;
+}
+`,
+      "test.d.ts",
+      { packageName: "myapp/user" }
+    );
+    const mbti = generateMbti(binding);
+    expect(mbti).toMatchInlineSnapshot(`
+      "// Generated from .d.ts by mbts
+      package "myapp/user"
+
+      // Types and methods
+      pub struct User {
+        name : String
+        age : Int
+      }
+      "
+    `);
+  });
+
+  it("should generate .mbti with functions", () => {
+    const binding = parseDts(
+      `
+export function greet(name: string): string;
+export function add(a: number, b: number): number;
+`,
+      "test.d.ts"
+    );
+    const mbti = generateMbti(binding);
+    expect(mbti).toMatchInlineSnapshot(`
+      "// Generated from .d.ts by mbts
+
+      pub fn greet(String) -> String
+      pub fn add(Int, Int) -> Int
+      "
+    `);
+  });
+
+  it("should generate .mbti with class methods", () => {
+    const binding = parseDts(
+      `
+export class Counter {
+  constructor(initial: number);
+  increment(): void;
+  getValue(): number;
+}
+`,
+      "test.d.ts"
+    );
+    const mbti = generateMbti(binding);
+    expect(mbti).toMatchInlineSnapshot(`
+      "// Generated from .d.ts by mbts
+
+      // Types and methods
+      pub type Counter
+
+      pub fn Counter::new(Int) -> Counter
+      pub fn Counter::increment(Counter) -> Unit
+      pub fn Counter::get_value(Counter) -> Int
+      "
+    `);
+  });
+
+  it("should generate .mbti with enum", () => {
+    const binding = parseDts(
+      `
+export type Status = "pending" | "active" | "done";
+`,
+      "test.d.ts"
+    );
+    const mbti = generateMbti(binding);
+    expect(mbti).toMatchInlineSnapshot(`
+      "// Generated from .d.ts by mbts
+
+      // Types and methods
+      pub enum Status {
+        Pending
+        Active
+        Done
+      }
+      "
+    `);
+  });
+
+  it("should generate .mbti with generic types", () => {
+    const binding = parseDts(
+      `
+export interface Result<T, E> {
+  value: T;
+  error: E;
+}
+export class Container<T> {
+  constructor(value: T);
+  get(): T;
+}
+`,
+      "test.d.ts"
+    );
+    const mbti = generateMbti(binding);
+    expect(mbti).toMatchInlineSnapshot(`
+      "// Generated from .d.ts by mbts
+
+      // Types and methods
+      pub type Container[T]
+      pub struct Result[T, E] {
+        value : T
+        error : E
+      }
+
+      pub fn[T] Container::new(T) -> Container[T]
+      pub fn[T] Container::get(Container[T]) -> T
+      "
+    `);
+  });
+});
+
+describe("dtsToMbtWithMbti", () => {
+  it("should generate both .mbt and .mbti", () => {
+    const dts = `
+export interface User {
+  name: string;
+  age: number;
+}
+export function createUser(name: string): User;
+`;
+    const result = dtsToMbtWithMbti(dts, "test.d.ts", { packageName: "myapp" });
+
+    expect(result.mbt).toContain("pub struct User");
+    expect(result.mbt).toContain('extern "js" fn create_user');
+
+    expect(result.mbti).toContain('package "myapp"');
+    expect(result.mbti).toContain("pub struct User");
+    expect(result.mbti).toContain("pub fn create_user(String) -> User");
   });
 });
