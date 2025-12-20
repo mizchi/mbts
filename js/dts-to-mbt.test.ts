@@ -10,14 +10,27 @@ export interface User {
 }
 `;
     const binding = parseDts(dts, "test.d.ts");
-    expect(binding.types.length).toBe(1);
-    expect(binding.types[0].name).toBe("User");
-    expect(binding.types[0].kind).toBe("struct");
-    expect(binding.types[0].fields).toHaveLength(2);
-    expect(binding.types[0].fields![0].name).toBe("name");
-    expect(binding.types[0].fields![0].type).toBe("String");
-    expect(binding.types[0].fields![1].name).toBe("age");
-    expect(binding.types[0].fields![1].type).toBe("Int");
+    expect(binding.types).toMatchInlineSnapshot(`
+      [
+        {
+          "fields": [
+            {
+              "mutable": false,
+              "name": "name",
+              "type": "String",
+            },
+            {
+              "mutable": false,
+              "name": "age",
+              "type": "Int",
+            },
+          ],
+          "kind": "struct",
+          "name": "User",
+          "typeParams": undefined,
+        },
+      ]
+    `);
   });
 
   it("should parse interface with optional fields", () => {
@@ -28,8 +41,20 @@ export interface Config {
 }
 `;
     const binding = parseDts(dts, "test.d.ts");
-    expect(binding.types[0].fields![0].type).toBe("String");
-    expect(binding.types[0].fields![1].type).toBe("Int?");
+    expect(binding.types[0].fields).toMatchInlineSnapshot(`
+      [
+        {
+          "mutable": false,
+          "name": "host",
+          "type": "String",
+        },
+        {
+          "mutable": false,
+          "name": "port",
+          "type": "Int?",
+        },
+      ]
+    `);
   });
 
   it("should parse function declaration", () => {
@@ -37,12 +62,24 @@ export interface Config {
 export function greet(name: string): string;
 `;
     const binding = parseDts(dts, "test.d.ts");
-    expect(binding.functions.length).toBe(1);
-    expect(binding.functions[0].name).toBe("greet");
-    expect(binding.functions[0].jsName).toBe("greet");
-    expect(binding.functions[0].params).toHaveLength(1);
-    expect(binding.functions[0].params[0].type).toBe("String");
-    expect(binding.functions[0].returnType).toBe("String");
+    expect(binding.functions).toMatchInlineSnapshot(`
+      [
+        {
+          "isAsync": false,
+          "jsName": "greet",
+          "name": "greet",
+          "params": [
+            {
+              "name": "name",
+              "optional": false,
+              "type": "String",
+            },
+          ],
+          "returnType": "String",
+          "typeParams": undefined,
+        },
+      ]
+    `);
   });
 
   it("should parse async function", () => {
@@ -50,8 +87,24 @@ export function greet(name: string): string;
 export async function fetchData(url: string): Promise<string>;
 `;
     const binding = parseDts(dts, "test.d.ts");
-    expect(binding.functions[0].isAsync).toBe(true);
-    expect(binding.functions[0].returnType).toBe("@js.Promise[String]");
+    expect(binding.functions).toMatchInlineSnapshot(`
+      [
+        {
+          "isAsync": true,
+          "jsName": "fetchData",
+          "name": "fetch_data",
+          "params": [
+            {
+              "name": "url",
+              "optional": false,
+              "type": "String",
+            },
+          ],
+          "returnType": "@js.Promise[String]",
+          "typeParams": undefined,
+        },
+      ]
+    `);
   });
 
   it("should parse string literal union as enum", () => {
@@ -59,12 +112,26 @@ export async function fetchData(url: string): Promise<string>;
 export type Status = "pending" | "active" | "done";
 `;
     const binding = parseDts(dts, "test.d.ts");
-    expect(binding.types.length).toBe(1);
-    expect(binding.types[0].kind).toBe("enum");
-    expect(binding.types[0].variants).toHaveLength(3);
-    expect(binding.types[0].variants![0].name).toBe("Pending");
-    expect(binding.types[0].variants![1].name).toBe("Active");
-    expect(binding.types[0].variants![2].name).toBe("Done");
+    expect(binding.types).toMatchInlineSnapshot(`
+      [
+        {
+          "kind": "enum",
+          "name": "Status",
+          "typeParams": undefined,
+          "variants": [
+            {
+              "name": "Pending",
+            },
+            {
+              "name": "Active",
+            },
+            {
+              "name": "Done",
+            },
+          ],
+        },
+      ]
+    `);
   });
 
   it("should parse generic interface", () => {
@@ -75,7 +142,30 @@ export interface Result<T, E> {
 }
 `;
     const binding = parseDts(dts, "test.d.ts");
-    expect(binding.types[0].typeParams).toEqual(["T", "E"]);
+    expect(binding.types).toMatchInlineSnapshot(`
+      [
+        {
+          "fields": [
+            {
+              "mutable": false,
+              "name": "value",
+              "type": "T",
+            },
+            {
+              "mutable": false,
+              "name": "error",
+              "type": "E",
+            },
+          ],
+          "kind": "struct",
+          "name": "Result",
+          "typeParams": [
+            "T",
+            "E",
+          ],
+        },
+      ]
+    `);
   });
 
   it("should handle array types", () => {
@@ -86,8 +176,20 @@ export interface Container {
 }
 `;
     const binding = parseDts(dts, "test.d.ts");
-    expect(binding.types[0].fields![0].type).toBe("Array[String]");
-    expect(binding.types[0].fields![1].type).toBe("Array[Int]");
+    expect(binding.types[0].fields).toMatchInlineSnapshot(`
+      [
+        {
+          "mutable": false,
+          "name": "items",
+          "type": "Array[String]",
+        },
+        {
+          "mutable": false,
+          "name": "numbers",
+          "type": "Array[Int]",
+        },
+      ]
+    `);
   });
 });
 
@@ -103,9 +205,14 @@ export interface Point {
       "test.d.ts"
     );
     const mbt = generateMbt(binding);
-    expect(mbt).toContain("pub struct Point");
-    expect(mbt).toContain("x : Int");
-    expect(mbt).toContain("y : Int");
+    expect(mbt).toMatchInlineSnapshot(`
+      "// Types
+      pub struct Point {
+        x : Int
+        y : Int
+      }
+      "
+    `);
   });
 
   it("should generate extern function with js binding", () => {
@@ -116,9 +223,11 @@ export function calculateSum(a: number, b: number): number;
       "test.d.ts"
     );
     const mbt = generateMbt(binding);
-    expect(mbt).toContain('extern "js" fn calculate_sum');
-    expect(mbt).toContain('= "calculateSum"');
-    expect(mbt).toContain("-> Int");
+    expect(mbt).toMatchInlineSnapshot(`
+      "// Functions
+      extern "js" fn calculate_sum(a : Int, b : Int) -> Int = "calculateSum"
+      "
+    `);
   });
 
   it("should generate enum from string literal union", () => {
@@ -129,10 +238,15 @@ export type Color = "red" | "green" | "blue";
       "test.d.ts"
     );
     const mbt = generateMbt(binding);
-    expect(mbt).toContain("pub enum Color");
-    expect(mbt).toContain("Red");
-    expect(mbt).toContain("Green");
-    expect(mbt).toContain("Blue");
+    expect(mbt).toMatchInlineSnapshot(`
+      "// Types
+      pub enum Color {
+        Red
+        Green
+        Blue
+      }
+      "
+    `);
   });
 });
 
@@ -149,16 +263,22 @@ export function createUser(name: string, email?: string): User;
 export function getUser(id: number): User | undefined;
 `;
     const mbt = dtsToMbt(dts, "test.d.ts", { packageName: "my/package" });
+    expect(mbt).toMatchInlineSnapshot(`
+      "// package "my/package"
 
-    expect(mbt).toContain('// package "my/package"');
-    expect(mbt).toContain("pub struct User");
-    expect(mbt).toContain("id : Int");
-    expect(mbt).toContain("name : String");
-    expect(mbt).toContain("email : String?");
-    expect(mbt).toContain('extern "js" fn create_user');
-    expect(mbt).toContain('= "createUser"');
-    expect(mbt).toContain('extern "js" fn get_user');
-    expect(mbt).toContain('= "getUser"');
+      // Types
+      pub struct User {
+        id : Int
+        name : String
+        email : String?
+      }
+
+      // Functions
+      extern "js" fn create_user(name : String, email : String) -> User = "createUser"
+
+      extern "js" fn get_user(id : Int) -> User? = "getUser"
+      "
+    `);
   });
 
   it("should handle TypeScript built-in types", () => {
@@ -170,10 +290,11 @@ export function process(
 ): void;
 `;
     const mbt = dtsToMbt(dts, "test.d.ts");
-    expect(mbt).toContain("Bytes");
-    expect(mbt).toContain("Bool");
-    expect(mbt).toContain("BigInt");
-    expect(mbt).toContain("-> Unit");
+    expect(mbt).toMatchInlineSnapshot(`
+      "// Functions
+      extern "js" fn process(data : Bytes, flag : Bool, count : BigInt) -> Unit = "process"
+      "
+    `);
   });
 });
 
@@ -189,28 +310,104 @@ export class Counter {
 }
 `;
     const binding = parseDts(dts, "test.d.ts");
-
-    // Should have extern type
-    expect(binding.externTypes).toContain("type Counter");
-
-    // Should have constructor with Type::new format
-    const ctorFn = binding.functions.find((f) => f.name === "Counter::new");
-    expect(ctorFn).toBeDefined();
-    expect(ctorFn?.returnType).toBe("Counter");
-    expect(ctorFn?.isMethod).toBe(true);
-    expect(ctorFn?.className).toBe("Counter");
-
-    // Should have methods with Type::method format and self parameter
-    const incrFn = binding.functions.find((f) => f.name === "Counter::increment");
-    expect(incrFn).toBeDefined();
-    expect(incrFn?.params[0].name).toBe("self");
-    expect(incrFn?.params[0].type).toBe("Counter");
-    expect(incrFn?.isMethod).toBe(true);
-
-    // Should have class info for glue code generation
-    expect(binding.classes).toHaveLength(1);
-    expect(binding.classes[0].name).toBe("Counter");
-    expect(binding.classes[0].hasConstructor).toBe(true);
+    expect({
+      externTypes: binding.externTypes,
+      functions: binding.functions,
+      classes: binding.classes
+    }).toMatchInlineSnapshot(`
+      {
+        "classes": [
+          {
+            "hasConstructor": true,
+            "methods": [
+              {
+                "jsName": "Counter.prototype.increment",
+                "name": "increment",
+              },
+              {
+                "jsName": "Counter.prototype.decrement",
+                "name": "decrement",
+              },
+              {
+                "jsName": "Counter.prototype.getValue",
+                "name": "getValue",
+              },
+            ],
+            "name": "Counter",
+            "typeParams": undefined,
+          },
+        ],
+        "externTypes": [
+          "type Counter",
+        ],
+        "functions": [
+          {
+            "className": "Counter",
+            "isAsync": false,
+            "isMethod": true,
+            "jsName": "Counter",
+            "name": "Counter::new",
+            "params": [
+              {
+                "name": "initial",
+                "optional": false,
+                "type": "Int",
+              },
+            ],
+            "returnType": "Counter",
+            "typeParams": undefined,
+          },
+          {
+            "className": "Counter",
+            "isAsync": false,
+            "isMethod": true,
+            "jsName": "Counter.prototype.increment",
+            "name": "Counter::increment",
+            "params": [
+              {
+                "name": "self",
+                "optional": false,
+                "type": "Counter",
+              },
+            ],
+            "returnType": "Unit",
+            "typeParams": undefined,
+          },
+          {
+            "className": "Counter",
+            "isAsync": false,
+            "isMethod": true,
+            "jsName": "Counter.prototype.decrement",
+            "name": "Counter::decrement",
+            "params": [
+              {
+                "name": "self",
+                "optional": false,
+                "type": "Counter",
+              },
+            ],
+            "returnType": "Unit",
+            "typeParams": undefined,
+          },
+          {
+            "className": "Counter",
+            "isAsync": false,
+            "isMethod": true,
+            "jsName": "Counter.prototype.getValue",
+            "name": "Counter::get_value",
+            "params": [
+              {
+                "name": "self",
+                "optional": false,
+                "type": "Counter",
+              },
+            ],
+            "returnType": "Int",
+            "typeParams": undefined,
+          },
+        ],
+      }
+    `);
   });
 
   it("should generate correct MoonBit code for class", () => {
@@ -223,17 +420,19 @@ export class HttpClient {
 }
 `;
     const mbt = dtsToMbt(dts, "test.d.ts");
+    expect(mbt).toMatchInlineSnapshot(`
+      "// Extern types
+      #external
+      type HttpClient
 
-    // New #external syntax
-    expect(mbt).toContain("#external");
-    expect(mbt).toContain("type HttpClient");
-    // Type::method format
-    expect(mbt).toContain('extern "js" fn HttpClient::new');
-    expect(mbt).toContain('= "HttpClient"');
-    expect(mbt).toContain('extern "js" fn HttpClient::get');
-    expect(mbt).toContain('extern "js" fn HttpClient::post');
-    // @js.Promise
-    expect(mbt).toContain("@js.Promise[String]");
+      // Functions
+      extern "js" fn HttpClient::new(base_url : String) -> HttpClient = "HttpClient"
+
+      extern "js" fn HttpClient::get(self : HttpClient, path : String) -> @js.Promise[String] = "HttpClient.prototype.get"
+
+      extern "js" fn HttpClient::post(self : HttpClient, path : String, body : String) -> @js.Promise[String] = "HttpClient.prototype.post"
+      "
+    `);
   });
 
   it("should handle generic class", () => {
@@ -246,12 +445,43 @@ export class Container<T> {
 }
 `;
     const binding = parseDts(dts, "test.d.ts");
-
-    expect(binding.externTypes).toContain("type Container[T]");
-
-    const ctorFn = binding.functions.find((f) => f.name === "Container::new");
-    expect(ctorFn?.typeParams).toContain("T");
-    expect(ctorFn?.returnType).toBe("Container[T]");
+    expect({
+      externTypes: binding.externTypes,
+      functions: binding.functions.map(f => ({
+        name: f.name,
+        typeParams: f.typeParams,
+        returnType: f.returnType
+      }))
+    }).toMatchInlineSnapshot(`
+      {
+        "externTypes": [
+          "type Container[T]",
+        ],
+        "functions": [
+          {
+            "name": "Container::new",
+            "returnType": "Container[T]",
+            "typeParams": [
+              "T",
+            ],
+          },
+          {
+            "name": "Container::get",
+            "returnType": "T",
+            "typeParams": [
+              "T",
+            ],
+          },
+          {
+            "name": "Container::set",
+            "returnType": "Unit",
+            "typeParams": [
+              "T",
+            ],
+          },
+        ],
+      }
+    `);
   });
 
   it("should generate glue code for class", () => {
@@ -264,17 +494,29 @@ export class Counter {
 `;
     const binding = parseDts(dts, "test.d.ts");
     const glue = generateGlueCode(binding, "./counter.js");
+    expect(glue).toMatchInlineSnapshot(`
+      "// Generated glue code for MoonBit FFI
+      // Import the original module
+      import * as _original from './counter.js';
 
-    // Should have factory function
-    expect(glue).toContain("export function Counter(...args)");
-    expect(glue).toContain("new _original.Counter(...args)");
+      // Factory function for Counter (called without 'new')
+      export function Counter(...args) {
+        return new _original.Counter(...args);
+      }
 
-    // Should have method wrappers
-    expect(glue).toContain("Counter.prototype.increment = function(self, ...args)");
-    expect(glue).toContain("Counter.prototype.getValue = function(self, ...args)");
+      // Method wrappers for Counter
+      Counter.prototype = Object.create(_original.Counter.prototype);
 
-    // Should re-export other items
-    expect(glue).toContain("export * from './counter.js'");
+      Counter.prototype.increment = function(self, ...args) {
+        return _original.Counter.prototype.increment.call(self, ...args);
+      };
+      Counter.prototype.getValue = function(self, ...args) {
+        return _original.Counter.prototype.getValue.call(self, ...args);
+      };
+
+      // Re-export other items
+      export * from './counter.js';"
+    `);
   });
 
   it("should generate both .mbt and glue code with dtsToMbtWithGlue", () => {
@@ -287,16 +529,44 @@ export class Timer {
 export function createTimer(): Timer;
 `;
     const result = dtsToMbtWithGlue(dts, "test.d.ts", "./timer.js");
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "glue": "// Generated glue code for MoonBit FFI
+      // Import the original module
+      import * as _original from './timer.js';
 
-    // Should have .mbt content
-    expect(result.mbt).toContain("#external");
-    expect(result.mbt).toContain("type Timer");
-    expect(result.mbt).toContain("Timer::new");
-    expect(result.mbt).toContain("Timer::start");
+      // Factory function for Timer (called without 'new')
+      export function Timer(...args) {
+        return new _original.Timer(...args);
+      }
 
-    // Should have glue code
-    expect(result.glue).toContain("export function Timer");
-    expect(result.glue).toContain("Timer.prototype.start");
+      // Method wrappers for Timer
+      Timer.prototype = Object.create(_original.Timer.prototype);
+
+      Timer.prototype.start = function(self, ...args) {
+        return _original.Timer.prototype.start.call(self, ...args);
+      };
+      Timer.prototype.stop = function(self, ...args) {
+        return _original.Timer.prototype.stop.call(self, ...args);
+      };
+
+      // Re-export other items
+      export * from './timer.js';",
+        "mbt": "// Extern types
+      #external
+      type Timer
+
+      // Functions
+      extern "js" fn Timer::new() -> Timer = "Timer"
+
+      extern "js" fn Timer::start(self : Timer) -> Unit = "Timer.prototype.start"
+
+      extern "js" fn Timer::stop(self : Timer) -> Unit = "Timer.prototype.stop"
+
+      extern "js" fn create_timer() -> Timer = "createTimer"
+      ",
+      }
+    `);
   });
 });
 
@@ -320,11 +590,27 @@ export function createElement(tagName: string): Element;
 export function querySelector(selector: string): Element | undefined;
 `;
     const mbt = dtsToMbt(dts, "dom.d.ts");
+    expect(mbt).toMatchInlineSnapshot(`
+      "// Types
+      pub struct Element {
+        tag_name : String
+        id : String
+        class_name : String
+        inner_h_t_m_l : String
+      }
 
-    expect(mbt).toContain("pub struct Element");
-    expect(mbt).toContain("pub struct Document");
-    expect(mbt).toContain('extern "js" fn get_element_by_id');
-    expect(mbt).toContain('extern "js" fn create_element');
-    expect(mbt).toContain('extern "js" fn query_selector');
+      pub struct Document {
+        body : Element
+        title : String
+      }
+
+      // Functions
+      extern "js" fn get_element_by_id(id : String) -> Element? = "getElementById"
+
+      extern "js" fn create_element(tag_name : String) -> Element = "createElement"
+
+      extern "js" fn query_selector(selector : String) -> Element? = "querySelector"
+      "
+    `);
   });
 });

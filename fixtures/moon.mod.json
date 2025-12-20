@@ -1,0 +1,9 @@
+{
+  "name": "mizchi/mbts_fixtures",
+  "deps": {
+    "mizchi/markdown": "0.1.2",
+    "mizchi/cbor": "0.1.1",
+    "bobzhang/tar": "0.1.0",
+    "moonbitlang/x": "0.4.38"
+  }
+}

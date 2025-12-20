@@ -1,3 +1,5 @@
 target/
-.mooncakes/
-node_modules/
+.mooncakes
+node_modules
+fixtures/.mooncakes
+.temp-typecheck
