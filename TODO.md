@@ -143,6 +143,8 @@ export function Show$toString<Self>(arg0: Self): string;
 - [ ] ランタイムで実際に動作すること
   - JS → MoonBit の FFI 呼び出しが機能するか
   - 型のマーシャリングが正しく行われるか (特に Optional, Array, Promise)
+  - **課題**: 独立した MoonBit プロジェクトで extern "js" の動作確認が必要
+  - 生成された関数名 (`ClassName.prototype.method`) が正しく動作するか要検証
 
 - [ ] 双方向変換の一貫性
   - `.mbti → .d.ts → .mbt` の変換が往復して意味的に等価になるか
