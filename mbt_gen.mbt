@@ -81,6 +81,83 @@ pub struct MbtParam {
 }
 
 // ============================================================
+// Helper Functions (public for testing)
+// ============================================================
+
+///|
+/// Format type parameters as "[T, U, V]" or "" if empty
+pub fn format_type_params(params : Array[String]) -> String {
+  if params.length() == 0 {
+    return ""
+  }
+  let buf = StringBuilder::new()
+  buf.write_string("[")
+  for i, p in params {
+    if i > 0 {
+      buf.write_string(", ")
+    }
+    buf.write_string(p)
+  }
+  buf.write_string("]")
+  buf.to_string()
+}
+
+///|
+/// Format struct fields
+pub fn format_fields(fields : Array[MbtField]) -> String {
+  let buf = StringBuilder::new()
+  for f in fields {
+    buf.write_string("  ")
+    if f.mutable {
+      buf.write_string("mut ")
+    }
+    buf.write_string(f.name)
+    buf.write_string(" : ")
+    buf.write_string(f.type_)
+    buf.write_string("\n")
+  }
+  buf.to_string()
+}
+
+///|
+/// Format enum variants
+pub fn format_variants(variants : Array[MbtVariant]) -> String {
+  let buf = StringBuilder::new()
+  for v in variants {
+    buf.write_string("  ")
+    buf.write_string(v.name)
+    if v.payload.length() > 0 {
+      buf.write_string("(")
+      for i, p in v.payload {
+        if i > 0 {
+          buf.write_string(", ")
+        }
+        buf.write_string(p)
+      }
+      buf.write_string(")")
+    }
+    buf.write_string("\n")
+  }
+  buf.to_string()
+}
+
+///|
+/// Format function parameters as "name : Type, name2 : Type2"
+pub fn format_fn_params(params : Array[MbtParam]) -> String {
+  let buf = StringBuilder::new()
+  for i, p in params {
+    if i > 0 {
+      buf.write_string(", ")
+    }
+    let name = if p.name.length() > 0 { p.name } else { "arg\{i}" }
+    buf.write_string(name)
+    buf.write_string(" : ")
+    buf.write_string(p.type_)
+  }
+  buf.to_string()
+}
+
+// ============================================================
 // Code Generation
 // ============================================================
 
@@ -123,100 +200,36 @@ pub fn generate_mbt(binding : MbtBinding) -> String {
 
 ///|
 fn gen_mbt_type(t : MbtType) -> String {
-  let type_params = if t.type_params.length() > 0 {
-    let buf = StringBuilder::new()
-    buf.write_string("[")
-    for i, p in t.type_params {
-      if i > 0 {
-        buf.write_string(", ")
-      }
-      buf.write_string(p)
-    }
-    buf.write_string("]")
-    buf.to_string()
-  } else {
-    ""
-  }
+  let type_params = format_type_params(t.type_params)
   match t.kind {
-    Struct =>
-      if t.fields.length() == 0 {
-        "pub struct \{t.name}\{type_params} {}"
-      } else {
-        let buf = StringBuilder::new()
-        buf.write_string("pub struct ")
-        buf.write_string(t.name)
-        buf.write_string(type_params)
-        buf.write_string(" {\n")
-        for f in t.fields {
-          buf.write_string("  ")
-          if f.mutable {
-            buf.write_string("mut ")
-          }
-          buf.write_string(f.name)
-          buf.write_string(" : ")
-          buf.write_string(f.type_)
-          buf.write_string("\n")
-        }
-        buf.write_string("}")
-        buf.to_string()
-      }
-    Enum => {
-      let buf = StringBuilder::new()
-      buf.write_string("pub enum ")
-      buf.write_string(t.name)
-      buf.write_string(type_params)
-      buf.write_string(" {\n")
-      for v in t.variants {
-        buf.write_string("  ")
-        buf.write_string(v.name)
-        if v.payload.length() > 0 {
-          buf.write_string("(")
-          for i, p in v.payload {
-            if i > 0 {
-              buf.write_string(", ")
-            }
-            buf.write_string(p)
-          }
-          buf.write_string(")")
-        }
-        buf.write_string("\n")
-      }
-      buf.write_string("}")
-      buf.to_string()
-    }
+    Struct => gen_struct(t.name, type_params, t.fields)
+    Enum => gen_enum(t.name, type_params, t.variants)
     Type => "pub type \{t.name}\{type_params}"
   }
 }
 
 ///|
-fn gen_mbt_function(f : MbtFunction) -> String {
-  let type_params = if f.type_params.length() > 0 {
-    let buf = StringBuilder::new()
-    buf.write_string("[")
-    for i, p in f.type_params {
-      if i > 0 {
-        buf.write_string(", ")
-      }
-      buf.write_string(p)
-    }
-    buf.write_string("]")
-    buf.to_string()
+/// Generate struct definition
+fn gen_struct(name : String, type_params : String, fields : Array[MbtField]) -> String {
+  if fields.length() == 0 {
+    "pub struct \{name}\{type_params} {}"
   } else {
-    ""
+    let fields_str = format_fields(fields)
+    "pub struct \{name}\{type_params} {\n\{fields_str}}"
   }
-  let params = {
-    let buf = StringBuilder::new()
-    for i, p in f.params {
-      if i > 0 {
-        buf.write_string(", ")
-      }
-      let name = if p.name.length() > 0 { p.name } else { "arg\{i}" }
-      buf.write_string(name)
-      buf.write_string(" : ")
-      buf.write_string(p.type_)
-    }
-    buf.to_string()
-  }
+}
+
+///|
+/// Generate enum definition
+fn gen_enum(name : String, type_params : String, variants : Array[MbtVariant]) -> String {
+  let variants_str = format_variants(variants)
+  "pub enum \{name}\{type_params} {\n\{variants_str}}"
+}
+
+///|
+fn gen_mbt_function(f : MbtFunction) -> String {
+  let type_params = format_type_params(f.type_params)
+  let params = format_fn_params(f.params)
   // Handle async - wrap in Promise if not already
   let return_type = if f.is_async && not(f.return_type.has_prefix("Promise[")) {
     "Promise[\{f.return_type}]"

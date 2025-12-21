@@ -1,9 +1,214 @@
 ///|
 /// Tests for mbt_gen.mbt - MoonBit code generation
+
+// ============================================================
+// Helper Function Tests
+// ============================================================
+
+///|
+test "format_type_params: empty" {
+  let result = format_type_params([])
+  assert_eq(result, "")
+}
+
+///|
+test "format_type_params: single" {
+  let result = format_type_params(["T"])
+  assert_eq(result, "[T]")
+}
+
+///|
+test "format_type_params: multiple" {
+  let result = format_type_params(["T", "U", "V"])
+  assert_eq(result, "[T, U, V]")
+}
+
+///|
+test "format_fields: empty" {
+  let result = format_fields([])
+  assert_eq(result, "")
+}
+
+///|
+test "format_fields: single" {
+  let result = format_fields([MbtField::new("name", "String")])
+  assert_eq(result, "  name : String\n")
+}
+
+///|
+test "format_fields: with mutable" {
+  let result = format_fields([
+    MbtField::new("name", "String"),
+    MbtField::{ name: "age", type_: "Int", mutable: true },
+  ])
+  let expected = "  name : String\n  mut age : Int\n"
+  assert_eq(result, expected)
+}
+
+///|
+test "format_variants: empty" {
+  let result = format_variants([])
+  assert_eq(result, "")
+}
+
+///|
+test "format_variants: no payload" {
+  let result = format_variants([MbtVariant::new("Pending")])
+  assert_eq(result, "  Pending\n")
+}
+
+///|
+test "format_variants: with payload" {
+  let result = format_variants([
+    MbtVariant::new("Pending"),
+    MbtVariant::{ name: "Active", payload: ["Int"] },
+    MbtVariant::{ name: "Error", payload: ["String", "Int"] },
+  ])
+  let expected = "  Pending\n  Active(Int)\n  Error(String, Int)\n"
+  assert_eq(result, expected)
+}
+
+///|
+test "format_fn_params: empty" {
+  let result = format_fn_params([])
+  assert_eq(result, "")
+}
+
+///|
+test "format_fn_params: single" {
+  let result = format_fn_params([MbtParam::new("name", "String")])
+  assert_eq(result, "name : String")
+}
+
+///|
+test "format_fn_params: multiple" {
+  let result = format_fn_params([
+    MbtParam::new("a", "Int"),
+    MbtParam::new("b", "Int"),
+  ])
+  assert_eq(result, "a : Int, b : Int")
+}
+
+///|
+test "format_fn_params: empty name fallback" {
+  let result = format_fn_params([
+    MbtParam::{ name: "", type_: "String", optional: false },
+  ])
+  assert_eq(result, "arg0 : String")
+}
+
+// ============================================================
+// Code Generation Tests
+// ============================================================
+
+///|
 test "generate_mbt: empty binding" {
   let binding = MbtBinding::new()
   let result = generate_mbt(binding)
   assert_eq(result, "")
+}
+
+///|
+test "generate_mbt: with package_name" {
+  let binding = MbtBinding::{
+    package_name: "myapp/lib",
+    types: [],
+    functions: [],
+    extern_types: [],
+    classes: [],
+  }
+  let result = generate_mbt(binding)
+  let expected =
+    #|// package "myapp/lib"
+    #|
+    #|
+  assert_eq(result, expected)
+}
+
+///|
+test "generate_mbt: empty struct" {
+  let t = MbtType::{
+    name: "Empty",
+    kind: MbtTypeKind::Struct,
+    fields: [],
+    variants: [],
+    type_params: [],
+    js_name: "",
+  }
+  let binding = MbtBinding::{
+    package_name: "",
+    types: [t],
+    functions: [],
+    extern_types: [],
+    classes: [],
+  }
+  let result = generate_mbt(binding)
+  let expected =
+    #|// Types
+    #|pub struct Empty {}
+    #|
+    #|
+  assert_eq(result, expected)
+}
+
+///|
+test "generate_mbt: generic struct" {
+  let t = MbtType::{
+    name: "Container",
+    kind: MbtTypeKind::Struct,
+    fields: [MbtField::new("value", "T")],
+    variants: [],
+    type_params: ["T"],
+    js_name: "",
+  }
+  let binding = MbtBinding::{
+    package_name: "",
+    types: [t],
+    functions: [],
+    extern_types: [],
+    classes: [],
+  }
+  let result = generate_mbt(binding)
+  let expected =
+    #|// Types
+    #|pub struct Container[T] {
+    #|  value : T
+    #|}
+    #|
+    #|
+  assert_eq(result, expected)
+}
+
+///|
+test "generate_mbt: generic enum" {
+  let t = MbtType::{
+    name: "Result",
+    kind: MbtTypeKind::Enum,
+    fields: [],
+    variants: [
+      MbtVariant::{ name: "Ok", payload: ["T"] },
+      MbtVariant::{ name: "Err", payload: ["E"] },
+    ],
+    type_params: ["T", "E"],
+    js_name: "",
+  }
+  let binding = MbtBinding::{
+    package_name: "",
+    types: [t],
+    functions: [],
+    extern_types: [],
+    classes: [],
+  }
+  let result = generate_mbt(binding)
+  let expected =
+    #|// Types
+    #|pub enum Result[T, E] {
+    #|  Ok(T)
+    #|  Err(E)
+    #|}
+    #|
+    #|
+  assert_eq(result, expected)
 }
 
 ///|
@@ -214,6 +419,122 @@ test "generate_mbt: class method" {
     #|// Functions
     #|extern "js" fn Counter::increment(self : Counter) -> Int =
     #|  #| (self) => self.increment()
+    #|
+  assert_eq(result, expected)
+}
+
+///|
+test "generate_mbt: type alias" {
+  let t = MbtType::{
+    name: "UserId",
+    kind: MbtTypeKind::Type,
+    fields: [],
+    variants: [],
+    type_params: [],
+    js_name: "",
+  }
+  let binding = MbtBinding::{
+    package_name: "",
+    types: [t],
+    functions: [],
+    extern_types: [],
+    classes: [],
+  }
+  let result = generate_mbt(binding)
+  let expected =
+    #|// Types
+    #|pub type UserId
+    #|
+    #|
+  assert_eq(result, expected)
+}
+
+///|
+test "generate_mbt: generic type alias" {
+  let t = MbtType::{
+    name: "Wrapper",
+    kind: MbtTypeKind::Type,
+    fields: [],
+    variants: [],
+    type_params: ["T"],
+    js_name: "",
+  }
+  let binding = MbtBinding::{
+    package_name: "",
+    types: [t],
+    functions: [],
+    extern_types: [],
+    classes: [],
+  }
+  let result = generate_mbt(binding)
+  let expected =
+    #|// Types
+    #|pub type Wrapper[T]
+    #|
+    #|
+  assert_eq(result, expected)
+}
+
+///|
+test "generate_mbt: constructor" {
+  let f = MbtFunction::{
+    name: "Counter::new",
+    params: [MbtParam::new("value", "Int")],
+    return_type: "Counter",
+    is_async: false,
+    js_name: "Counter",
+    type_params: [],
+    is_method: true,
+    class_name: "Counter",
+  }
+  let binding = MbtBinding::{
+    package_name: "",
+    types: [],
+    functions: [f],
+    extern_types: ["type Counter"],
+    classes: [],
+  }
+  let result = generate_mbt(binding)
+  let expected =
+    #|// Extern types
+    #|#external
+    #|type Counter
+    #|
+    #|// Functions
+    #|extern "js" fn Counter::new(value : Int) -> Counter =
+    #|  #| (value) => new Counter(value)
+    #|
+  assert_eq(result, expected)
+}
+
+///|
+test "generate_mbt: method with args" {
+  let f = MbtFunction::{
+    name: "Counter::add",
+    params: [MbtParam::new("self", "Counter"), MbtParam::new("n", "Int")],
+    return_type: "Int",
+    is_async: false,
+    js_name: "Counter.prototype.add",
+    type_params: [],
+    is_method: true,
+    class_name: "Counter",
+  }
+  let binding = MbtBinding::{
+    package_name: "",
+    types: [],
+    functions: [f],
+    extern_types: ["type Counter"],
+    classes: [],
+  }
+  let result = generate_mbt(binding)
+  let expected =
+    #|// Extern types
+    #|#external
+    #|type Counter
+    #|
+    #|// Functions
+    #|extern "js" fn Counter::add(self : Counter, n : Int) -> Int =
+    #|  #| (self, n) => self.add(n)
     #|
   assert_eq(result, expected)
 }

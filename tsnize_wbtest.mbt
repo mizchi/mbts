@@ -506,6 +506,39 @@ test "package_to_namespace" {
   inspect(package_to_namespace("test"), content="test")
 }
 
+///|
+test "package_to_namespace: empty string" {
+  inspect(package_to_namespace(""), content="")
+}
+
+///|
+test "generate_dts_with_preamble: with preamble" {
+  let content =
+    #|package "test"
+    #|
+    #|pub struct User {
+    #|  name : String
+    #|}
+    #|
+  let mbti = parse_mbti(content, "test.mbti")
+  let dts = generate_dts_with_preamble(mbti, include_preamble=true)
+  // Check that preamble is included
+  assert_true(dts.contains("Runtime types"))
+  assert_true(dts.contains("Ref<T>"))
+  assert_true(dts.contains("interface User"))
+}
+
+///|
+test "preprocess_mbti: pub fn to fn" {
+  let content =
+    #|package "test"
+    #|pub fn hello() -> String
+    #|
+  let result = preprocess_mbti(content)
+  assert_true(result.contains("fn hello"))
+  assert_false(result.contains("pub fn hello"))
+}
+
 // ============================================================
 // 曖昧性のあるケース - Phase 3 前に意思決定が必要
 // ============================================================
