@@ -1,0 +1,46 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "mizchi/mbts_fixtures/demo"
+
+// Values
+
+// Errors
+
+// Types and methods
+type ApiClient
+
+pub struct ApiResponse {
+  data : String
+  status : Int
+}
+
+pub enum Color {
+  Red
+  Green
+  Blue
+}
+
+type Container[T]
+
+type Counter
+
+pub struct Result[T, E] {
+  value : T?
+  error : E?
+}
+
+pub enum Status {
+  Pending
+  Active
+  Done
+}
+
+pub struct User {
+  id : Int
+  name : String
+  email : String?
+}
+
+// Type aliases
+
+// Traits
+
