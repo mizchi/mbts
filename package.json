@@ -1,6 +1,6 @@
 {
   "name": "@mizchi/mbts",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "MoonBit / TypeScript interoperability helpers",
   "main": "js/index.ts",
   "scripts": {
@@ -10,7 +10,10 @@
     "test:watch": "vitest",
     "mbts": "npx tsx js/cli.ts"
   },
-  "files": ["js", "target/js/release/build/cli"],
+  "files": [
+    "js",
+    "target/js/release/build/cli"
+  ],
   "bin": "js/cli.cjs",
   "keywords": [
     "moonbit",

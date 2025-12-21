@@ -1,6 +1,6 @@
 {
   "name": "@mizchi/mbts",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "nodeModulesDir": "auto",
   "license": "MIT",
   "exports": {
@@ -12,13 +12,12 @@
   "exclude": [
     "js/*.test.ts",
     "**/.mooncakes/**",
+    "__snapshot__",
     "playground",
     "fixtures",
     "scripts",
     "examples",
-    "__snapshot__",
     ".temp-typecheck"
- 
   ],
   "publish": {
     "include": [

@@ -248,6 +248,80 @@ pub fn __jsglue_identity(arg0 : @js.Any) -> @js.Any {
 }
 ```
 
+## Conversion Rules
+
+### Function Names
+
+| MoonBit | TypeScript (default) | TypeScript (--naming camelCase) |
+|---------|---------------------|--------------------------------|
+| `get_user_name` | `get_user_name` | `getUserName` |
+| `Type::method` | `type$method` | `type$method` |
+
+### Structs → Interfaces
+
+```moonbit
+pub struct User {
+  id : Int           // immutable
+  mut name : String  // mutable
+}
+```
+
+```typescript
+export interface User {
+  readonly id: number;  // readonly (immutable)
+  name: string;         // writable (mut)
+}
+```
+
+### Enums → Discriminated Unions
+
+```moonbit
+pub enum Result[T, E] {
+  Ok(T)
+  Err(E)
+}
+```
+
+```typescript
+export interface Result_Ok<T> { readonly $tag: "Ok"; readonly $0: T; }
+export interface Result_Err<E> { readonly $tag: "Err"; readonly $0: E; }
+export type Result<T, E> = Result_Ok<T> | Result_Err<E>;
+```
+
+### Option Types
+
+```moonbit
+pub fn find(id : Int) -> User?
+```
+
+```typescript
+export function find(id: number): User | undefined;
+```
+
+### Tuples
+
+```moonbit
+pub fn get_pair() -> (Int, String)
+```
+
+```typescript
+export function get_pair(): [number, string];
+```
+
+### Methods
+
+Methods are exported with `$` separator:
+
+```moonbit
+pub fn User::new(name : String) -> User
+pub fn User::greet(self : User) -> String
+```
+
+```typescript
+export function user$new(name: string): User;
+export function user$greet(self: User): string;
+```
+
 ## Programmatic API
 
 ### .mbti → .d.ts
@@ -305,6 +379,20 @@ pnpm build:cli
 # Run tests
 moon test
 pnpm test
+```
+
+## Internals
+
+mbts uses an internal `.mbti` parser to analyze MoonBit's interface files. The parser extracts:
+
+- Function signatures with type parameters
+- Struct and enum definitions
+- Method declarations
+
+For generic functions that cannot be directly exported to JavaScript (due to MoonBit's FFI limitation), mbts automatically generates wrapper functions in `__jsglue.mbt`. These wrappers replace type parameters with `@js.Any`, enabling JavaScript interop while preserving the original generic implementation.
+
+```
+.mbti (parsed) → AST → analyze generics → generate __jsglue.mbt
 ```
 
 ## License

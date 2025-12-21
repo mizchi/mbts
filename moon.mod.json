@@ -1,6 +1,6 @@
 {
   "name": "mizchi/mbts",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "well-typed mbt(i) to d.ts converter and utils",
   "deps": {
     "moonbitlang/parser": "0.1.12",
