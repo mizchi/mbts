@@ -1,0 +1,61 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "examples/sample"
+
+import(
+  "mizchi/js/core"
+)
+
+// Values
+pub fn __jsglue_identity(@core.Any) -> @core.Any
+
+pub fn add(Int, Int) -> Int
+
+pub fn box_get(Box[@core.Any]) -> @core.Any
+
+pub fn box_new(@core.Any) -> Box[@core.Any]
+
+pub fn box_set(Box[@core.Any], @core.Any) -> Unit
+
+pub fn create_point(Double, Double) -> Point
+
+pub fn create_user(Int, String) -> User
+
+pub fn distance(Point, Point) -> Double
+
+pub fn greet(String) -> String
+
+pub fn[T] identity(T) -> T
+
+pub fn identity_any(@core.Any) -> @core.Any
+
+// Errors
+
+// Types and methods
+type Box[T]
+
+pub struct Point {
+  x : Double
+  y : Double
+}
+
+pub enum Result[T, E] {
+  Ok(T)
+  Err(E)
+}
+
+pub enum Status {
+  Pending
+  Active
+  Done
+}
+
+pub struct User {
+  id : Int
+  name : String
+  email : String?
+}
+
+// Type aliases
+
+// Traits
+

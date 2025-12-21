@@ -1,0 +1,22 @@
+{
+  "import": [
+    "mizchi/js"
+  ],
+  "is-main": true,
+  "link": {
+    "js": {
+      "exports": [
+        "__jsglue_identity",
+        "add",
+        "box_get",
+        "box_new",
+        "box_set",
+        "create_point",
+        "create_user",
+        "distance",
+        "greet",
+        "identity_any"
+      ]
+    }
+  }
+}
