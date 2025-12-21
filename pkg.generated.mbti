@@ -9,6 +9,14 @@ import(
 )
 
 // Values
+pub fn format_fields(Array[MbtField]) -> String
+
+pub fn format_fn_params(Array[MbtParam]) -> String
+
+pub fn format_type_params(Array[String]) -> String
+
+pub fn format_variants(Array[MbtVariant]) -> String
+
 pub fn generate_combined_dts(Array[@mbti_ast.Mbti]) -> String
 
 pub fn generate_dts(@mbti_ast.Mbti) -> String

@@ -1,0 +1,18 @@
+{
+  "import": [
+    "mizchi/js"
+  ],
+  "link": {
+    "js": {
+      "exports": [
+        "container_get",
+        "container_new",
+        "container_set",
+        "greet",
+        "__jsglue_identity",
+        "identity_any",
+        "wrap_and_get"
+      ]
+    }
+  }
+}

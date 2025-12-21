@@ -3927,19 +3927,19 @@ var moonbitlang$parser$mbti_parser$$error$46$tuple$47$22455 = { _0: 100, _1: 101
 var moonbitlang$parser$mbti_parser$$error$46$tuple$47$22456 = { _0: 101, _1: 100 };
 var moonbitlang$parser$mbti_parser$$error$46$tuple$47$22457 = { _0: 102, _1: 102 };
 var moonbitlang$parser$mbti_parser$$error$46$tuple$47$22458 = { _0: 103, _1: 103 };
-var mizchi$mbts$$is_type_alias$46$42$bind$124$594 = "pub type ";
-var mizchi$mbts$$is_type_alias$46$42$bind$124$595 = " = ";
-var mizchi$mbts$$preprocess_mbti$46$42$bind$124$611 = "\n";
-var mizchi$mbts$$preprocess_mbti$46$42$bind$124$597 = "pub fn ";
-var mizchi$mbts$$preprocess_mbti$46$42$bind$124$598 = "pub fn ";
-var mizchi$mbts$$preprocess_mbti$46$42$bind$124$599 = "fn ";
-var mizchi$mbts$$preprocess_mbti$46$42$bind$124$604 = "pub impl ";
-var mizchi$mbts$$preprocess_mbti$46$42$bind$124$605 = "pub using ";
-var mizchi$mbts$$preprocess_mbti$46$42$bind$124$606 = "pub let ";
-var mizchi$mbts$$preprocess_mbti$46$42$bind$124$596 = "\n";
-var mizchi$mbts$$package_to_namespace$46$42$bind$124$616 = "/";
-var mizchi$mbts$$generate_type$46$42$bind$124$645 = ".";
-var mizchi$mbts$$generate_dts_namespace$46$42$bind$124$869 = "\n";
+var mizchi$mbts$$is_type_alias$46$42$bind$124$600 = "pub type ";
+var mizchi$mbts$$is_type_alias$46$42$bind$124$601 = " = ";
+var mizchi$mbts$$preprocess_mbti$46$42$bind$124$617 = "\n";
+var mizchi$mbts$$preprocess_mbti$46$42$bind$124$603 = "pub fn ";
+var mizchi$mbts$$preprocess_mbti$46$42$bind$124$604 = "pub fn ";
+var mizchi$mbts$$preprocess_mbti$46$42$bind$124$605 = "fn ";
+var mizchi$mbts$$preprocess_mbti$46$42$bind$124$610 = "pub impl ";
+var mizchi$mbts$$preprocess_mbti$46$42$bind$124$611 = "pub using ";
+var mizchi$mbts$$preprocess_mbti$46$42$bind$124$612 = "pub let ";
+var mizchi$mbts$$preprocess_mbti$46$42$bind$124$602 = "\n";
+var mizchi$mbts$$package_to_namespace$46$42$bind$124$622 = "/";
+var mizchi$mbts$$generate_type$46$42$bind$124$651 = ".";
+var mizchi$mbts$$generate_dts_namespace$46$42$bind$124$875 = "\n";
 var moonbitlang$parser$lexer$$use_utf16_location = moonbitlang$core$ref$$Ref$new$6$(false);
 var moonbitlang$core$builtin$$seed = moonbitlang$core$builtin$$random_seed();
 var _bind = [{ _0: "as", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$AS }, { _0: "else", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$ELSE }, { _0: "extern", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$EXTERN }, { _0: "fn", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$FN }, { _0: "fnalias", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$FNALIAS }, { _0: "if", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$IF }, { _0: "let", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$LET }, { _0: "const", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$CONST }, { _0: "match", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$MATCH }, { _0: "mut", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$MUTABLE }, { _0: "type", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$TYPE }, { _0: "typealias", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$TYPEALIAS }, { _0: "struct", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$STRUCT }, { _0: "enum", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$ENUM }, { _0: "trait", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$TRAIT }, { _0: "traitalias", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$TRAITALIAS }, { _0: "derive", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$DERIVE }, { _0: "while", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$WHILE }, { _0: "break", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$BREAK }, { _0: "continue", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$CONTINUE }, { _0: "import", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$IMPORT }, { _0: "return", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$RETURN }, { _0: "throw", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$THROW }, { _0: "raise", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$RAISE }, { _0: "try", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$TRY }, { _0: "catch", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$CATCH }, { _0: "pub", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$PUB }, { _0: "priv", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$PRIV }, { _0: "readonly", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$READONLY }, { _0: "true", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$TRUE }, { _0: "false", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$FALSE }, { _0: "_", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$UNDERSCORE }, { _0: "test", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$TEST }, { _0: "loop", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$LOOP }, { _0: "for", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$FOR }, { _0: "in", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$IN }, { _0: "impl", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$IMPL }, { _0: "with", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$WITH }, { _0: "guard", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$GUARD }, { _0: "async", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$ASYNC }, { _0: "is", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$IS }, { _0: "suberror", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$SUBERROR }, { _0: "and", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$AND }, { _0: "letrec", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$LETREC }, { _0: "enumview", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$ENUMVIEW }, { _0: "noraise", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$NORAISE }, { _0: "defer", _1: $64$moonbitlang$47$parser$47$tokens$46$Token$DEFER }];
@@ -25431,19 +25431,19 @@ function moonbitlang$parser$mbti_parser$$mbti(tokens, initial_pos) {
   }, initial_pos);
 }
 function mizchi$mbts$$is_type_alias(line) {
-  return moonbitlang$core$string$$String$has_prefix(line, { str: mizchi$mbts$$is_type_alias$46$42$bind$124$594, start: 0, end: mizchi$mbts$$is_type_alias$46$42$bind$124$594.length }) ? moonbitlang$core$string$$String$contains(line, { str: mizchi$mbts$$is_type_alias$46$42$bind$124$595, start: 0, end: mizchi$mbts$$is_type_alias$46$42$bind$124$595.length }) : false;
+  return moonbitlang$core$string$$String$has_prefix(line, { str: mizchi$mbts$$is_type_alias$46$42$bind$124$600, start: 0, end: mizchi$mbts$$is_type_alias$46$42$bind$124$600.length }) ? moonbitlang$core$string$$String$contains(line, { str: mizchi$mbts$$is_type_alias$46$42$bind$124$601, start: 0, end: mizchi$mbts$$is_type_alias$46$42$bind$124$601.length }) : false;
 }
-function mizchi$mbts$$preprocess_mbti$46$42$p$124$607(_p, _p$2) {
+function mizchi$mbts$$preprocess_mbti$46$42$p$124$613(_p, _p$2) {
   const s = moonbitlang$core$builtin$$Show$to_string$17$(_p$2);
-  return _p(moonbitlang$core$string$$String$has_prefix(moonbitlang$core$builtin$$Show$to_string$17$(moonbitlang$core$string$$String$trim_space(s)), { str: mizchi$mbts$$preprocess_mbti$46$42$bind$124$597, start: 0, end: mizchi$mbts$$preprocess_mbti$46$42$bind$124$597.length }) ? moonbitlang$core$string$$String$replace(s, { str: mizchi$mbts$$preprocess_mbti$46$42$bind$124$598, start: 0, end: mizchi$mbts$$preprocess_mbti$46$42$bind$124$598.length }, { str: mizchi$mbts$$preprocess_mbti$46$42$bind$124$599, start: 0, end: mizchi$mbts$$preprocess_mbti$46$42$bind$124$599.length }) : s);
+  return _p(moonbitlang$core$string$$String$has_prefix(moonbitlang$core$builtin$$Show$to_string$17$(moonbitlang$core$string$$String$trim_space(s)), { str: mizchi$mbts$$preprocess_mbti$46$42$bind$124$603, start: 0, end: mizchi$mbts$$preprocess_mbti$46$42$bind$124$603.length }) ? moonbitlang$core$string$$String$replace(s, { str: mizchi$mbts$$preprocess_mbti$46$42$bind$124$604, start: 0, end: mizchi$mbts$$preprocess_mbti$46$42$bind$124$604.length }, { str: mizchi$mbts$$preprocess_mbti$46$42$bind$124$605, start: 0, end: mizchi$mbts$$preprocess_mbti$46$42$bind$124$605.length }) : s);
 }
 function mizchi$mbts$$preprocess_mbti(content) {
-  const lines = moonbitlang$core$string$$String$split(content, { str: mizchi$mbts$$preprocess_mbti$46$42$bind$124$611, start: 0, end: mizchi$mbts$$preprocess_mbti$46$42$bind$124$611.length });
+  const lines = moonbitlang$core$string$$String$split(content, { str: mizchi$mbts$$preprocess_mbti$46$42$bind$124$617, start: 0, end: mizchi$mbts$$preprocess_mbti$46$42$bind$124$617.length });
   const processed = (_p) => lines((_p$2) => {
     const trimmed = moonbitlang$core$builtin$$Show$to_string$17$(moonbitlang$core$string$$StringView$trim_space(_p$2));
-    return !moonbitlang$core$string$$String$has_prefix(trimmed, { str: mizchi$mbts$$preprocess_mbti$46$42$bind$124$604, start: 0, end: mizchi$mbts$$preprocess_mbti$46$42$bind$124$604.length }) && (!moonbitlang$core$string$$String$has_prefix(trimmed, { str: mizchi$mbts$$preprocess_mbti$46$42$bind$124$605, start: 0, end: mizchi$mbts$$preprocess_mbti$46$42$bind$124$605.length }) && (!moonbitlang$core$string$$String$has_prefix(trimmed, { str: mizchi$mbts$$preprocess_mbti$46$42$bind$124$606, start: 0, end: mizchi$mbts$$preprocess_mbti$46$42$bind$124$606.length }) && !mizchi$mbts$$is_type_alias(trimmed))) ? mizchi$mbts$$preprocess_mbti$46$42$p$124$607(_p, _p$2) : 1;
+    return !moonbitlang$core$string$$String$has_prefix(trimmed, { str: mizchi$mbts$$preprocess_mbti$46$42$bind$124$610, start: 0, end: mizchi$mbts$$preprocess_mbti$46$42$bind$124$610.length }) && (!moonbitlang$core$string$$String$has_prefix(trimmed, { str: mizchi$mbts$$preprocess_mbti$46$42$bind$124$611, start: 0, end: mizchi$mbts$$preprocess_mbti$46$42$bind$124$611.length }) && (!moonbitlang$core$string$$String$has_prefix(trimmed, { str: mizchi$mbts$$preprocess_mbti$46$42$bind$124$612, start: 0, end: mizchi$mbts$$preprocess_mbti$46$42$bind$124$612.length }) && !mizchi$mbts$$is_type_alias(trimmed))) ? mizchi$mbts$$preprocess_mbti$46$42$p$124$613(_p, _p$2) : 1;
   });
-  return moonbitlang$core$array$$Array$join$8$(moonbitlang$core$builtin$$Iter$collect$8$(processed), { str: mizchi$mbts$$preprocess_mbti$46$42$bind$124$596, start: 0, end: mizchi$mbts$$preprocess_mbti$46$42$bind$124$596.length });
+  return moonbitlang$core$array$$Array$join$8$(moonbitlang$core$builtin$$Iter$collect$8$(processed), { str: mizchi$mbts$$preprocess_mbti$46$42$bind$124$602, start: 0, end: mizchi$mbts$$preprocess_mbti$46$42$bind$124$602.length });
 }
 function mizchi$mbts$$parse_mbti(content, filename) {
   const preprocessed = mizchi$mbts$$preprocess_mbti(content);
@@ -25484,7 +25484,7 @@ function mizchi$mbts$$parse_mbti(content, filename) {
   return moonbitlang$parser$mbti_parser$$mbti(tokens, { fname: filename, lnum: 1, bol: 0, cnum: 0 });
 }
 function mizchi$mbts$$package_to_namespace(package_name) {
-  const _bind$2 = moonbitlang$core$string$$String$split(package_name, { str: mizchi$mbts$$package_to_namespace$46$42$bind$124$616, start: 0, end: mizchi$mbts$$package_to_namespace$46$42$bind$124$616.length });
+  const _bind$2 = moonbitlang$core$string$$String$split(package_name, { str: mizchi$mbts$$package_to_namespace$46$42$bind$124$622, start: 0, end: mizchi$mbts$$package_to_namespace$46$42$bind$124$622.length });
   const parts = moonbitlang$core$builtin$$Iter$collect$8$((_p) => _bind$2((_p$2) => _p(moonbitlang$core$builtin$$Show$to_string$17$(_p$2))));
   return parts.length > 0 ? moonbitlang$core$array$$Array$at$8$(parts, parts.length - 1 | 0) : package_name;
 }
@@ -25640,7 +25640,7 @@ function mizchi$mbts$$generate_type(ty) {
       const _tys$2 = _Name._1;
       _Name._2;
       const name = mizchi$mbts$$long_ident_to_string(_constr_id.id);
-      if (moonbitlang$core$string$$String$contains(name, { str: mizchi$mbts$$generate_type$46$42$bind$124$645, start: 0, end: mizchi$mbts$$generate_type$46$42$bind$124$645.length })) {
+      if (moonbitlang$core$string$$String$contains(name, { str: mizchi$mbts$$generate_type$46$42$bind$124$651, start: 0, end: mizchi$mbts$$generate_type$46$42$bind$124$651.length })) {
         return `any /* TODO: @${name} */`;
       } else {
         const mapped = mizchi$mbts$$map_moonbit_type(name);
@@ -26691,7 +26691,7 @@ function mizchi$mbts$$generate_dts_namespace(mbti) {
       const _sig = _item._0;
       const ts2 = mizchi$mbts$$generate_sig(_sig);
       if (ts2.length > 0) {
-        const _bind$3 = moonbitlang$core$string$$String$split(ts2, { str: mizchi$mbts$$generate_dts_namespace$46$42$bind$124$869, start: 0, end: mizchi$mbts$$generate_dts_namespace$46$42$bind$124$869.length });
+        const _bind$3 = moonbitlang$core$string$$String$split(ts2, { str: mizchi$mbts$$generate_dts_namespace$46$42$bind$124$875, start: 0, end: mizchi$mbts$$generate_dts_namespace$46$42$bind$124$875.length });
         _bind$3((line) => {
           moonbitlang$core$builtin$$Logger$write_string$76$(buf, "  ");
           moonbitlang$core$builtin$$Logger$write_string$76$(buf, moonbitlang$core$builtin$$Show$to_string$17$(line));
@@ -26824,6 +26824,13 @@ function mapTypeString(typeString) {
   if (typeString.includes(" | null")) {
     const baseType = typeString.replace(" | null", "");
     return `${mapTypeString(baseType)}?`;
+  }
+  const genericMatch = typeString.match(/^([A-Z][a-zA-Z0-9_]*)<(.+)>$/);
+  if (genericMatch) {
+    const typeName = genericMatch[1];
+    const typeArgs = genericMatch[2];
+    const mappedArgs = typeArgs.split(/,\s*/).map((arg) => mapTypeString(arg.trim())).join(", ");
+    return `${typeName}[${mappedArgs}]`;
   }
   return typeString;
 }
@@ -27152,14 +27159,23 @@ ${variantLines.join("\n")}
   }
 }
 function generateFunction(func) {
-  const typeParams = func.typeParams && func.typeParams.length > 0 ? `[${func.typeParams.join(", ")}]` : "";
-  const params = func.params.map((p, i) => `${p.name || `arg${i}`} : ${p.type}`).join(", ");
-  const returnType = func.isAsync && !func.returnType.startsWith("Promise[") ? `Promise[${func.returnType}]` : func.returnType;
+  const hasTypeParams = func.typeParams && func.typeParams.length > 0;
+  const replaceTypeParams = (type) => {
+    if (!hasTypeParams) return type;
+    let result = type;
+    for (const tp of func.typeParams) {
+      result = result.replace(new RegExp(`\\b${tp}\\b`, "g"), "@js.Any");
+    }
+    return result;
+  };
+  const params = func.params.map((p, i) => `${p.name || `arg${i}`} : ${replaceTypeParams(p.type)}`).join(", ");
+  let returnType = func.isAsync && !func.returnType.startsWith("Promise[") ? `Promise[${func.returnType}]` : func.returnType;
+  returnType = replaceTypeParams(returnType);
   if (func.isMethod && func.className) {
     const paramNames = func.params.map((p, i) => p.name || `arg${i}`);
     if (func.name.endsWith("::new")) {
       const argList = paramNames.join(", ");
-      return `extern "js" fn ${func.name}${typeParams}(${params}) -> ${returnType} =
+      return `extern "js" fn ${func.name}(${params}) -> ${returnType} =
   #| (${argList}) => new ${func.className}(${argList})
 `;
     } else {
@@ -27167,12 +27183,12 @@ function generateFunction(func) {
       const jsMethodName = toCamelCase(methodName);
       const argsWithoutSelf = paramNames.slice(1).join(", ");
       const jsArgsDecl = argsWithoutSelf ? `self, ${argsWithoutSelf}` : "self";
-      return `extern "js" fn ${func.name}${typeParams}(${params}) -> ${returnType} =
+      return `extern "js" fn ${func.name}(${params}) -> ${returnType} =
   #| (${jsArgsDecl}) => self.${jsMethodName}(${argsWithoutSelf})
 `;
     }
   }
-  return `extern "js" fn ${func.name}${typeParams}(${params}) -> ${returnType} = "${func.jsName}"
+  return `extern "js" fn ${func.name}(${params}) -> ${returnType} = "${func.jsName}"
 `;
 }
 function toCamelCase(str) {
@@ -27451,6 +27467,131 @@ function extractExportSymbols(content) {
   }
   return symbols;
 }
+function extractFunctionSignatures(content) {
+  const signatures = [];
+  const lines = content.split("\n");
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed.startsWith("pub fn") && !trimmed.startsWith("fn ")) {
+      continue;
+    }
+    const isPublic = trimmed.startsWith("pub ");
+    const fnPart = isPublic ? trimmed.slice(4) : trimmed;
+    let typeParams = [];
+    let rest = fnPart;
+    const fnGenericMatch = rest.match(/^fn\[([^\]]+)\]\s*/);
+    if (fnGenericMatch) {
+      const params2 = fnGenericMatch[1];
+      typeParams = params2.split(",").map((p) => p.trim().split(/\s*:\s*/)[0]);
+      rest = "fn " + rest.slice(fnGenericMatch[0].length);
+    }
+    const fnMatch = rest.match(/^fn\s+(\w+)(?:::(\w+))?(?:\[([^\]]+)\])?\s*\(([^)]*)\)\s*(?:->\s*(.+))?$/);
+    if (!fnMatch) continue;
+    const [, firstPart, secondPart, methodTypeParams, paramsStr, returnType] = fnMatch;
+    const typeName = secondPart ? firstPart : void 0;
+    const name = secondPart || firstPart;
+    if (methodTypeParams) {
+      const extraParams = methodTypeParams.split(",").map((p) => p.trim().split(/\s*:\s*/)[0]);
+      typeParams = [...typeParams, ...extraParams];
+    }
+    const params = [];
+    if (paramsStr && paramsStr.trim()) {
+      const paramParts = splitParams(paramsStr);
+      for (let i = 0; i < paramParts.length; i++) {
+        const part = paramParts[i].trim();
+        const namedParamMatch = part.match(/^(\w+)\s*:\s*(.+)$/);
+        if (namedParamMatch) {
+          const [, paramName, paramType] = namedParamMatch;
+          const optional = paramType.endsWith("?");
+          params.push({
+            name: paramName,
+            type: optional ? paramType.slice(0, -1) : paramType,
+            optional
+          });
+        } else {
+          const paramType = part;
+          const optional = paramType.endsWith("?");
+          params.push({
+            name: `arg${i}`,
+            type: optional ? paramType.slice(0, -1) : paramType,
+            optional
+          });
+        }
+      }
+    }
+    signatures.push({
+      name,
+      typeName,
+      isMethod: !!typeName,
+      typeParams,
+      params,
+      returnType: returnType?.trim() || "Unit",
+      isPublic,
+      originalLine: trimmed
+    });
+  }
+  return signatures;
+}
+function splitParams(paramsStr) {
+  const result = [];
+  let current = "";
+  let depth = 0;
+  for (const char of paramsStr) {
+    if (char === "[" || char === "(") depth++;
+    if (char === "]" || char === ")") depth--;
+    if (char === "," && depth === 0) {
+      result.push(current.trim());
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+  if (current.trim()) {
+    result.push(current.trim());
+  }
+  return result;
+}
+function generateMbtiGlueCode(signatures) {
+  const exports2 = [];
+  const lines = [
+    "// Auto-generated by mbts link - DO NOT EDIT",
+    "// This file provides non-generic wrappers for JS export",
+    ""
+  ];
+  for (const sig of signatures) {
+    if (!sig.isPublic) continue;
+    if (sig.typeParams.length === 0) continue;
+    const originalName = sig.isMethod ? `${sig.typeName}::${sig.name}` : sig.name;
+    const wrapperName = sig.isMethod ? `__jsglue_${sig.typeName}_${sig.name}` : `__jsglue_${sig.name}`;
+    const wrappedParams = sig.params.map((p) => {
+      let type = p.type;
+      for (const tp of sig.typeParams) {
+        type = type.replace(new RegExp(`\\b${tp}\\b`, "g"), "@js.Any");
+      }
+      return `${p.name} : ${type}${p.optional ? "?" : ""}`;
+    });
+    let wrappedReturnType = sig.returnType;
+    for (const tp of sig.typeParams) {
+      wrappedReturnType = wrappedReturnType.replace(new RegExp(`\\b${tp}\\b`, "g"), "@js.Any");
+    }
+    const callArgs = sig.params.map((p) => p.name).join(", ");
+    const call = sig.isMethod ? `${sig.typeName}::${sig.name}(${callArgs})` : `${sig.name}(${callArgs})`;
+    lines.push(`///|`);
+    lines.push(`pub fn ${wrapperName}(${wrappedParams.join(", ")}) -> ${wrappedReturnType} {`);
+    lines.push(`  ${call}`);
+    lines.push(`}`);
+    lines.push("");
+    exports2.push({
+      original: originalName,
+      wrapper: wrapperName,
+      signature: sig
+    });
+  }
+  return {
+    code: lines.join("\n"),
+    exports: exports2
+  };
+}
 function getExportNames(content, options = {}) {
   const { includeMethods = true, publicOnly = true } = options;
   const symbols = extractExportSymbols(content);
@@ -27512,9 +27653,20 @@ async function linkCommand(moonPkgPath, options = {}) {
     process.exit(1);
   }
   const mbtiContent = fs.readFileSync(mbtiPath, "utf8");
-  const exports2 = getExportNames(mbtiContent, {
+  const signatures = extractFunctionSignatures(mbtiContent);
+  const glueResult = generateMbtiGlueCode(signatures);
+  const gluePath = path.join(pkgDir, "__jsglue.mbt");
+  const wrapperMap = /* @__PURE__ */ new Map();
+  for (const exp of glueResult.exports) {
+    wrapperMap.set(exp.original, exp.wrapper);
+  }
+  const baseExports = getExportNames(mbtiContent, {
     includeMethods,
     publicOnly: true
+  });
+  const exports2 = baseExports.map((name) => {
+    const originalName = name.replace("$", "::");
+    return wrapperMap.get(originalName) || name;
   });
   if (exports2.length === 0) {
     console.warn("Warning: No public functions found to export.");
@@ -27539,11 +27691,25 @@ async function linkCommand(moonPkgPath, options = {}) {
   if (dryRun) {
     console.log("=== Would write to", pkgJsonPath, "===");
     console.log(output);
+    if (glueResult.exports.length > 0) {
+      console.log("\n=== Would write to", gluePath, "===");
+      console.log(glueResult.code);
+    }
   } else {
     fs.writeFileSync(pkgJsonPath, output + "\n");
     console.log(`Updated ${pkgJsonPath}`);
     console.log(`  Exports: ${exports2.length} functions`);
     console.log(`  Targets: ${targets.join(", ")}`);
+    if (glueResult.exports.length > 0) {
+      fs.writeFileSync(gluePath, glueResult.code);
+      console.log(`Generated ${gluePath}`);
+      console.log(`  Wrapped: ${glueResult.exports.length} generic functions`);
+    } else {
+      if (fs.existsSync(gluePath)) {
+        fs.unlinkSync(gluePath);
+        console.log(`Removed ${gluePath} (no generic functions to wrap)`);
+      }
+    }
   }
 }
 async function dtsCommand(srcPath, options = {}) {

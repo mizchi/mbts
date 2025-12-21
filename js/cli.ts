@@ -11,12 +11,15 @@ import * as fs from "fs";
 import * as path from "path";
 import {
   extractExportSymbols,
+  extractFunctionSignatures,
   getExportNames,
   generateDts,
+  generateMbtiGlueCode,
   parseDts,
   generateMbt,
   generateMbti,
   type ExportSymbol,
+  type FunctionSignature,
 } from "./index.js";
 
 // ============================================================
@@ -96,10 +99,30 @@ async function linkCommand(
   // Read .mbti content
   const mbtiContent = fs.readFileSync(mbtiPath, "utf8");
 
-  // Extract export names
-  const exports = getExportNames(mbtiContent, {
+  // Extract function signatures for glue code generation
+  const signatures = extractFunctionSignatures(mbtiContent);
+
+  // Generate glue code for functions with type parameters
+  const glueResult = generateMbtiGlueCode(signatures);
+  const gluePath = path.join(pkgDir, "__jsglue.mbt");
+
+  // Build export list with wrapper substitutions
+  const wrapperMap = new Map<string, string>();
+  for (const exp of glueResult.exports) {
+    wrapperMap.set(exp.original, exp.wrapper);
+  }
+
+  // Get base export names
+  const baseExports = getExportNames(mbtiContent, {
     includeMethods,
     publicOnly: true,
+  });
+
+  // Substitute wrapper names for generic functions
+  const exports = baseExports.map((name) => {
+    // Convert Type$method format back to Type::method for lookup
+    const originalName = name.replace("$", "::");
+    return wrapperMap.get(originalName) || name;
   });
 
   if (exports.length === 0) {
@@ -131,11 +154,28 @@ async function linkCommand(
   if (dryRun) {
     console.log("=== Would write to", pkgJsonPath, "===");
     console.log(output);
+    if (glueResult.exports.length > 0) {
+      console.log("\n=== Would write to", gluePath, "===");
+      console.log(glueResult.code);
+    }
   } else {
     fs.writeFileSync(pkgJsonPath, output + "\n");
     console.log(`Updated ${pkgJsonPath}`);
     console.log(`  Exports: ${exports.length} functions`);
     console.log(`  Targets: ${targets.join(", ")}`);
+
+    // Write glue code if there are wrapped functions
+    if (glueResult.exports.length > 0) {
+      fs.writeFileSync(gluePath, glueResult.code);
+      console.log(`Generated ${gluePath}`);
+      console.log(`  Wrapped: ${glueResult.exports.length} generic functions`);
+    } else {
+      // Remove existing glue file if no longer needed
+      if (fs.existsSync(gluePath)) {
+        fs.unlinkSync(gluePath);
+        console.log(`Removed ${gluePath} (no generic functions to wrap)`);
+      }
+    }
   }
 }
 

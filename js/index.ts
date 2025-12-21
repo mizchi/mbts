@@ -629,6 +629,222 @@ export function extractExportSymbols(content: string): ExportSymbol[] {
   return symbols;
 }
 
+// ============================================================
+// Function Signature Extraction (for glue code generation)
+// ============================================================
+
+/** Parameter information */
+export interface ParamInfo {
+  name: string;
+  type: string;
+  optional: boolean;
+}
+
+/** Full function signature information */
+export interface FunctionSignature {
+  /** The function name */
+  name: string;
+  /** The type name for methods (e.g., "Stack" for "Stack::push") */
+  typeName?: string;
+  /** Whether this is a method */
+  isMethod: boolean;
+  /** Generic type parameters (e.g., ["T", "U"]) */
+  typeParams: string[];
+  /** Function parameters */
+  params: ParamInfo[];
+  /** Return type */
+  returnType: string;
+  /** Whether the function is public */
+  isPublic: boolean;
+  /** The original line from .mbti */
+  originalLine: string;
+}
+
+/**
+ * Extract full function signatures from .mbti content
+ *
+ * Parses complete function declarations including parameters and return types.
+ * Used for generating glue code with @js.Any substitution.
+ */
+export function extractFunctionSignatures(content: string): FunctionSignature[] {
+  const signatures: FunctionSignature[] = [];
+  const lines = content.split("\n");
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    // Skip non-function declarations
+    if (!trimmed.startsWith("pub fn") && !trimmed.startsWith("fn ")) {
+      continue;
+    }
+
+    const isPublic = trimmed.startsWith("pub ");
+    const fnPart = isPublic ? trimmed.slice(4) : trimmed;
+
+    // Extract type parameters from fn[T] or fn[T : Constraint]
+    let typeParams: string[] = [];
+    let rest = fnPart;
+
+    const fnGenericMatch = rest.match(/^fn\[([^\]]+)\]\s*/);
+    if (fnGenericMatch) {
+      const params = fnGenericMatch[1];
+      typeParams = params.split(",").map((p) => p.trim().split(/\s*:\s*/)[0]);
+      rest = "fn " + rest.slice(fnGenericMatch[0].length);
+    }
+
+    // Parse fn name or fn Type::name with optional method type params
+    const fnMatch = rest.match(/^fn\s+(\w+)(?:::(\w+))?(?:\[([^\]]+)\])?\s*\(([^)]*)\)\s*(?:->\s*(.+))?$/);
+    if (!fnMatch) continue;
+
+    const [, firstPart, secondPart, methodTypeParams, paramsStr, returnType] = fnMatch;
+
+    const typeName = secondPart ? firstPart : undefined;
+    const name = secondPart || firstPart;
+
+    // Extract method type params
+    if (methodTypeParams) {
+      const extraParams = methodTypeParams.split(",").map((p) => p.trim().split(/\s*:\s*/)[0]);
+      typeParams = [...typeParams, ...extraParams];
+    }
+
+    // Parse parameters
+    const params: ParamInfo[] = [];
+    if (paramsStr && paramsStr.trim()) {
+      // Split by comma, handling nested generics
+      const paramParts = splitParams(paramsStr);
+      for (let i = 0; i < paramParts.length; i++) {
+        const part = paramParts[i].trim();
+        // Try to match "name : type" format (from .mbt files)
+        const namedParamMatch = part.match(/^(\w+)\s*:\s*(.+)$/);
+        if (namedParamMatch) {
+          const [, paramName, paramType] = namedParamMatch;
+          const optional = paramType.endsWith("?");
+          params.push({
+            name: paramName,
+            type: optional ? paramType.slice(0, -1) : paramType,
+            optional,
+          });
+        } else {
+          // .mbti format: just type without name (e.g., "String", "Container[@core.Any]")
+          const paramType = part;
+          const optional = paramType.endsWith("?");
+          params.push({
+            name: `arg${i}`,
+            type: optional ? paramType.slice(0, -1) : paramType,
+            optional,
+          });
+        }
+      }
+    }
+
+    signatures.push({
+      name,
+      typeName,
+      isMethod: !!typeName,
+      typeParams,
+      params,
+      returnType: returnType?.trim() || "Unit",
+      isPublic,
+      originalLine: trimmed,
+    });
+  }
+
+  return signatures;
+}
+
+/** Split parameters handling nested generics */
+function splitParams(paramsStr: string): string[] {
+  const result: string[] = [];
+  let current = "";
+  let depth = 0;
+
+  for (const char of paramsStr) {
+    if (char === "[" || char === "(") depth++;
+    if (char === "]" || char === ")") depth--;
+    if (char === "," && depth === 0) {
+      result.push(current.trim());
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+  if (current.trim()) {
+    result.push(current.trim());
+  }
+  return result;
+}
+
+/**
+ * Generate __jsglue.mbt content for functions that need wrapping
+ *
+ * For functions with type parameters, generates non-generic wrappers
+ * using @js.Any that can be exported via link.js.exports.
+ *
+ * @param signatures - Function signatures from extractFunctionSignatures
+ * @returns Object with glue code and export mappings
+ */
+export function generateMbtiGlueCode(signatures: FunctionSignature[]): {
+  code: string;
+  exports: { original: string; wrapper: string; signature: FunctionSignature }[];
+} {
+  const exports: { original: string; wrapper: string; signature: FunctionSignature }[] = [];
+  const lines: string[] = [
+    "// Auto-generated by mbts link - DO NOT EDIT",
+    "// This file provides non-generic wrappers for JS export",
+    "",
+  ];
+
+  for (const sig of signatures) {
+    if (!sig.isPublic) continue;
+    if (sig.typeParams.length === 0) continue; // No wrapping needed
+
+    // Generate wrapper function name
+    const originalName = sig.isMethod ? `${sig.typeName}::${sig.name}` : sig.name;
+    const wrapperName = sig.isMethod
+      ? `__jsglue_${sig.typeName}_${sig.name}`
+      : `__jsglue_${sig.name}`;
+
+    // Replace type params with @js.Any in params
+    const wrappedParams = sig.params.map((p) => {
+      let type = p.type;
+      for (const tp of sig.typeParams) {
+        type = type.replace(new RegExp(`\\b${tp}\\b`, "g"), "@js.Any");
+      }
+      return `${p.name} : ${type}${p.optional ? "?" : ""}`;
+    });
+
+    // Replace type params with @js.Any in return type
+    let wrappedReturnType = sig.returnType;
+    for (const tp of sig.typeParams) {
+      wrappedReturnType = wrappedReturnType.replace(new RegExp(`\\b${tp}\\b`, "g"), "@js.Any");
+    }
+
+    // Generate call to original function
+    const callArgs = sig.params.map((p) => p.name).join(", ");
+    const call = sig.isMethod
+      ? `${sig.typeName}::${sig.name}(${callArgs})`
+      : `${sig.name}(${callArgs})`;
+
+    // Generate wrapper
+    lines.push(`///|`);
+    lines.push(`pub fn ${wrapperName}(${wrappedParams.join(", ")}) -> ${wrappedReturnType} {`);
+    lines.push(`  ${call}`);
+    lines.push(`}`);
+    lines.push("");
+
+    exports.push({
+      original: originalName,
+      wrapper: wrapperName,
+      signature: sig,
+    });
+  }
+
+  return {
+    code: lines.join("\n"),
+    exports,
+  };
+}
+
 /**
  * Get export names for moon.pkg.json link.js.exports
  *

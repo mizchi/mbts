@@ -161,6 +161,20 @@ function mapTypeString(typeString: string): string {
     return `${mapTypeString(baseType)}?`;
   }
 
+  // Handle generic types with <T, U, ...> -> [T, U, ...]
+  // e.g., Container<T> -> Container[T], Result<T, E> -> Result[T, E]
+  const genericMatch = typeString.match(/^([A-Z][a-zA-Z0-9_]*)<(.+)>$/);
+  if (genericMatch) {
+    const typeName = genericMatch[1];
+    const typeArgs = genericMatch[2];
+    // Recursively map each type argument
+    const mappedArgs = typeArgs
+      .split(/,\s*/)
+      .map((arg) => mapTypeString(arg.trim()))
+      .join(", ");
+    return `${typeName}[${mappedArgs}]`;
+  }
+
   // Keep other types as-is (they may be user-defined types)
   return typeString;
 }
@@ -624,20 +638,32 @@ function generateType(type: MbtType): string {
 }
 
 function generateFunction(func: MbtFunction): string {
-  const typeParams =
-    func.typeParams && func.typeParams.length > 0
-      ? `[${func.typeParams.join(", ")}]`
-      : "";
+  // MoonBit FFI limitation: extern functions cannot have type parameters
+  // Replace type params with @js.Any
+  const hasTypeParams = func.typeParams && func.typeParams.length > 0;
+
+  // Helper to replace type params with @js.Any
+  const replaceTypeParams = (type: string): string => {
+    if (!hasTypeParams) return type;
+    let result = type;
+    for (const tp of func.typeParams!) {
+      // Replace standalone type param and type param in generics
+      // e.g., T -> @js.Any, Container[T] -> Container[@js.Any]
+      result = result.replace(new RegExp(`\\b${tp}\\b`, 'g'), '@js.Any');
+    }
+    return result;
+  };
 
   // For extern functions, parameters need names: (arg0 : Type, arg1 : Type)
   const params = func.params
-    .map((p, i) => `${p.name || `arg${i}`} : ${p.type}`)
+    .map((p, i) => `${p.name || `arg${i}`} : ${replaceTypeParams(p.type)}`)
     .join(", ");
 
   // Don't wrap in Promise if already a Promise type (async functions already have Promise return type)
-  const returnType = func.isAsync && !func.returnType.startsWith("Promise[")
+  let returnType = func.isAsync && !func.returnType.startsWith("Promise[")
     ? `Promise[${func.returnType}]`
     : func.returnType;
+  returnType = replaceTypeParams(returnType);
 
   // Generate inline JS for methods/constructors (glue-code-free)
   if (func.isMethod && func.className) {
@@ -646,7 +672,7 @@ function generateFunction(func: MbtFunction): string {
     if (func.name.endsWith("::new")) {
       // Constructor: new ClassName(args)
       const argList = paramNames.join(", ");
-      return `extern "js" fn ${func.name}${typeParams}(${params}) -> ${returnType} =
+      return `extern "js" fn ${func.name}(${params}) -> ${returnType} =
   #| (${argList}) => new ${func.className}(${argList})
 `;
     } else {
@@ -657,14 +683,14 @@ function generateFunction(func: MbtFunction): string {
       // Skip 'self' parameter for JS call
       const argsWithoutSelf = paramNames.slice(1).join(", ");
       const jsArgsDecl = argsWithoutSelf ? `self, ${argsWithoutSelf}` : "self";
-      return `extern "js" fn ${func.name}${typeParams}(${params}) -> ${returnType} =
+      return `extern "js" fn ${func.name}(${params}) -> ${returnType} =
   #| (${jsArgsDecl}) => self.${jsMethodName}(${argsWithoutSelf})
 `;
     }
   }
 
   // Regular function - use simple string binding
-  return `extern "js" fn ${func.name}${typeParams}(${params}) -> ${returnType} = "${func.jsName}"
+  return `extern "js" fn ${func.name}(${params}) -> ${returnType} = "${func.jsName}"
 `;
 }
 

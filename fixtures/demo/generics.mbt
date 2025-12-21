@@ -1,5 +1,3 @@
-// package "demo"
-
 // Extern types
 #external
 type Container[T]
@@ -11,13 +9,13 @@ pub struct Result[T, E] {
 }
 
 // Functions
-extern "js" fn Container::new[T](value : T) -> Container[T] =
+extern "js" fn Container::new(value : @js.Any) -> Container[@js.Any] =
   #| (value) => new Container(value)
 
-extern "js" fn Container::get[T](self : Container[T]) -> T =
+extern "js" fn Container::get(self : Container[@js.Any]) -> @js.Any =
   #| (self) => self.get()
 
-extern "js" fn Container::set[T](self : Container[T], value : T) -> Unit =
+extern "js" fn Container::set(self : Container[@js.Any], value : @js.Any) -> Unit =
   #| (self, value) => self.set(value)
 
-extern "js" fn wrap[T](value : T) -> Container<T> = "wrap"
+extern "js" fn wrap(value : @js.Any) -> Container[@js.Any] = "wrap"

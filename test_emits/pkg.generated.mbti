@@ -1,0 +1,31 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "mizchi/mbts/test_emits"
+
+import(
+  "mizchi/js/core"
+)
+
+// Values
+pub fn container_get(Container[@core.Any]) -> @core.Any
+
+pub fn container_new(@core.Any) -> Container[@core.Any]
+
+pub fn container_set(Container[@core.Any], @core.Any) -> Unit
+
+pub fn greet(String) -> String
+
+pub fn[T] identity(T) -> T
+
+pub fn identity_any(@core.Any) -> @core.Any
+
+pub fn wrap_and_get(@core.Any) -> @core.Any
+
+// Errors
+
+// Types and methods
+type Container[T]
+
+// Type aliases
+
+// Traits
+
