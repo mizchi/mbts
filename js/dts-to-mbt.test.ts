@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseDts, dtsToMbt, generateMbt, generateMbti, generateGlueCode, dtsToMbtWithGlue, dtsToMbtWithMbti } from "./dts-to-mbt.js";
+import { parseDts, dtsToMbt, generateMbt, generateMbti, generateGlueCode, dtsToMbtWithGlue, dtsToMbtWithMbti } from "./dts-to-mbt.ts";
 
 describe("parseDts", () => {
   it("should parse interface to struct", () => {

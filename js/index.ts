@@ -948,13 +948,13 @@ export {
   type MbtFunction,
   type MbtParam,
   type ConvertOptions,
-} from "./dts-to-mbt.js";
+} from "./dts-to-mbt.ts";
 
 // ============================================================
 // MoonBit-native code generation (Phase 5)
 // ============================================================
 
-import type { MbtBinding } from "./dts-to-mbt.js";
+import type { MbtBinding } from "./dts-to-mbt.ts";
 
 /**
  * Generate MoonBit FFI bindings using the MoonBit implementation

@@ -4,9 +4,9 @@
  * This file evaluates the library's capabilities against real-world MoonBit packages.
  */
 import { describe, it, expect, beforeAll } from "vitest";
-import { readFileSync, readdirSync, statSync, writeFileSync, mkdirSync } from "fs";
-import { join, relative } from "path";
-import { execSync } from "child_process";
+import { readFileSync, readdirSync, statSync, writeFileSync, mkdirSync } from "node:fs";
+import { join, relative } from "node:path";
+import { execSync } from "node:child_process";
 import {
   generateDts,
   parseMbti,
@@ -16,7 +16,7 @@ import {
   generateMbtNative,
   generateDtsFromMbt,
 } from "./index.js";
-import { dtsToMbt, parseDts } from "./dts-to-mbt.js";
+import { dtsToMbt, parseDts } from "./dts-to-mbt.ts";
 
 const fixturesPath = join(import.meta.dirname, "../fixtures/.mooncakes");
 

@@ -1,0 +1,29 @@
+{
+  "name": "@mizchi/mbts",
+  "version": "0.0.1",
+  "nodeModulesDir": "auto",
+  "license": "MIT",
+  "exports": {
+    ".": "./js/cli.ts"
+  },
+  "imports": {
+    "typescript": "npm:typescript@5.9.3"
+  },
+  "exclude": [
+    "js/*.test.ts",
+    "**/.mooncakes/**",
+    "playground",
+    "fixtures",
+    "scripts",
+    "examples",
+    "__snapshot__",
+    ".temp-typecheck"
+ 
+  ],
+  "publish": {
+    "include": [
+      "js",
+      "target/js/release/build/cli"
+    ]
+  }
+}

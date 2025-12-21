@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { readFileSync } from "fs";
-import { join } from "path";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import {
   generateDts,
   generateDtsNamespace,
@@ -11,7 +11,7 @@ import {
   getFunctions,
   getTraits,
   getTypeName,
-} from "./index.js";
+} from "./index.ts";
 
 // Helper to read .mbti files from fixtures
 const fixturesPath = join(import.meta.dirname, "../fixtures/.mooncakes");

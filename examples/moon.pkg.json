@@ -15,6 +15,7 @@
         "create_user",
         "distance",
         "greet",
+        "__jsglue_identity",
         "identity_any"
       ]
     }
