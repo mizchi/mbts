@@ -1,0 +1,10 @@
+import {
+  "moonbitlang/core/list" @list,
+  "moonbitlang/core/test" @test,
+  "moonbitlang/parser" @parser,
+  "moonbitlang/parser/lexer" @lexer,
+  "moonbitlang/parser/mbti_parser" @mbti_parser,
+  "moonbitlang/parser/mbti_ast" @mbti_ast,
+  "moonbitlang/parser/basic" @basic,
+  "moonbitlang/parser/syntax" @syntax,
+}

@@ -210,7 +210,11 @@ fn gen_mbt_type(t : MbtType) -> String {
 
 ///|
 /// Generate struct definition
-fn gen_struct(name : String, type_params : String, fields : Array[MbtField]) -> String {
+fn gen_struct(
+  name : String,
+  type_params : String,
+  fields : Array[MbtField],
+) -> String {
   if fields.length() == 0 {
     "pub struct \{name}\{type_params} {}"
   } else {
@@ -221,7 +225,11 @@ fn gen_struct(name : String, type_params : String, fields : Array[MbtField]) -> 
 
 ///|
 /// Generate enum definition
-fn gen_enum(name : String, type_params : String, variants : Array[MbtVariant]) -> String {
+fn gen_enum(
+  name : String,
+  type_params : String,
+  variants : Array[MbtVariant],
+) -> String {
   let variants_str = format_variants(variants)
   "pub enum \{name}\{type_params} {\n\{variants_str}}"
 }
@@ -405,7 +413,7 @@ pub fn MbtVariant::new(name : String) -> MbtVariant {
 /// Helper to get optional string from Json object
 fn get_string(obj : Map[String, Json], key : String) -> String? {
   match obj.get(key) {
-    Some(v) => v.as_string()
+    Some(v) => if v is String(s) { Some(s) } else { None }
     None => None
   }
 }
@@ -414,7 +422,14 @@ fn get_string(obj : Map[String, Json], key : String) -> String? {
 /// Helper to get optional bool from Json object
 fn get_bool(obj : Map[String, Json], key : String) -> Bool? {
   match obj.get(key) {
-    Some(v) => v.as_bool()
+    Some(v) =>
+      if v is True {
+        Some(true)
+      } else if v is False {
+        Some(false)
+      } else {
+        None
+      }
     None => None
   }
 }
@@ -423,8 +438,17 @@ fn get_bool(obj : Map[String, Json], key : String) -> Bool? {
 /// Helper to get optional array from Json object
 fn get_array(obj : Map[String, Json], key : String) -> Array[Json]? {
   match obj.get(key) {
-    Some(v) => v.as_array()
+    Some(v) => if v is Array(arr) { Some(arr) } else { None }
     None => None
+  }
+}
+
+///|
+fn get_object(json : Json) -> Map[String, Json]? {
+  if json is Object(obj) {
+    Some(obj)
+  } else {
+    None
   }
 }
 
@@ -432,7 +456,7 @@ fn get_array(obj : Map[String, Json], key : String) -> Array[Json]? {
 /// Parse MbtBinding from JSON
 /// JSON structure mirrors dts-to-mbt.ts MbtBinding interface
 pub fn MbtBinding::from_json(json : Json) -> MbtBinding? {
-  match json.as_object() {
+  match get_object(json) {
     None => None
     Some(obj) => {
       let package_name = get_string(obj, "packageName").unwrap_or("")
@@ -451,9 +475,8 @@ fn parse_string_array(arr : Array[Json]?) -> Array[String] {
   match arr {
     Some(items) =>
       for item in items {
-        match item.as_string() {
-          Some(s) => result.push(s)
-          None => ()
+        if item is String(s) {
+          result.push(s)
         }
       }
     None => ()
@@ -511,7 +534,7 @@ fn parse_mbt_classes(arr : Array[Json]?) -> Array[MbtClass] {
 
 ///|
 pub fn MbtType::from_json(json : Json) -> MbtType? {
-  match json.as_object() {
+  match get_object(json) {
     None => None
     Some(obj) => {
       let name = match get_string(obj, "name") {
@@ -555,7 +578,7 @@ fn parse_mbt_fields(arr : Array[Json]?) -> Array[MbtField] {
 
 ///|
 pub fn MbtField::from_json(json : Json) -> MbtField? {
-  match json.as_object() {
+  match get_object(json) {
     None => None
     Some(obj) => {
       let name = match get_string(obj, "name") {
@@ -590,7 +613,7 @@ fn parse_mbt_variants(arr : Array[Json]?) -> Array[MbtVariant] {
 
 ///|
 pub fn MbtVariant::from_json(json : Json) -> MbtVariant? {
-  match json.as_object() {
+  match get_object(json) {
     None => None
     Some(obj) => {
       let name = match get_string(obj, "name") {
@@ -605,7 +628,7 @@ pub fn MbtVariant::from_json(json : Json) -> MbtVariant? {
 
 ///|
 pub fn MbtFunction::from_json(json : Json) -> MbtFunction? {
-  match json.as_object() {
+  match get_object(json) {
     None => None
     Some(obj) => {
       let name = match get_string(obj, "name") {
@@ -654,7 +677,7 @@ fn parse_mbt_params(arr : Array[Json]?) -> Array[MbtParam] {
 
 ///|
 pub fn MbtParam::from_json(json : Json) -> MbtParam? {
-  match json.as_object() {
+  match get_object(json) {
     None => None
     Some(obj) => {
       let name = match get_string(obj, "name") {
@@ -673,7 +696,7 @@ pub fn MbtParam::from_json(json : Json) -> MbtParam? {
 
 ///|
 pub fn MbtClass::from_json(json : Json) -> MbtClass? {
-  match json.as_object() {
+  match get_object(json) {
     None => None
     Some(obj) => {
       let name = match get_string(obj, "name") {
@@ -706,7 +729,7 @@ fn parse_mbt_methods(arr : Array[Json]?) -> Array[MbtMethod] {
 
 ///|
 pub fn MbtMethod::from_json(json : Json) -> MbtMethod? {
-  match json.as_object() {
+  match get_object(json) {
     None => None
     Some(obj) => {
       let name = match get_string(obj, "name") {

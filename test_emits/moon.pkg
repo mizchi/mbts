@@ -1,8 +1,9 @@
-{
-  "import": [
-    "mizchi/js"
-  ],
-  "link": {
+import {
+  "mizchi/js",
+}
+
+options(
+  link: {
     "js": {
       "exports": [
         "container_get",
@@ -11,8 +12,8 @@
         "greet",
         "__jsglue_identity",
         "identity_any",
-        "wrap_and_get"
-      ]
-    }
-  }
-}
+        "wrap_and_get",
+      ],
+    },
+  },
+)

@@ -1,12 +1,12 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "mizchi/mbts"
 
-import(
-  "moonbitlang/core/list"
-  "moonbitlang/parser/basic"
-  "moonbitlang/parser/mbti_ast"
-  "moonbitlang/parser/syntax"
-)
+import {
+  "moonbitlang/core/list",
+  "moonbitlang/parser/basic",
+  "moonbitlang/parser/mbti_ast",
+  "moonbitlang/parser/syntax",
+}
 
 // Values
 pub fn format_fields(Array[MbtField]) -> String
