@@ -210,7 +210,11 @@ fn gen_mbt_type(t : MbtType) -> String {
 
 ///|
 /// Generate struct definition
-fn gen_struct(name : String, type_params : String, fields : Array[MbtField]) -> String {
+fn gen_struct(
+  name : String,
+  type_params : String,
+  fields : Array[MbtField],
+) -> String {
   if fields.length() == 0 {
     "pub struct \{name}\{type_params} {}"
   } else {
@@ -221,7 +225,11 @@ fn gen_struct(name : String, type_params : String, fields : Array[MbtField]) -> 
 
 ///|
 /// Generate enum definition
-fn gen_enum(name : String, type_params : String, variants : Array[MbtVariant]) -> String {
+fn gen_enum(
+  name : String,
+  type_params : String,
+  variants : Array[MbtVariant],
+) -> String {
   let variants_str = format_variants(variants)
   "pub enum \{name}\{type_params} {\n\{variants_str}}"
 }

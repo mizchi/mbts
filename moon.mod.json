@@ -1,11 +1,11 @@
 {
   "name": "mizchi/mbts",
   "version": "0.0.2",
-  "description": "well-typed mbt(i) to d.ts converter and utils",
   "deps": {
-    "moonbitlang/parser": "0.1.12",
-    "mizchi/js": "0.10.3",
-    "mizchi/markdown": "0.1.2"
+    "moonbitlang/parser": "0.1.15",
+    "mizchi/js": "0.10.14",
+    "mizchi/markdown": "0.4.7"
   },
+  "description": "well-typed mbt(i) to d.ts converter and utils",
   "preferred-target": "js"
 }

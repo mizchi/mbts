@@ -1,11 +1,13 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "mizchi/mbts/test_emits"
 
-import(
-  "mizchi/js/core"
-)
+import {
+  "mizchi/js/core",
+}
 
 // Values
+pub fn __jsglue_identity(@core.Any) -> @core.Any
+
 pub fn container_get(Container[@core.Any]) -> @core.Any
 
 pub fn container_new(@core.Any) -> Container[@core.Any]

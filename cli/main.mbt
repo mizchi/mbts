@@ -54,7 +54,20 @@ pub fn generate_dts_namespace_from_string(
 pub fn parse_mbti_to_json(content : String, filename : String) -> String {
   try {
     let mbti = @mbts.parse_mbti(content, filename)
-    mbti.to_json().stringify()
+    let imports : Array[Json] = mbti.imports
+      .to_array()
+      .map(fn(import_) {
+        match import_.alias_ {
+          Some(alias_name) => { "name": import_.name, "alias": alias_name }
+          None => { "name": import_.name }
+        }
+      })
+    let summary : Json = {
+      "packageName": mbti.package_name,
+      "imports": imports,
+      "sigCount": mbti.sigs.to_array().length(),
+    }
+    summary.stringify()
   } catch {
     e => {
       let error_obj : Json = { "error": e.to_string() }

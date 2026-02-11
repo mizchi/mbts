@@ -620,24 +620,27 @@ fn generate_type(ty : @syntax.Type) -> String {
       ignore(err)
       ignore(loc)
       let buf = StringBuilder::new()
-      if is_async {
-        buf.write_string("Promise<")
-        buf.write_string(generate_type(res))
-        buf.write_string(">")
-      } else {
-        buf.write_string("(")
-        let args_arr = args.to_array()
-        for i, arg in args_arr {
-          if i > 0 {
-            buf.write_string(", ")
-          }
-          buf.write_string("arg")
-          buf.write_string(i.to_string())
-          buf.write_string(": ")
-          buf.write_string(generate_type(arg))
+      match is_async {
+        Some(_) => {
+          buf.write_string("Promise<")
+          buf.write_string(generate_type(res))
+          buf.write_string(">")
         }
-        buf.write_string(") => ")
-        buf.write_string(generate_type(res))
+        None => {
+          buf.write_string("(")
+          let args_arr = args.to_array()
+          for i, arg in args_arr {
+            if i > 0 {
+              buf.write_string(", ")
+            }
+            buf.write_string("arg")
+            buf.write_string(i.to_string())
+            buf.write_string(": ")
+            buf.write_string(generate_type(arg))
+          }
+          buf.write_string(") => ")
+          buf.write_string(generate_type(res))
+        }
       }
       buf.to_string()
     }

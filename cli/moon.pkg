@@ -1,12 +1,11 @@
-{
+import {
+  "mizchi/mbts" @mbts,
+  "moonbitlang/core/json" @json,
+}
+
+options(
   "is-main": true,
-  "import": [
-    {
-      "path": "mizchi/mbts",
-      "alias": "mbts"
-    }
-  ],
-  "link": {
+  link: {
     "js": {
       "exports": [
         "generate_dts_from_string",
@@ -14,9 +13,9 @@
         "generate_dts_namespace_from_string",
         "parse_mbti_to_json",
         "generate_mbt_from_json",
-        "generate_dts_from_mbt_string"
+        "generate_dts_from_mbt_string",
       ],
-      "format": "esm"
-    }
-  }
-}
+      "format": "esm",
+    },
+  },
+)
