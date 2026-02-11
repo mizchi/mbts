@@ -8,7 +8,7 @@
 pub fn preprocess_mbti(content : String) -> String {
   let lines = content.split("\n")
   let filtered = lines.filter(fn(line) {
-    let trimmed = line.trim_space().to_string()
+    let trimmed = line.trim().to_string()
     // Skip unsupported syntax in mbti_parser
     not(trimmed.has_prefix("pub impl ")) &&
     not(trimmed.has_prefix("pub using ")) &&
@@ -18,7 +18,7 @@ pub fn preprocess_mbti(content : String) -> String {
   // Convert "pub fn" to "fn" for parser compatibility
   let processed = filtered.map(fn(line) {
     let s = line.to_string()
-    if s.trim_space().to_string().has_prefix("pub fn ") {
+    if s.trim().to_string().has_prefix("pub fn ") {
       s.replace(old="pub fn ", new="fn ")
     } else {
       s
@@ -109,7 +109,7 @@ pub fn generate_dts_with_preamble(
       buf.write_string("\n\n")
     }
   }
-  buf.to_string().trim_space().to_string()
+  buf.to_string().trim().to_string()
 }
 
 ///|
@@ -149,7 +149,7 @@ pub fn generate_combined_dts(packages : Array[@mbti_ast.Mbti]) -> String {
     buf.write_string(generate_dts_namespace(pkg))
     buf.write_string("\n")
   }
-  buf.to_string().trim_space().to_string()
+  buf.to_string().trim().to_string()
 }
 
 ///|
@@ -587,7 +587,7 @@ fn generate_trait_sig(trait_sig : @mbti_ast.TraitSig) -> String {
     buf.write_string(generate_type(ret_type))
     buf.write_string(";\n")
   }
-  buf.to_string().trim_space().to_string()
+  buf.to_string().trim().to_string()
 }
 
 ///|
@@ -990,7 +990,7 @@ pub fn generate_dts_from_mbt(content : String, filename : String) -> String {
       buf.write_string("\n\n")
     }
   }
-  buf.to_string().trim_space().to_string()
+  buf.to_string().trim().to_string()
 }
 
 ///|
@@ -1311,5 +1311,5 @@ fn generate_mbt_trait_decl(decl : @syntax.TraitDecl) -> String {
     }
     buf.write_string(";\n")
   }
-  buf.to_string().trim_space().to_string()
+  buf.to_string().trim().to_string()
 }
