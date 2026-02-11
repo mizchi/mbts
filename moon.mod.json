@@ -1,6 +1,6 @@
 {
   "name": "mizchi/mbts",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "deps": {
     "moonbitlang/parser": "0.1.15",
     "mizchi/js": "0.10.14",
