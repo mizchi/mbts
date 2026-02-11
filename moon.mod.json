@@ -7,5 +7,8 @@
     "mizchi/markdown": "0.4.7"
   },
   "description": "well-typed mbt(i) to d.ts converter and utils",
+  "readme": "README.md",
+  "repository": "https://github.com/mizchi/mbts",
+  "license": "MIT",
   "preferred-target": "js"
 }
