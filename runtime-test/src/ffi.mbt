@@ -13,7 +13,11 @@ extern "js" fn add(a : Int, b : Int) -> Int = "add"
 
 extern "js" fn greet(name : String) -> String = "greet"
 
-extern "js" fn get_length(arr : Array[Int]) -> Int = "getLength"
+extern "js" fn get_length_ffi(arr : FixedArray[Int]) -> Int = "getLength"
+
+fn get_length(arr : Array[Int]) -> Int {
+  get_length_ffi(FixedArray::from_array(arr))
+}
 
 extern "js" fn create_person(name : String, age : Int) -> Person = "createPerson"
 
